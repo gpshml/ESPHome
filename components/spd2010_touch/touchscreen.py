@@ -13,9 +13,9 @@ spd2010_ns = cg.esphome_ns.namespace("spd2010_touch")
 SPD2010Touch = spd2010_ns.class_(
     "SPD2010Touch",
     touchscreen.Touchscreen,
-    cg.Component,
     i2c.I2CDevice,
 )
+
 
 CONF_POLLING_FALLBACK_MS = "polling_fallback_ms"
 
@@ -41,6 +41,7 @@ async def to_code(config):
         cg.add(var.set_interrupt_pin(irq))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
 
 
 
