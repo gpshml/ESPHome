@@ -124,7 +124,21 @@ void SPD2010Touch::write_tp_clear_int_cmd_() {
 
 void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
   uint8_t d[4]{0};
-  this->read16_(REG_STATUS_LEN, d, 4);
+
+  bool ok = this->read16_(REG_STATUS_LEN, d, 4);
+  if (!ok) {
+    ESP_LOGW(TAG, "I2C read failed: REG_STATUS_LEN (0x%04X)", REG_STATUS_LEN);
+    st->read_len = 0;
+    st->low.pt_exist = 0;
+    st->low.gesture = 0;
+    st->low.aux = 0;
+    st->high.cpu_run = 0;
+    st->high.tic_in_cpu = 0;
+    st->high.tic_in_bios = 0;
+    return;
+  }
+
+  ESP_LOGD(TAG, "STATUS raw: %02X %02X %02X %02X", d[0], d[1], d[2], d[3]);
 
   st->low.pt_exist = (d[0] & 0x01);
   st->low.gesture  = (d[0] & 0x02);
@@ -239,6 +253,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
