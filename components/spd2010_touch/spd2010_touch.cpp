@@ -78,21 +78,28 @@ void SPD2010Touch::update_touches() {
 // ---------- I2C helpers (16-bit register addressing) ----------
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
   // Write register pointer (big-endian) then read
-  uint8_t regbuf[2] = {static_cast<uint8_t>(reg >> 8), static_cast<uint8_t>(reg & 0xFF)};
+  // uint8_t regbuf[2] = {static_cast<uint8_t>(reg >> 8), static_cast<uint8_t>(reg & 0xFF)};
+  uint8_t regbuf[2] = { (uint8_t)(reg & 0xFF), (uint8_t)(reg >> 8) };
   if (!this->write(regbuf, 2))
     return false;
   return this->read(data, len);
 }
 
 bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
-  // Build buffer: [reg_hi reg_lo payload...]
-  uint8_t buf[2 + 8];  // all our writes are 2 bytes payload; keep it small
+  // Build buffer: [reg_lo reg_hi payload...]
+  uint8_t buf[2 + 8];
   if (len > 8) return false;
-  buf[0] = static_cast<uint8_t>(reg >> 8);
-  buf[1] = static_cast<uint8_t>(reg & 0xFF);
-  for (size_t i = 0; i < len; i++) buf[2 + i] = data[i];
+
+  buf[0] = static_cast<uint8_t>(reg & 0xFF);
+  buf[1] = static_cast<uint8_t>(reg >> 8);
+
+  for (size_t i = 0; i < len; i++) {
+    buf[2 + i] = data[i];
+  }
+
   return this->write(buf, 2 + len);
 }
+
 
 // ---------- Commands (ported from your functions) ----------
 void SPD2010Touch::write_tp_point_mode_cmd_() {
@@ -232,6 +239,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
