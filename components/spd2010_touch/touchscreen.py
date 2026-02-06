@@ -1,5 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
+from esphome import pins
 from esphome.components import i2c, touchscreen
 from esphome.const import CONF_ID, CONF_INTERRUPT_PIN, CONF_ADDRESS
 
@@ -15,7 +16,7 @@ CONFIG_SCHEMA = (
     touchscreen.TOUCHSCREEN_SCHEMA.extend(
         {
             cv.GenerateID(): cv.declare_id(SPD2010Touch),
-            cv.Optional(CONF_INTERRUPT_PIN): cv.pin,
+            cv.Optional(CONF_INTERRUPT_PIN): pins.gpio_input_pin_schema,
             cv.Optional(CONF_ADDRESS, default=0x53): cv.hex_int,
             cv.Optional(CONF_POLLING_FALLBACK_MS, default=50): cv.int_range(min=10, max=1000),
         }
@@ -35,3 +36,4 @@ async def to_code(config):
         cg.add(var.set_interrupt_pin(irq))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
