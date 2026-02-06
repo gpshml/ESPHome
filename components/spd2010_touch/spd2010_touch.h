@@ -46,7 +46,7 @@ struct TouchFrame {
 };
 
 class SPD2010Touch : public touchscreen::Touchscreen,
-                     public PollingComponent,
+                     public Component,
                      public i2c::I2CDevice {
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
@@ -84,5 +84,6 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
