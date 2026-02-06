@@ -17,6 +17,12 @@ static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 
 void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch (no reset)...");
+
+  this->write_tp_cpu_start_cmd_();
+  this->write_tp_point_mode_cmd_();
+  this->write_tp_start_cmd_();
+  this->write_tp_clear_int_cmd_();
+
   // Optional IRQ pin
   if (this->irq_pin_ != nullptr) {
     this->irq_pin_->setup();
@@ -61,6 +67,9 @@ void SPD2010Touch::update_touches() {
 
   TouchFrame frame{};
   this->tp_read_data_(&frame);
+  ESP_LOGD(TAG, "Reading touch...");
+  ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
+  ESP_LOGD(TAG, "pt_exist=%u read_len=%u", st.low.pt_exist, st.read_len);
 
   // Push points into ESPHome/LVGL
   for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
@@ -218,6 +227,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
