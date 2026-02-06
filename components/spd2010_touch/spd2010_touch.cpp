@@ -27,7 +27,7 @@ void SPD2010Touch::setup() {
   if (this->irq_pin_ != nullptr) {
     this->irq_pin_->setup();
     // Use Touchscreen base helper to attach interrupt
-    this->attach_interrupt_(this->irq_pin_, gpio::INTERRUPT_FALLING_EDGE);
+    // this->attach_interrupt_(this->irq_pin_, gpio::INTERRUPT_FALLING_EDGE);
     // Also set a lightweight flag so we can skip I2C reads when idle
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
@@ -179,9 +179,14 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
   this->read_tp_status_length_(&st);
   
-  ESP_LOGD(TAG, "pt_exist=%u gesture=%u aux=%u read_len=%u cpu_run=%u in_cpu=%u in_bios=%u",
-           st.low.pt_exist, st.low.gesture, st.low.aux, st.read_len,
-           st.high.cpu_run, st.high.tic_in_cpu, st.high.tic_in_bios);
+  static uint32_t last_st = 0;
+  uint32_t now = millis();
+  if (now - last_st > 500) {
+    last_st = now;
+    ESP_LOGD(TAG, "pt_exist=%u gesture=%u aux=%u read_len=%u cpu_run=%u in_cpu=%u in_bios=%u",
+             st.low.pt_exist, st.low.gesture, st.low.aux, st.read_len,
+             st.high.cpu_run, st.high.tic_in_cpu, st.high.tic_in_bios);
+  }
 
   if (st.high.tic_in_bios) {
     this->write_tp_clear_int_cmd_();
@@ -227,6 +232,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
