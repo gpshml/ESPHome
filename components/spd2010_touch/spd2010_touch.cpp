@@ -58,22 +58,18 @@ void SPD2010Touch::loop() {
 }
 
 void SPD2010Touch::update_touches() {
-  // If IRQ pin is configured, only do the expensive read when we saw an IRQ
-  if (this->irq_pin_ != nullptr) {
-    if (!this->irq_fired_)
-      return;
-    this->irq_fired_ = false;
-  }
-
   TouchFrame frame{};
   this->tp_read_data_(&frame);
-  ESP_LOGD(TAG, "Reading touch...");
-  ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
-  ESP_LOGD(TAG, "pt_exist=%u read_len=%u", st.low.pt_exist, st.read_len);
 
-  // Push points into ESPHome/LVGL
+  static uint32_t last = 0;
+  uint32_t now = millis();
+  if (now - last > 500) {
+    last = now;
+    ESP_LOGD(TAG, "Reading touch...");
+    ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
+  }
+
   for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-    // raw ranges are already screen pixel space for this panel per your driver
     this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
   }
   this->send_touches_();
@@ -182,6 +178,10 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   TpHdpStatus hs{};
 
   this->read_tp_status_length_(&st);
+  
+  ESP_LOGD(TAG, "pt_exist=%u gesture=%u aux=%u read_len=%u cpu_run=%u in_cpu=%u in_bios=%u",
+           st.low.pt_exist, st.low.gesture, st.low.aux, st.read_len,
+           st.high.cpu_run, st.high.tic_in_cpu, st.high.tic_in_bios);
 
   if (st.high.tic_in_bios) {
     this->write_tp_clear_int_cmd_();
@@ -227,6 +227,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
