@@ -53,7 +53,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
 
   void setup() override;
-  void update() override;
+  void loop() override;
   void dump_config() override;
 
  protected:
@@ -84,6 +84,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
