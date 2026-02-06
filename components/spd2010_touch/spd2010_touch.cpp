@@ -35,16 +35,15 @@ void SPD2010Touch::dump_config() {
 }
 
 void SPD2010Touch::loop() {
-  // If IRQ pin exists, only read when fired (fast path)
+  // If IRQ configured: read only when fired
   if (this->irq_pin_ != nullptr) {
-    if (!this->irq_fired_)
-      return;
+    if (!this->irq_fired_) return;
     this->irq_fired_ = false;
     this->update_touches();
     return;
   }
 
-  // Polling fallback if no IRQ configured
+  // Polling fallback
   const uint32_t now = millis();
   if (now - this->last_poll_ms_ >= this->polling_fallback_ms_) {
     this->last_poll_ms_ = now;
@@ -219,5 +218,6 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
