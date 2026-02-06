@@ -7,6 +7,8 @@ from esphome.const import CONF_ID, CONF_INTERRUPT_PIN, CONF_ADDRESS
 DEPENDENCIES = ["i2c"]
 AUTO_LOAD = ["touchscreen"]
 
+print("SPD2010_TOUCH: LOADED FROM GITHUB COMMIT <hash>")
+
 spd2010_ns = cg.esphome_ns.namespace("spd2010_touch")
 SPD2010Touch = spd2010_ns.class_(
     "SPD2010Touch",
@@ -39,6 +41,7 @@ async def to_code(config):
         cg.add(var.set_interrupt_pin(irq))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
 
 
 
