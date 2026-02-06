@@ -23,7 +23,7 @@ void SPD2010Touch::setup() {
     // Use Touchscreen base helper to attach interrupt
     this->attach_interrupt_(this->irq_pin_, gpio::INTERRUPT_FALLING_EDGE);
     // Also set a lightweight flag so we can skip I2C reads when idle
-    this->irq_pin_->attach_interrupt([this]() { this->irq_fired_ = true; }, gpio::INTERRUPT_FALLING_EDGE);
+    this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
 }
 
@@ -210,3 +210,4 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
