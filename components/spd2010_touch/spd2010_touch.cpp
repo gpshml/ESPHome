@@ -77,12 +77,15 @@ void SPD2010Touch::update_touches() {
 
 // ---------- I2C helpers (16-bit register addressing) ----------
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
-  // Write register pointer (big-endian) then read
-  // uint8_t regbuf[2] = {static_cast<uint8_t>(reg >> 8), static_cast<uint8_t>(reg & 0xFF)};
-  uint8_t regbuf[2] = { (uint8_t)(reg & 0xFF), (uint8_t)(reg >> 8) };
-  if (!this->write(regbuf, 2))
-    return false;
-  return this->read(data, len);
+  // 16-bit register address (big-endian) + repeated-start read
+  uint8_t regbuf[2] = {
+    static_cast<uint8_t>(reg >> 8),
+    static_cast<uint8_t>(reg & 0xFF)
+  };
+
+  // Combined transaction (no STOP between write and read)
+  bool ok = this->write_read(regbuf, 2, data, len);
+  return ok;
 }
 
 bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
@@ -90,8 +93,8 @@ bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
   uint8_t buf[2 + 8];
   if (len > 8) return false;
 
-  buf[0] = static_cast<uint8_t>(reg & 0xFF);
-  buf[1] = static_cast<uint8_t>(reg >> 8);
+buf[0] = static_cast<uint8_t>(reg >> 8);
+buf[1] = static_cast<uint8_t>(reg & 0xFF);
 
   for (size_t i = 0; i < len; i++) {
     buf[2 + i] = data[i];
@@ -126,17 +129,8 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
   uint8_t d[4]{0};
 
   bool ok = this->read16_(REG_STATUS_LEN, d, 4);
-  if (!ok) {
-    ESP_LOGW(TAG, "I2C read failed: REG_STATUS_LEN (0x%04X)", REG_STATUS_LEN);
-    st->read_len = 0;
-    st->low.pt_exist = 0;
-    st->low.gesture = 0;
-    st->low.aux = 0;
-    st->high.cpu_run = 0;
-    st->high.tic_in_cpu = 0;
-    st->high.tic_in_bios = 0;
-    return;
-  }
+  ESP_LOGD(TAG, "STATUS read ok=%d raw=%02X %02X %02X %02X", ok, d[0], d[1], d[2], d[3]);
+  if (!ok) return;
 
   ESP_LOGD(TAG, "STATUS raw: %02X %02X %02X %02X", d[0], d[1], d[2], d[3]);
 
@@ -253,6 +247,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
