@@ -45,7 +45,7 @@ struct TouchFrame {
   uint8_t touch_num{0};
 };
 
-class SPD2010Touch : public touchscreen::Touchscreen, public PollingComponent, public i2c::I2CDevice {
+class SPD2010Touch : public touchscreen::Touchscreen, public Component, public i2c::I2CDevice {
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
@@ -82,3 +82,4 @@ class SPD2010Touch : public touchscreen::Touchscreen, public PollingComponent, p
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
