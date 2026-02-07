@@ -4,6 +4,7 @@
 #include "esphome/components/i2c/i2c.h"
 #include "esphome/components/touchscreen/touchscreen.h"
 #include "esphome/core/hal.h"
+#include "esphome/core/gpio.h"
 
 namespace esphome {
 namespace spd2010_touch {
@@ -50,7 +51,8 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
-  void set_reset_pin(InternalGPIOPin *pin) { this->reset_pin_ = pin; }
+  void set_reset_pin(GPIOPin *pin) { this->reset_pin_ = pin; } 
+  GPIOPin *reset_pin_{nullptr};
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
 
   void setup() override;
@@ -86,6 +88,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
