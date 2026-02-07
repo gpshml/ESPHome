@@ -50,6 +50,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
+  void set_reset_pin(InternalGPIOPin *pin) { this->reset_pin_ = pin; }
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
 
   void setup() override;
@@ -58,7 +59,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
  protected:
   void update_touches() override;
-
+  
   // SPD2010 protocol helpers (ported from your driver)
   bool read16_(uint16_t reg, uint8_t *data, size_t len);
   bool write16_(uint16_t reg, const uint8_t *data, size_t len);
@@ -75,6 +76,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   void tp_read_data_(TouchFrame *frame);
 
   InternalGPIOPin *irq_pin_{nullptr};
+  InternalGPIOPin *reset_pin_{nullptr};
   volatile bool irq_fired_{false};
   uint32_t last_poll_ms_{0};
   uint16_t polling_fallback_ms_{50};
@@ -84,6 +86,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
