@@ -18,58 +18,67 @@ static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch... Address 0x%02X", this->address_);
 
-  // Assume display init/reset already ran (shared RST)
-  ESP_LOGD(TAG, "Waiting for SPD2010 stabilization after display init...");
-  delay(500);  // Full 500ms - matches Arduino examples for TDDI wakeup
+  // No touch-specific reset pulse - display component / on_boot handles shared RST
+  ESP_LOGD(TAG, "Waiting for display init to complete and SPD2010 to wake on I2C...");
+  delay(600);  // Conservative: covers reset (60ms) + display commands + stabilization (500ms+)
 
   // IRQ setup
   if (this->irq_pin_ != nullptr) {
-    ESP_LOGD(TAG, "Setting up IRQ on GPIO4 (falling edge)...");
+    ESP_LOGD(TAG, "Configuring IRQ on GPIO4 (falling edge)...");
     this->irq_pin_->setup();
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
 
-  // Init commands from Arduino (with delays between)
-  ESP_LOGD(TAG, "Sending CPU_START (0x0400: 0x01 0x00)...");
-  this->write_tp_cpu_start_cmd_();
+  // Touch init commands (from Arduino examples - safe to send even if already partially done)
+  ESP_LOGD(TAG, "Sending touch init sequence...");
+  uint8_t payload[2];
+
+  // CPU_START: 0x0400 0x01 0x00
+  payload[0] = 0x01; payload[1] = 0x00;
+  this->write16_(0x0400, payload, 2);
   delay(20);
 
-  ESP_LOGD(TAG, "Sending POINT_MODE (0x5000: 0x00 0x00)...");
-  this->write_tp_point_mode_cmd_();
+  // POINT_MODE: 0x5000 0x00 0x00
+  payload[0] = 0x00; payload[1] = 0x00;
+  this->write16_(0x5000, payload, 2);
   delay(20);
 
-  ESP_LOGD(TAG, "Sending TOUCH_START (0x4600: 0x00 0x00)...");
-  this->write_tp_start_cmd_();
+  // TOUCH_START: 0x4600 0x00 0x00
+  payload[0] = 0x00; payload[1] = 0x00;
+  this->write16_(0x4600, payload, 2);
   delay(20);
 
-  ESP_LOGD(TAG, "Sending CLEAR_INT (0x0200: 0x01 0x00)...");
-  this->write_tp_clear_int_cmd_();
+  // CLEAR_INT: 0x0200 0x01 0x00
+  payload[0] = 0x01; payload[1] = 0x00;
+  this->write16_(0x0200, payload, 2);
   delay(20);
 
-  // Quick status probe (reg 0x2000, 4 bytes)
-  ESP_LOGD(TAG, "Probing status reg 0x2000...");
+  // Quick status probe (reg 0x2000, expect 4 bytes)
+  ESP_LOGD(TAG, "Quick status probe (0x2000)...");
   uint8_t status_buf[4] = {0};
   if (this->read16_(0x2000, status_buf, 4)) {
-    ESP_LOGD(TAG, "Status probe SUCCESS - bytes: %02X %02X %02X %02X", status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
+    ESP_LOGD(TAG, "Status probe SUCCESS - bytes: %02X %02X %02X %02X", 
+             status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
   } else {
-    ESP_LOGE(TAG, "Status probe FAILED - continuing anyway");
+    ESP_LOGE(TAG, "Status probe FAILED - SPD2010 may need more time or display init");
   }
 
   // FW probe (reg 0x2600, 18 bytes)
-  ESP_LOGD(TAG, "Probing FW reg 0x2600...");
+  ESP_LOGD(TAG, "FW version probe (0x2600)...");
   uint8_t fw_buf[18] = {0};
   if (this->read16_(0x2600, fw_buf, 18)) {
     uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
     uint32_t pid = (fw_buf[9] << 24) | (fw_buf[8] << 16) | (fw_buf[7] << 8) | fw_buf[6];
     char ic_name[9] = {0};
-    snprintf(ic_name, sizeof(ic_name), "%c%c%c%c%c%c%c%c", fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[17], fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
+    snprintf(ic_name, sizeof(ic_name), "%c%c%c%c%c%c%c%c",
+             fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[17],
+             fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
     ESP_LOGD(TAG, "FW probe SUCCESS - DVer=%u, PID=0x%08X, ICName=%.8s", d_ver, pid, ic_name);
   } else {
-    ESP_LOGE(TAG, "FW probe FAILED - SPD2010 may not be ready; using polling fallback");
-    // Do not mark_failed() - allow component to run and retry in loop
+    ESP_LOGE(TAG, "FW probe FAILED - using polling fallback");
   }
 
-  ESP_LOGCONFIG(TAG, "SPD2010 setup finished - monitoring for touch...");
+  ESP_LOGCONFIG(TAG, "SPD2010 setup complete - touch monitoring active");
 }
 
 void SPD2010Touch::dump_config() {
@@ -313,6 +322,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
