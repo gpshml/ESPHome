@@ -20,7 +20,7 @@ void SPD2010Touch::setup() {
 
   // Assume display init/reset already ran (shared RST)
   ESP_LOGD(TAG, "Waiting for SPD2010 stabilization after display init...");
-  delay(500);  # Full 500ms - matches Arduino examples for TDDI wakeup
+  delay(500);  // Full 500ms - matches Arduino examples for TDDI wakeup
 
   // IRQ setup
   if (this->irq_pin_ != nullptr) {
@@ -321,6 +321,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
