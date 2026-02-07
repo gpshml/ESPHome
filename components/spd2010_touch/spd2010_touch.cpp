@@ -96,7 +96,7 @@ void SPD2010Touch::update_touches() {
 
   //static uint32_t last = 0;
   uint32_t now = millis();
-if (frame.touch_num > 0) 
+if (frame.touch_num > 0) {
 //{ ... ESP_LOGD(TAG, "touch_num=%u", frame.touch_num); }
   //if (now - last > 500) {
     //last = now;
@@ -309,6 +309,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
