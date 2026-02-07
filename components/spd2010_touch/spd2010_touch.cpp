@@ -16,7 +16,19 @@ static constexpr uint16_t REG_HDP_READ    = 0x0003; // read read_len bytes
 static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 
 void SPD2010Touch::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch (no reset)...");
+    ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch...");
+
+    // ---- TP_RST pulse (matches original driver) ----
+    if (this->reset_pin_ != nullptr) {
+      ESP_LOGCONFIG(TAG, "Resetting SPD2010 touch controller...");
+      this->reset_pin_->setup();
+      this->reset_pin_->digital_write(false);
+      delay(50);
+      this->reset_pin_->digital_write(true);
+      delay(50);
+    } else {
+      ESP_LOGW(TAG, "No reset_pin configured for SPD2010 touch");
+    }
 
   this->write_tp_cpu_start_cmd_();
   this->write_tp_point_mode_cmd_();
@@ -77,10 +89,7 @@ void SPD2010Touch::update_touches() {
 
 // ---------- I2C helpers (16-bit register addressing) ----------
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
-  uint8_t regbuf[2] = {
-    static_cast<uint8_t>(reg >> 8),
-    static_cast<uint8_t>(reg & 0xFF)
-  };
+  uint8_t regbuf[2] = { (uint8_t)(reg >> 8), (uint8_t)(reg & 0xFF) };
 
   // Combined transaction: write reg pointer then read (repeated start)
   return this->write_read(regbuf, 2, data, len);
@@ -92,8 +101,8 @@ bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
   uint8_t buf[2 + 8];
   if (len > 8) return false;
 
-  buf[0] = static_cast<uint8_t>(reg >> 8);
-  buf[1] = static_cast<uint8_t>(reg & 0xFF);
+  buf[0] = (uint8_t)(reg >> 8);
+  buf[1] = (uint8_t)(reg & 0xFF);
 
   for (size_t i = 0; i < len; i++) {
     buf[2 + i] = data[i];
@@ -247,6 +256,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
