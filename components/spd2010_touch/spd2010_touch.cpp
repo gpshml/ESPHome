@@ -43,6 +43,14 @@ void SPD2010Touch::setup() {
     // Also set a lightweight flag so we can skip I2C reads when idle
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
+
+  uint8_t fw_buf[18];
+  if (this->read16_(0x2600, fw_buf, 18)) {  // From original: 0x2600 for version
+    ESP_LOGD(TAG, "FW Version read OK: ICName %02x%02x", /* parse as in original */);
+  } else {
+    this->mark_failed();  // Sets error_ state, visible in HA
+    ESP_LOGE(TAG, "SPD2010 init failed - no response");
+  }
 }
 
 void SPD2010Touch::dump_config() {
@@ -110,7 +118,6 @@ bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
 
 bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
   uint8_t buf[2 + 8];
-  if (len > 8) return false;
 
   buf[0] = (uint8_t)(reg >> 8);
   buf[1] = (uint8_t)(reg & 0xFF);
@@ -285,6 +292,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
