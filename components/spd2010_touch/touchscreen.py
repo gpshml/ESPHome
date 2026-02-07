@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome import pins
 
 from esphome.components import i2c, touchscreen
-from esphome.components import pca9554  # <-- THIS was missing
+from esphome.components import pca9554
 from esphome.const import CONF_ID, CONF_INTERRUPT_PIN, CONF_ADDRESS
 
 CONF_POLLING_FALLBACK_MS = "polling_fallback_ms"
@@ -52,3 +52,4 @@ async def to_code(config):
         cg.add(var.set_reset_expander(exp, config[CONF_RESET_IO]))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
