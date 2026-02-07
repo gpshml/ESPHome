@@ -18,58 +18,60 @@ static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch... Address 0x%02X", this->address_);
 
-  // Assume display reset already happened via shared PCA IO1
-  // Add extra wait for TDDI chip to fully wake (common need)
-  ESP_LOGD(TAG, "Waiting extra time for SPD2010 stabilization after display init...");
-  delay(400);  // 400ms total post-reset/init - adjust up to 800ms if needed
+  // Assume display init/reset already ran (shared RST)
+  ESP_LOGD(TAG, "Waiting for SPD2010 stabilization after display init...");
+  delay(500);  # Full 500ms - matches Arduino examples for TDDI wakeup
 
-  // Optional IRQ setup
+  // IRQ setup
   if (this->irq_pin_ != nullptr) {
-    ESP_LOGD(TAG, "Configuring IRQ on GPIO4 (falling edge)");
+    ESP_LOGD(TAG, "Setting up IRQ on GPIO4 (falling edge)...");
     this->irq_pin_->setup();
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
 
-  // Touch init commands (your existing sequence)
-  ESP_LOGD(TAG, "Sending init commands...");
+  // Init commands from Arduino (with delays between)
+  ESP_LOGD(TAG, "Sending CPU_START (0x0400: 0x01 0x00)...");
   this->write_tp_cpu_start_cmd_();
-  delay(10);  // Short delay between commands - helps on some TDDI
-  this->write_tp_point_mode_cmd_();
-  delay(10);
-  this->write_tp_start_cmd_();
-  delay(10);
-  this->write_tp_clear_int_cmd_();
+  delay(20);
 
-  // Quick harmless probe (status length reg - 4 bytes)
-  ESP_LOGD(TAG, "Quick status probe (reg 0x2000)...");
+  ESP_LOGD(TAG, "Sending POINT_MODE (0x5000: 0x00 0x00)...");
+  this->write_tp_point_mode_cmd_();
+  delay(20);
+
+  ESP_LOGD(TAG, "Sending TOUCH_START (0x4600: 0x00 0x00)...");
+  this->write_tp_start_cmd_();
+  delay(20);
+
+  ESP_LOGD(TAG, "Sending CLEAR_INT (0x0200: 0x01 0x00)...");
+  this->write_tp_clear_int_cmd_();
+  delay(20);
+
+  // Quick status probe (reg 0x2000, 4 bytes)
+  ESP_LOGD(TAG, "Probing status reg 0x2000...");
   uint8_t status_buf[4] = {0};
   if (this->read16_(0x2000, status_buf, 4)) {
-    ESP_LOGD(TAG, "Quick probe OK - status bytes: %02X %02X %02X %02X", 
-             status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
+    ESP_LOGD(TAG, "Status probe SUCCESS - bytes: %02X %02X %02X %02X", status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
   } else {
-    ESP_LOGE(TAG, "Quick probe FAILED - SPD2010 not responding yet");
-    // Do NOT mark_failed() here - let polling try every 50ms
+    ESP_LOGE(TAG, "Status probe FAILED - continuing anyway");
   }
 
-  // FW version probe
-  ESP_LOGD(TAG, "Probing FW version (reg 0x2600)...");
+  // FW probe (reg 0x2600, 18 bytes)
+  ESP_LOGD(TAG, "Probing FW reg 0x2600...");
   uint8_t fw_buf[18] = {0};
   if (this->read16_(0x2600, fw_buf, 18)) {
-    // Parse and log (your existing parsing code here)
     uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
     uint32_t pid = (fw_buf[9] << 24) | (fw_buf[8] << 16) | (fw_buf[7] << 8) | fw_buf[6];
     char ic_name[9] = {0};
-    snprintf(ic_name, sizeof(ic_name), "%c%c%c%c%c%c%c%c",
-             fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[17],
-             fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
-    ESP_LOGD(TAG, "FW SUCCESS - DVer=%u, PID=0x%08X, ICName=%.8s", d_ver, pid, ic_name);
+    snprintf(ic_name, sizeof(ic_name), "%c%c%c%c%c%c%c%c", fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[17], fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
+    ESP_LOGD(TAG, "FW probe SUCCESS - DVer=%u, PID=0x%08X, ICName=%.8s", d_ver, pid, ic_name);
   } else {
-    ESP_LOGE(TAG, "FW probe FAILED - continuing with polling fallback");
-    // Again, do NOT mark_failed() - polling may recover
+    ESP_LOGE(TAG, "FW probe FAILED - SPD2010 may not be ready; using polling fallback");
+    // Do not mark_failed() - allow component to run and retry in loop
   }
 
-  ESP_LOGCONFIG(TAG, "SPD2010 setup complete - polling enabled");
+  ESP_LOGCONFIG(TAG, "SPD2010 setup finished - monitoring for touch...");
 }
+
 void SPD2010Touch::dump_config() {
   ESP_LOGCONFIG(TAG, "SPD2010 Touch:");
   LOG_I2C_DEVICE(this);
@@ -78,13 +80,17 @@ void SPD2010Touch::dump_config() {
 }
 
 void SPD2010Touch::loop() {
-  // If IRQ configured: read only when fired
-  if (this->irq_pin_ != nullptr) {
-    if (!this->irq_fired_) return;
+  uint32_t now = millis();
+
+  // Polling fallback or IRQ check
+  if (this->irq_fired_ || (now - this->last_poll_ms_ > this->polling_fallback_ms_)) {
     this->irq_fired_ = false;
+    this->last_poll_ms_ = now;
+
+    ESP_LOGV(TAG, "Polling for touch data...");
     this->update_touches();
-    return;
   }
+}
 
   // Polling fallback
   const uint32_t now = millis();
@@ -315,6 +321,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
