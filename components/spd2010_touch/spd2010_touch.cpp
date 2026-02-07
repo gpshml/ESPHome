@@ -15,77 +15,22 @@ static constexpr uint16_t REG_STATUS_LEN  = 0x2000; // read 4 bytes
 static constexpr uint16_t REG_HDP_READ    = 0x0003; // read read_len bytes
 static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 
+void SPD2010Touch::notify_display_ready() {
+  this->display_ready_ = true;
+  this->initialised_ = false;
+  this->init_attempts_ = 0;
+  this->next_init_try_ms_ = millis();  // try immediately
+  ESP_LOGI(TAG, "Display marked ready; touch init will begin (I2C 0x%02X)", this->address_);
+}
+
 void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch... Address 0x%02X", this->address_);
 
-  ESP_LOGD(TAG, "Waiting for display init to complete and SPD2010 to wake...");
-  delay(800);  // Increased - gives time after 0x29 + display stabilization
+  // IMPORTANT: DO NOT touch I2C here. This runs too early in ESPHome boot.
+  // We will only initialise after notify_display_ready() is called from YAML.
+  this->last_poll_ms_ = millis();
 
-  // Wait for the device to start acknowledging its address
-  ESP_LOGD(TAG, "Waiting for SPD2010 to ACK on I2C (max 10 attempts)...");
-  bool device_ready = false;
-  for (uint8_t attempt = 0; attempt < 10; ++attempt) {
-    esphome::i2c::ErrorCode err = this->write(nullptr, 0);  // 0-byte write = probe address
-    if (err == esphome::i2c::ERROR_OK) {
-      ESP_LOGD(TAG, "SPD2010 acknowledged address on attempt %u", attempt + 1);
-      device_ready = true;
-      break;
-    }
-    ESP_LOGW(TAG, "No ACK on attempt %u (error %d) - waiting 200ms...", attempt + 1, err);
-    delay(200);
-  }
-
-  if (!device_ready) {
-    ESP_LOGE(TAG, "SPD2010 never acknowledged address - touch likely not waking up");
-    this->mark_failed();
-    return;
-  }
-
-  ESP_LOGD(TAG, "Device responded - sending touch initialization commands...");
-
-  uint8_t payload[2];
-
-  // CPU_START
-  payload[0] = 0x01; payload[1] = 0x00;
-  this->write16_(0x0400, payload, 2);
-  delay(20);
-
-  // POINT_MODE
-  payload[0] = 0x00; payload[1] = 0x00;
-  this->write16_(0x5000, payload, 2);
-  delay(20);
-
-  // TOUCH_START
-  payload[0] = 0x00; payload[1] = 0x00;
-  this->write16_(0x4600, payload, 2);
-  delay(20);
-
-  // CLEAR_INT
-  payload[0] = 0x01; payload[1] = 0x00;
-  this->write16_(0x0200, payload, 2);
-  delay(20);
-
-  // Quick status probe
-  ESP_LOGD(TAG, "Probing status register 0x2000...");
-  uint8_t status_buf[4] = {0};
-  if (this->read16_(0x2000, status_buf, 4)) {
-    ESP_LOGD(TAG, "Status probe OK - bytes: %02X %02X %02X %02X",
-             status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
-  } else {
-    ESP_LOGE(TAG, "Status probe failed - continuing with polling");
-  }
-
-  // Optional FW probe
-  ESP_LOGD(TAG, "Probing firmware version register 0x2600...");
-  uint8_t fw_buf[18] = {0};
-  if (this->read16_(0x2600, fw_buf, 18)) {
-    ESP_LOGD(TAG, "Firmware probe successful");
-    // add parsing if you want
-  } else {
-    ESP_LOGE(TAG, "Firmware probe failed - using polling fallback");
-  }
-
-  ESP_LOGCONFIG(TAG, "SPD2010 setup finished - touch active");
+  ESP_LOGI(TAG, "Touch init deferred until display is ready (call notify_display_ready() from YAML).");
 }
 
 void SPD2010Touch::dump_config() {
@@ -93,32 +38,95 @@ void SPD2010Touch::dump_config() {
   LOG_I2C_DEVICE(this);
   LOG_PIN("  Interrupt Pin: ", this->irq_pin_);
   ESP_LOGCONFIG(TAG, "  Polling fallback: %ums", this->polling_fallback_ms_);
+  ESP_LOGCONFIG(TAG, "  Display-ready gating: %s", this->display_ready_ ? "YES" : "NO");
+  ESP_LOGCONFIG(TAG, "  Initialised: %s", this->initialised_ ? "YES" : "NO");
 }
 
 void SPD2010Touch::loop() {
-  uint32_t now = millis();
+  const uint32_t now = millis();
 
-  // Polling fallback or IRQ check
+  // Phase 1: deferred init
+  if (this->display_ready_ && !this->initialised_ && now >= this->next_init_try_ms_) {
+    this->try_init_();
+    // even if init fails we keep looping; no mark_failed()
+  }
+
+  // Phase 2: touch readout (only after init)
+  if (!this->initialised_) {
+    return;
+  }
+
   if (this->irq_fired_ || (now - this->last_poll_ms_ > this->polling_fallback_ms_)) {
     this->irq_fired_ = false;
     this->last_poll_ms_ = now;
-
-    ESP_LOGV(TAG, "Polling for touch data...");
     this->update_touches();
   }
+}
+
+void SPD2010Touch::try_init_() {
+  this->init_attempts_++;
+
+  // First: check if the device ACKs address at all.
+  // A 0-byte write is a good "address probe" in ESPHome I2CDevice.
+  esphome::i2c::ErrorCode err = this->write(nullptr, 0);
+
+  if (err != esphome::i2c::ERROR_OK) {
+    // Not awake yet. Back off and retry.
+    // Use a slightly increasing delay so we don't hammer the bus.
+    const uint32_t backoff_ms = (this->init_attempts_ < 10) ? 200 : 500;
+
+    ESP_LOGW(TAG, "SPD2010 not ACKing 0x%02X (attempt %u, err=%d). Retrying in %ums...",
+             this->address_, this->init_attempts_, err, (unsigned) backoff_ms);
+
+    this->next_init_try_ms_ = millis() + backoff_ms;
+    return;
+  }
+
+  ESP_LOGI(TAG, "SPD2010 ACKed 0x%02X on attempt %u. Sending init sequence...",
+           this->address_, this->init_attempts_);
+
+  uint8_t payload[2];
+
+  // CPU_START
+  payload[0] = 0x01; payload[1] = 0x00;
+  this->write16_(REG_CPU_START, payload, 2);
+  delay(20);
+
+  // POINT_MODE
+  payload[0] = 0x00; payload[1] = 0x00;
+  this->write16_(REG_POINT_MODE, payload, 2);
+  delay(20);
+
+  // TOUCH_START
+  payload[0] = 0x00; payload[1] = 0x00;
+  this->write16_(REG_TOUCH_START, payload, 2);
+  delay(20);
+
+  // CLEAR_INT
+  payload[0] = 0x01; payload[1] = 0x00;
+  this->write16_(REG_CLEAR_INT, payload, 2);
+  delay(20);
+
+  // Quick status probe - not fatal if it fails, but useful signal.
+  ESP_LOGD(TAG, "Probing status register 0x2000...");
+  uint8_t status_buf[4] = {0};
+  if (this->read16_(REG_STATUS_LEN, status_buf, 4)) {
+    ESP_LOGI(TAG, "Status probe OK: %02X %02X %02X %02X",
+             status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
+  } else {
+    ESP_LOGW(TAG, "Status probe failed; continuing anyway.");
+  }
+
+  // Mark initialised so loop() will start reading touches
+  this->initialised_ = true;
+  ESP_LOGI(TAG, "SPD2010 touch initialised and active.");
 }
 
 void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  //static uint32_t last = 0;
-  uint32_t now = millis();
-if (frame.touch_num > 0) {
-//{ ... ESP_LOGD(TAG, "touch_num=%u", frame.touch_num); }
-  //if (now - last > 500) {
-    //last = now;
-    ESP_LOGD(TAG, "Reading touch...");
+  if (frame.touch_num > 0) {
     ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
   }
 
@@ -132,19 +140,14 @@ if (frame.touch_num > 0) {
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
   uint8_t regbuf[2] = {static_cast<uint8_t>(reg >> 8), static_cast<uint8_t>(reg & 0xFF)};
 
-  ESP_LOGV(TAG, "read16: Writing reg pointer 0x%04X", reg);
   if (!this->write(regbuf, 2)) {
-    ESP_LOGE(TAG, "read16 FAILED - I2C write reg pointer error for 0x%04X", reg);
+    ESP_LOGV(TAG, "read16: write reg pointer failed 0x%04X", reg);
     return false;
   }
-
-  ESP_LOGV(TAG, "read16: Reading %u bytes from 0x%04X", (unsigned)len, reg);
   if (!this->read(data, len)) {
-    ESP_LOGE(TAG, "read16 FAILED - I2C read data error for 0x%04X len=%u", reg, (unsigned)len);
+    ESP_LOGV(TAG, "read16: read failed 0x%04X len=%u", reg, (unsigned)len);
     return false;
   }
-
-  ESP_LOGV(TAG, "read16 SUCCESS for 0x%04X", reg);
   return true;
 }
 
@@ -154,13 +157,10 @@ bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
   buf[1] = static_cast<uint8_t>(reg & 0xFF);
   memcpy(buf + 2, data, len);
 
-  ESP_LOGV(TAG, "write16: Sending to reg 0x%04X, len=%u", reg, (unsigned)len);
   if (!this->write(buf, 2 + len)) {
-    ESP_LOGE(TAG, "write16 FAILED - I2C write error for 0x%04X len=%u", reg, (unsigned)len);
+    ESP_LOGV(TAG, "write16: failed 0x%04X len=%u", reg, (unsigned)len);
     return false;
   }
-
-  ESP_LOGV(TAG, "write16 SUCCESS for 0x%04X", reg);
   return true;
 }
 
@@ -169,17 +169,14 @@ void SPD2010Touch::write_tp_point_mode_cmd_() {
   const uint8_t payload[2] = {0x00, 0x00};
   this->write16_(REG_POINT_MODE, payload, 2);
 }
-
 void SPD2010Touch::write_tp_start_cmd_() {
   const uint8_t payload[2] = {0x00, 0x00};
   this->write16_(REG_TOUCH_START, payload, 2);
 }
-
 void SPD2010Touch::write_tp_cpu_start_cmd_() {
   const uint8_t payload[2] = {0x01, 0x00};
   this->write16_(REG_CPU_START, payload, 2);
 }
-
 void SPD2010Touch::write_tp_clear_int_cmd_() {
   const uint8_t payload[2] = {0x01, 0x00};
   this->write16_(REG_CLEAR_INT, payload, 2);
@@ -189,13 +186,8 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
   uint8_t d[4]{0};
 
   bool ok = this->read16_(REG_STATUS_LEN, d, 4);
-
-  // NEW: log but do NOT return early if bytes look meaningful
-  // If ok==false but we got something non-zero, still parse it.
   if (!ok) {
-    ESP_LOGD(TAG, "STATUS read failed raw=%02X %02X %02X %02X", d[0], d[1], d[2], d[3]);
-
-    // If all bytes are zero, treat as failure and bail.
+    // If it's all zeros, treat as dead/no-data. Otherwise parse anyway.
     if (d[0] == 0x00 && d[1] == 0x00 && d[2] == 0x00 && d[3] == 0x00) {
       st->low.pt_exist = 0;
       st->low.gesture = 0;
@@ -206,10 +198,8 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
       st->read_len = 0;
       return;
     }
-    // otherwise: fall through and parse d[]
   }
 
-  // parse as before
   st->low.pt_exist = (d[0] & 0x01);
   st->low.gesture  = (d[0] & 0x02);
   st->low.aux      = (d[0] & 0x08);
@@ -223,9 +213,7 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
   st->read_len = (static_cast<uint16_t>(d[3]) << 8) | d[2];
 }
 
-
 void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
-  // your code: header 4 bytes + (n * 6)
   if (st.read_len < 4 || st.read_len > (4 + 10 * 6)) {
     frame->touch_num = 0;
     return;
@@ -270,25 +258,16 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   TpHdpStatus hs{};
 
   this->read_tp_status_length_(&st);
-  
-  static uint32_t last_st = 0;
-  uint32_t now = millis();
-  if (now - last_st > 500) {
-    last_st = now;
-    ESP_LOGD(TAG, "pt_exist=%u gesture=%u aux=%u read_len=%u cpu_run=%u in_cpu=%u in_bios=%u",
-             st.low.pt_exist, st.low.gesture, st.low.aux, st.read_len,
-             st.high.cpu_run, st.high.tic_in_cpu, st.high.tic_in_bios);
-  }
 
-    if (st.high.tic_in_bios) {
-      this->write_tp_clear_int_cmd_();
-      this->write_tp_cpu_start_cmd_();
-      this->write_tp_point_mode_cmd_();
-      this->write_tp_start_cmd_();
-      this->write_tp_clear_int_cmd_();
-      frame->touch_num = 0;
-      return;
-    }
+  if (st.high.tic_in_bios) {
+    this->write_tp_clear_int_cmd_();
+    this->write_tp_cpu_start_cmd_();
+    this->write_tp_point_mode_cmd_();
+    this->write_tp_start_cmd_();
+    this->write_tp_clear_int_cmd_();
+    frame->touch_num = 0;
+    return;
+  }
 
   if (st.high.tic_in_cpu) {
     this->write_tp_point_mode_cmd_();
@@ -307,16 +286,16 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   if (st.low.pt_exist || st.low.gesture) {
     this->read_tp_hdp_(st, frame);
 
-uint8_t retries = 0;
-hdp_done_check:
-  this->read_tp_hdp_status_(&hs);
-  if (hs.status == 0x82) {
-    this->write_tp_clear_int_cmd_();
-  } else if (hs.status == 0x00) {
-    this->read_hdp_remain_data_(hs);
-    if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); }
-    goto hdp_done_check;
-  }
+    uint8_t retries = 0;
+  hdp_done_check:
+    this->read_tp_hdp_status_(&hs);
+    if (hs.status == 0x82) {
+      this->write_tp_clear_int_cmd_();
+    } else if (hs.status == 0x00) {
+      this->read_hdp_remain_data_(hs);
+      if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); }
+      goto hdp_done_check;
+    }
     return;
   }
 
@@ -329,29 +308,3 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
