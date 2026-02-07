@@ -33,16 +33,6 @@ void SPD2010Touch::setup() {
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
 
-  // If a reset pin is provided, *actually use it*.
-  if (this->reset_pin_ != nullptr) {
-    ESP_LOGD(TAG, "Pulsing touch reset pin...");
-    this->reset_pin_->setup();
-    this->reset_pin_->digital_write(false);
-    delay(80);   // longer than your 60ms, just to be safe
-    this->reset_pin_->digital_write(true);
-    delay(300);  // allow internal boot
-  }
-
   // Don’t hard-fail if not ready yet; we’ll retry in loop()
   this->initialised_ = false;
   this->next_probe_ms_ = 0;
@@ -67,19 +57,17 @@ void SPD2010Touch::loop() {
   }
 
   // Phase 1: deferred init (includes reset pulse + ACK gating)
-  if (!this->initialised_ && now >= this->next_init_try_ms_) {
-    // If we can control the shared reset line via PCA9554, do a clean pulse here.
-    this->pulse_shared_reset_();
-
-    // Give the touch core time to boot after reset release
-    delay(30);
-
-    // Probe for ACK at 0x53
+  if (this->display_ready_ && !this->initialised_ && now >= this->next_init_try_ms_) {
+  
+    // pulse reset (via expander) every few attempts
+    this->init_attempts_++;
+    if ((this->init_attempts_ % 5) == 0) {
+      this->pulse_shared_reset_();
+    }
+  
     if (!this->probe_ack_()) {
-      // Optional: scan all addresses occasionally (helps detect wrong address / late wake)
+      ESP_LOGW(TAG, "SPD2010 not ACKing 0x%02X (attempt %u).", this->address_, this->init_attempts_);
       this->log_i2c_probe_scan_();
-
-      // Retry later (don’t mark_failed, keep looping)
       this->next_init_try_ms_ = now + 500;
       return;
     }
@@ -226,15 +214,13 @@ void SPD2010Touch::write_tp_clear_int_cmd_() {
 }
 
 void SPD2010Touch::pulse_shared_reset_() {
-  if (this->reset_expander_ == nullptr || this->reset_expander_pin_ > 7) {
-    // No expander reset configured; nothing to pulse
-    return;
-  }
+  if (this->reset_expander_ == nullptr || this->reset_expander_pin_ > 7) return;
 
-  // Active-low reset pulse (matches your on_boot logic)
+  // Active-low reset pulse
   this->reset_expander_->digital_write(this->reset_expander_pin_, false);
   delay(20);
   this->reset_expander_->digital_write(this->reset_expander_pin_, true);
+  delay(80);
 }
 
 bool SPD2010Touch::probe_ack_() {
@@ -246,18 +232,20 @@ bool SPD2010Touch::probe_ack_() {
 void SPD2010Touch::log_i2c_probe_scan_() {
   static uint32_t last_scan = 0;
   const uint32_t now = millis();
-  if (now - last_scan < 5000) return;  // don’t spam
+  if (now - last_scan < 5000) return;
   last_scan = now;
 
-  ESP_LOGW("spd2010_touch", "SPD2010 not ACKing 0x%02X. Probing 0x08–0x77 for late responders...", this->address_);
+  const uint8_t original = this->address_;
+  ESP_LOGW(TAG, "SPD2010 not ACKing 0x%02X. Probing 0x08–0x77 for late responders...", original);
+
   for (uint8_t a = 0x08; a <= 0x77; a++) {
-    this->set_address(a);
+    this->set_i2c_address(a);          // <-- correct method name
     if (this->probe_ack_()) {
-      ESP_LOGW("spd2010_touch", "I2C responder detected at 0x%02X", a);
+      ESP_LOGW(TAG, "I2C responder detected at 0x%02X", a);
     }
   }
-  // restore configured address
-  this->set_address(this->address_);
+
+  this->set_i2c_address(original);      // <-- restore
 }
 
 void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
@@ -386,3 +374,4 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
