@@ -91,6 +91,8 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   // New state for deferred init
   bool display_ready_{false};
   bool initialised_{false};
+  uint32_t next_probe_ms_{0};
+  uint32_t boot_ms_{0};
   uint8_t init_attempts_{0};
   uint32_t next_init_try_ms_{0};
 
@@ -99,3 +101,4 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
