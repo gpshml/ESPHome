@@ -294,7 +294,7 @@ hdp_done_check:
     this->write_tp_clear_int_cmd_();
   } else if (hs.status == 0x00) {
     this->read_hdp_remain_data_(hs);
-    if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); break; }
+    if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); }
     goto hdp_done_check;
   }
     return;
@@ -309,6 +309,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
