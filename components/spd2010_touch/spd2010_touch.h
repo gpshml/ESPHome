@@ -5,6 +5,7 @@
 #include "esphome/components/touchscreen/touchscreen.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/gpio.h"
+#include "esphome/components/pca9554/pca9554.h"
 
 namespace esphome {
 namespace spd2010_touch {
@@ -114,5 +115,6 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
