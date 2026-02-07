@@ -25,12 +25,28 @@ void SPD2010Touch::notify_display_ready() {
 
 void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch... Address 0x%02X", this->address_);
+  this->boot_ms_ = millis();
 
-  // IMPORTANT: DO NOT touch I2C here. This runs too early in ESPHome boot.
-  // We will only initialise after notify_display_ready() is called from YAML.
-  this->last_poll_ms_ = millis();
+  // Optional: configure IRQ
+  if (this->irq_pin_ != nullptr) {
+    this->irq_pin_->setup();
+    this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
+  }
 
-  ESP_LOGI(TAG, "Touch init deferred until display is ready (call notify_display_ready() from YAML).");
+  // If a reset pin is provided, *actually use it*.
+  if (this->reset_pin_ != nullptr) {
+    ESP_LOGD(TAG, "Pulsing touch reset pin...");
+    this->reset_pin_->setup();
+    this->reset_pin_->digital_write(false);
+    delay(80);   // longer than your 60ms, just to be safe
+    this->reset_pin_->digital_write(true);
+    delay(300);  // allow internal boot
+  }
+
+  // Don’t hard-fail if not ready yet; we’ll retry in loop()
+  this->initialised_ = false;
+  this->next_probe_ms_ = 0;
+  ESP_LOGD(TAG, "Touch will probe until 0x53 ACKs...");
 }
 
 void SPD2010Touch::dump_config() {
@@ -45,23 +61,82 @@ void SPD2010Touch::dump_config() {
 void SPD2010Touch::loop() {
   const uint32_t now = millis();
 
-  // Phase 1: deferred init
-  if (this->display_ready_ && !this->initialised_ && now >= this->next_init_try_ms_) {
-    this->try_init_();
-    // even if init fails we keep looping; no mark_failed()
-  }
-
-  // Phase 2: touch readout (only after init)
-  if (!this->initialised_) {
+  // -----------------------------
+  // Phase 0: pre-conditions
+  // -----------------------------
+  // Don't even attempt touch until we are told the display is ready.
+  if (!this->display_ready_) {
     return;
   }
 
+  // -----------------------------
+  // Phase 1: "wait until 0x53 ACKs", then init once
+  // -----------------------------
+  if (!this->initialised_) {
+    // throttle probing
+    if (now < this->next_init_try_ms_) {
+      return;
+    }
+
+    // Probe address ACK (0-byte write) - this is the quickest "is it awake?" test.
+    esphome::i2c::ErrorCode err = this->write(nullptr, 0);
+
+    if (err != esphome::i2c::ERROR_OK) {
+      // Not awake yet.
+      // Every so often, pulse reset if we have one (in case TP_RST is separate from LCD_RST).
+      // This is safe to do occasionally and gives us a chance to recover.
+      this->init_attempts_++;
+
+      // Pulse reset every 10 attempts (tune as you like)
+      if (this->reset_pin_ != nullptr && (this->init_attempts_ % 10) == 0) {
+        ESP_LOGW(TAG,
+                 "SPD2010 still not ACKing 0x%02X (attempt %u, err=%d). Pulsing reset pin and retrying...",
+                 this->address_, this->init_attempts_, err);
+        this->reset_pin_->setup();           // harmless if already set up
+        this->reset_pin_->digital_write(false);
+        delay(80);
+        this->reset_pin_->digital_write(true);
+        delay(300);
+      } else {
+        ESP_LOGW(TAG,
+                 "SPD2010 not ACKing 0x%02X (attempt %u, err=%d). Retrying...",
+                 this->address_, this->init_attempts_, err);
+      }
+
+      // Backoff so we don't spam the bus. 200ms early, then 500ms.
+      const uint32_t backoff_ms = (this->init_attempts_ < 10) ? 200 : 500;
+      this->next_init_try_ms_ = now + backoff_ms;
+      return;
+    }
+
+    // If we got here, the device ACKed.
+    ESP_LOGI(TAG,
+             "SPD2010 ACKed 0x%02X on attempt %u. Running init sequence...",
+             this->address_, this->init_attempts_);
+
+    // Now run your existing init sequence (try_init_ already does this).
+    // If try_init_ sets initialised_=true when successful, we're done.
+    this->try_init_();
+
+    // If init still didn't stick, schedule another try.
+    if (!this->initialised_) {
+      ESP_LOGW(TAG, "SPD2010 ACKed but init did not complete; will retry.");
+      this->next_init_try_ms_ = now + 500;
+    }
+
+    return;  // do not fall through into touch reads on the same cycle
+  }
+
+  // -----------------------------
+  // Phase 2: touch readout (only after init)
+  // -----------------------------
   if (this->irq_fired_ || (now - this->last_poll_ms_ > this->polling_fallback_ms_)) {
     this->irq_fired_ = false;
     this->last_poll_ms_ = now;
     this->update_touches();
   }
 }
+
 
 void SPD2010Touch::try_init_() {
   this->init_attempts_++;
@@ -308,3 +383,4 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
