@@ -44,9 +44,22 @@ void SPD2010Touch::setup() {
     this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
   }
 
+ESP_LOGD(TAG, "Probing I2C post-init...");
+esphome::i2c::ErrorCode probe_err = this->write(nullptr, 0);
+if (probe_err == esphome::i2c::ERROR_OK) {
+  ESP_LOGD(TAG, "SPD2010 found at 0x%02X", this->address_);
+} else {
+  this->mark_failed();
+ESP_LOGE(TAG, "SPD2010 not found post-init: error %d", probe_err);
+}
   uint8_t fw_buf[18];
   if (this->read16_(0x2600, fw_buf, 18)) {  // From original: 0x2600 for version
-    ESP_LOGD(TAG, "FW Version read OK: ICName %02x%02x", /* parse as in original */);
+    uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
+    uint32_t pid = (fw_buf[9] << 24) | (fw_buf[8] << 16) | (fw_buf[7] << 8) | fw_buf[6];
+    char ic_name[8];
+    // ICName_H (14-17: 'S','P','D',0) + ICName_L (10-13: '2','0','1','0')
+    sprintf(ic_name, "%c%c%c-%c%c%c%c", fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
+    ESP_LOGD(TAG, "FW Version: DVer=%u, PID=0x%08X, ICName=%s", d_ver, pid, ic_name);
   } else {
     this->mark_failed();  // Sets error_ state, visible in HA
     ESP_LOGE(TAG, "SPD2010 init failed - no response");
@@ -81,10 +94,12 @@ void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  static uint32_t last = 0;
+  //static uint32_t last = 0;
   uint32_t now = millis();
-  if (now - last > 500) {
-    last = now;
+if (frame.touch_num > 0) 
+//{ ... ESP_LOGD(TAG, "touch_num=%u", frame.touch_num); }
+  //if (now - last > 500) {
+    //last = now;
     ESP_LOGD(TAG, "Reading touch...");
     ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
   }
@@ -272,14 +287,16 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   if (st.low.pt_exist || st.low.gesture) {
     this->read_tp_hdp_(st, frame);
 
-  hdp_done_check:
-    this->read_tp_hdp_status_(&hs);
-    if (hs.status == 0x82) {
-      this->write_tp_clear_int_cmd_();
-    } else if (hs.status == 0x00) {
-      this->read_hdp_remain_data_(hs);
-      goto hdp_done_check;
-    }
+uint8_t retries = 0;
+hdp_done_check:
+  this->read_tp_hdp_status_(&hs);
+  if (hs.status == 0x82) {
+    this->write_tp_clear_int_cmd_();
+  } else if (hs.status == 0x00) {
+    this->read_hdp_remain_data_(hs);
+    if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); break; }
+    goto hdp_done_check;
+  }
     return;
   }
 
@@ -292,6 +309,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
