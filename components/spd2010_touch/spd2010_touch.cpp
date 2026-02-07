@@ -21,7 +21,7 @@ void SPD2010Touch::setup() {
     // ---- TP_RST pulse (matches original driver) ----
     if (this->reset_pin_ != nullptr) {
       ESP_LOGCONFIG(TAG, "Resetting SPD2010 touch controller...");
-      this->reset_pin_->setup();
+      this->reset_pin_->pin_mode(gpio::FLAG_OUTPUT);
       this->reset_pin_->digital_write(false);
       delay(50);
       this->reset_pin_->digital_write(true);
@@ -256,6 +256,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
