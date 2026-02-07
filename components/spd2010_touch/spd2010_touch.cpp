@@ -92,14 +92,6 @@ void SPD2010Touch::loop() {
   }
 }
 
-  // Polling fallback
-  const uint32_t now = millis();
-  if (now - this->last_poll_ms_ >= this->polling_fallback_ms_) {
-    this->last_poll_ms_ = now;
-    this->update_touches();
-  }
-}
-
 void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
@@ -321,6 +313,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
