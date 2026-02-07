@@ -54,8 +54,11 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
 
   // NEW:
-  void set_reset_expander(esphome::pca9554::PCA9554Component *exp, uint8_t pin);
-  esphome::pca9554::PCA9554Component *reset_expander_{nullptr};
+  // NEW: expander reset control (avoids "pin used in multiple places")
+  void set_reset_expander(esphome::pca9554::PCA9554Component *exp, uint8_t pin) {
+    this->reset_expander_ = exp;
+    this->reset_expander_pin_ = pin;
+  }
 
   // Call this AFTER the display init sequence (0x11 -> delay -> 0x29 -> delay)
   void notify_display_ready();
@@ -90,12 +93,8 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   void tp_read_data_(TouchFrame *frame);
 
   InternalGPIOPin *irq_pin_{nullptr};
-  pca9554::PCA9554 *reset_expander_{nullptr};
+  pca9554::PCA9554Component *reset_expander_{nullptr};
   uint8_t reset_expander_pin_{255};
-
-  volatile bool irq_fired_{false};
-  uint32_t last_poll_ms_{0};
-  uint16_t polling_fallback_ms_{50};
 
   volatile bool irq_fired_{false};
   uint32_t last_poll_ms_{0};
@@ -114,6 +113,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
