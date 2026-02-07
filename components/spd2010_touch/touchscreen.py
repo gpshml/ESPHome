@@ -32,9 +32,8 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_ADDRESS, default=0x53): cv.hex_int,
 
             # NEW: use expander pin for reset instead of a GPIOPin (avoids pin conflicts)
-            cv.Optional(CONF_PCA9554_ID): cv.use_id(pca9554.PCA9554),
+            cv.Optional(CONF_PCA9554_ID): cv.use_id(pca9554.PCA9554Component),
             cv.Optional(CONF_RESET_IO): cv.int_range(min=0, max=7),
-
             cv.Optional(CONF_POLLING_FALLBACK_MS, default=50): cv.int_range(min=10, max=2000),
         }
     )
@@ -55,6 +54,7 @@ async def to_code(config):
         cg.add(var.set_reset_expander(exp, config[CONF_RESET_IO]))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
 
 
 
