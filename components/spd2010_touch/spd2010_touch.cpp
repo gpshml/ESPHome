@@ -91,24 +91,34 @@ void SPD2010Touch::update_touches() {
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
   uint8_t regbuf[2] = { (uint8_t)(reg >> 8), (uint8_t)(reg & 0xFF) };
 
-  // Combined transaction: write reg pointer then read (repeated start)
-  return this->write_read(regbuf, 2, data, len);
+  // Write register pointer (STOP), then read.
+  if (!this->write(regbuf, 2)) {
+    ESP_LOGD(TAG, "I2C write reg failed: %04X", reg);
+    return false;
+  }
+
+  delayMicroseconds(200);  // original driver uses ~200us between ops
+
+  if (!this->read(data, len)) {
+    ESP_LOGD(TAG, "I2C read failed: %04X len=%u", reg, (unsigned)len);
+    return false;
+  }
+
+  return true;
 }
 
 
 bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
-  // Build buffer: [reg_lo reg_hi payload...]
   uint8_t buf[2 + 8];
   if (len > 8) return false;
 
   buf[0] = (uint8_t)(reg >> 8);
   buf[1] = (uint8_t)(reg & 0xFF);
+  for (size_t i = 0; i < len; i++) buf[2 + i] = data[i];
 
-  for (size_t i = 0; i < len; i++) {
-    buf[2 + i] = data[i];
-  }
-
-  return this->write(buf, 2 + len);
+  bool ok = this->write(buf, 2 + len);
+  delayMicroseconds(200);
+  return ok;
 }
 
 
@@ -256,6 +266,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
