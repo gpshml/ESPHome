@@ -6,6 +6,9 @@ from esphome.components import i2c, touchscreen
 from esphome.components import pca9554
 from esphome.const import CONF_ID, CONF_INTERRUPT_PIN, CONF_ADDRESS
 
+import os
+print("SPD2010_TOUCHSCREEN.PY LOADED FROM:", __file__)
+
 CONF_PCA9554_ID = "pca9554_id"
 CONF_POLLING_FALLBACK_MS = "polling_fallback_ms"
 CONF_RESET_IO = "reset_io"
@@ -52,5 +55,6 @@ async def to_code(config):
         cg.add(var.set_reset_expander(exp, config[CONF_RESET_IO]))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+
 
 
