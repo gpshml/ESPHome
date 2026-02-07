@@ -18,71 +18,70 @@ static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
 void SPD2010Touch::setup() {
     ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch...");
 
+    // ---- TP_RST pulse (matches original driver) ----
     if (this->reset_pin_ != nullptr) {
-      ESP_LOGCONFIG(TAG, "Resetting SPD2010 (shared with display)...");
-      this->reset_pin_->digital_write(false);  // assert reset (low)
-      delay(60);                               // ← was 50ms; try 60–100ms
-      this->reset_pin_->digital_write(true);   // release
-      delay(150);                              // ← critical: wait longer after release for chip to wake/stabilize
-      ESP_LOGD(TAG, "Reset complete, waiting for controller ready...");
+      ESP_LOGCONFIG(TAG, "Resetting SPD2010 touch controller (shared with display)...");
+      this->reset_pin_->pin_mode(gpio::FLAG_OUTPUT);
+      this->reset_pin_->digital_write(false);   // Assert reset (low)
+      delay(60);                                // ← Increased slightly from 50ms for stability
+      this->reset_pin_->digital_write(true);    // Release reset (high)
+      delay(150);                               // ← NEW: Longer wait for chip to stabilize / exit any low-power state
+      ESP_LOGD(TAG, "Reset pulse complete - waiting for SPD2010 ready");
     } else {
-      ESP_LOGW(TAG, "No reset_pin - hoping controller is already awake");
+      ESP_LOGW(TAG, "No reset_pin configured for SPD2010 touch - assuming already initialized");
     }
 
-    // Init sequence with logging
-    ESP_LOGD(TAG, "Sending CPU_START...");
+    // Init sequence with per-command logging
+    ESP_LOGD(TAG, "Sending CPU_START command...");
     this->write_tp_cpu_start_cmd_();
 
-    ESP_LOGD(TAG, "Sending POINT_MODE...");
+    ESP_LOGD(TAG, "Sending POINT_MODE command...");
     this->write_tp_point_mode_cmd_();
 
-    ESP_LOGD(TAG, "Sending TOUCH_START...");
+    ESP_LOGD(TAG, "Sending TOUCH_START command...");
     this->write_tp_start_cmd_();
 
-    ESP_LOGD(TAG, "Clearing INT...");
+    ESP_LOGD(TAG, "Sending CLEAR_INT command...");
     this->write_tp_clear_int_cmd_();
 
-  // Optional IRQ pin
-  if (this->irq_pin_ != nullptr) {
-    this->irq_pin_->setup();
-    // Use Touchscreen base helper to attach interrupt
-    // this->attach_interrupt_(this->irq_pin_, gpio::INTERRUPT_FALLING_EDGE);
-    // Also set a lightweight flag so we can skip I2C reads when idle
-    this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
-  }
-
-// Probe with detailed error
-    ESP_LOGD(TAG, "Probing I2C for FW read at 0x2600...");
-    uint8_t fw_buf[18] = {0};
-    esphome::i2c::ErrorCode err = this->read16_(0x2600, fw_buf, 18);
-    if (err == esphome::i2c::ERROR_OK) {
-      // Parse and log version (as before)
-      uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
-      ESP_LOGD(TAG, "FW read OK - DVer=%u", d_ver);
-      // Add ICName parse if you have it
-    } else {
-      ESP_LOGE(TAG, "FW probe FAILED - I2C error code: %d (0=OK, 1=NACK addr, 2=NACK data, 3=timeout, etc.)", err);
-      this->mark_failed();
-      return;  // early exit
+    // Optional IRQ setup (your existing code)
+    if (this->irq_pin_ != nullptr) {
+      this->irq_pin_->setup();
+      this->irq_pin_->attach_interrupt(SPD2010Touch::gpio_isr_, this, gpio::INTERRUPT_FALLING_EDGE);
     }
 
-    // Optional: Add a dummy status read to confirm
+    // Probe firmware read with detailed error reporting
+    ESP_LOGD(TAG, "Probing SPD2010 FW version at reg 0x2600...");
+    uint8_t fw_buf[18] = {0};
+    bool probe_ok = this->read16_(0x2600, fw_buf, 18);
+
+    if (probe_ok) {
+      // Parse key fields (from Espressif/Arduino examples)
+      uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
+      uint32_t pid   = (fw_buf[9] << 24) | (fw_buf[8] << 16) | (fw_buf[7] << 8) | fw_buf[6];
+      char ic_name[9] = {0};
+      snprintf(ic_name, sizeof(ic_name), "%c%c%c%c%c%c%c%c",
+               fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[17],  // ICName_H ("SPD\0"?)
+               fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]); // ICName_L ("2010")
+      ESP_LOGD(TAG, "FW probe SUCCESS - DVer=%u, PID=0x%08X, ICName=%.8s", d_ver, pid, ic_name);
+
+      // Optional: Validate expected name
+      if (strncmp(ic_name, "SPD2010", 7) != 0) {
+        ESP_LOGW(TAG, "Unexpected IC name - may indicate wrong chip or partial read");
+      }
+    } else {
+      // ← This is likely where your failure happens
+      ESP_LOGE(TAG, "SPD2010 FW probe FAILED - no response or I2C error");
+      // Optional: Add more diagnostics if you have read16_ logging errors
+      this->mark_failed();  // Keeps your original behavior
+      return;               // Prevent proceeding if probe fails
+    }
+
+    // Optional extra check: Read status register post-init
     TpStatus st{};
     this->read_tp_status_length_(&st);
-    ESP_LOGD(TAG, "Post-init status: pt_exist=%u, read_len=%u", st.low.pt_exist, st.read_len);
-
-    uint8_t fw_buf[18];
-    if (this->read16_(0x2600, fw_buf, 18)) {  // From original: 0x2600 for version
-        uint16_t d_ver = (fw_buf[5] << 8) | fw_buf[4];
-        uint32_t pid = (fw_buf[9] << 24) | (fw_buf[8] << 16) | (fw_buf[7] << 8) | fw_buf[6];
-        char ic_name[8];
-        // ICName_H (14-17: 'S','P','D',0) + ICName_L (10-13: '2','0','1','0')
-        sprintf(ic_name, "%c%c%c-%c%c%c%c", fw_buf[14], fw_buf[15], fw_buf[16], fw_buf[10], fw_buf[11], fw_buf[12], fw_buf[13]);
-        ESP_LOGD(TAG, "FW Version: DVer=%u, PID=0x%08X, ICName=%s", d_ver, pid, ic_name);
-    } else {
-        this->mark_failed();  // Sets error_ state, visible in HA
-        ESP_LOGE(TAG, "SPD2010 init failed - no response");
-    }
+    ESP_LOGD(TAG, "Post-init status check: pt_exist=%u, gesture=%u, read_len=%u, cpu_run=%u",
+             st.low.pt_exist, st.low.gesture, st.read_len, st.high.cpu_run);
 }
 
 void SPD2010Touch::dump_config() {
@@ -328,6 +327,7 @@ hdp_done_check:
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
