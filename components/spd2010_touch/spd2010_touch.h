@@ -48,11 +48,13 @@ struct TouchFrame {
 
 class SPD2010Touch : public touchscreen::Touchscreen,
                      public i2c::I2CDevice {
-
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
-  void set_reset_pin(GPIOPin *pin) { this->reset_pin_ = pin; } 
+  void set_reset_pin(GPIOPin *pin) { this->reset_pin_ = pin; }
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
+
+  // Call this AFTER the display init sequence (0x11 -> delay -> 0x29 -> delay)
+  void notify_display_ready();
 
   void setup() override;
   void loop() override;
@@ -60,7 +62,10 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
  protected:
   void update_touches() override;
-  
+
+  // Deferred init
+  void try_init_();
+
   // SPD2010 protocol helpers (ported from your driver)
   bool read16_(uint16_t reg, uint8_t *data, size_t len);
   bool write16_(uint16_t reg, const uint8_t *data, size_t len);
@@ -78,20 +83,19 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
   InternalGPIOPin *irq_pin_{nullptr};
   GPIOPin *reset_pin_{nullptr};
+
   volatile bool irq_fired_{false};
   uint32_t last_poll_ms_{0};
   uint16_t polling_fallback_ms_{50};
+
+  // New state for deferred init
+  bool display_ready_{false};
+  bool initialised_{false};
+  uint8_t init_attempts_{0};
+  uint32_t next_init_try_ms_{0};
 
   static void IRAM_ATTR gpio_isr_(SPD2010Touch *self) { self->irq_fired_ = true; }
 };
 
 }  // namespace spd2010_touch
 }  // namespace esphome
-
-
-
-
-
-
-
-
