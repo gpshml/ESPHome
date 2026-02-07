@@ -54,10 +54,9 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
 
   // NEW:
-  void set_reset_expander(pca9554::PCA9554 *exp, uint8_t pin) {
-    this->reset_expander_ = exp;
-    this->reset_expander_pin_ = pin;
-  }
+  void set_reset_expander(esphome::pca9554::PCA9554Component *exp, uint8_t pin);
+  esphome::pca9554::PCA9554Component *reset_expander_{nullptr};
+
   // Call this AFTER the display init sequence (0x11 -> delay -> 0x29 -> delay)
   void notify_display_ready();
 
@@ -115,6 +114,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
