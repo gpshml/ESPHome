@@ -80,6 +80,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   // SPD2010 protocol helpers (ported from your driver)
   bool read16_(uint16_t reg, uint8_t *data, size_t len);
   bool write16_(uint16_t reg, const uint8_t *data, size_t len);
+  bool read_fw_info_(uint16_t *dver_out, uint32_t *pid_out, uint32_t *name_hi_out, uint32_t *name_lo_out);
 
   void write_tp_point_mode_cmd_();
   void write_tp_start_cmd_();
@@ -113,6 +114,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
