@@ -171,9 +171,19 @@ void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  if ((int)frame.touch_num != last_num) {
-    ESP_LOGI(TAG, "touch_num changed: %d -> %u", last_num, frame.touch_num);
-    last_num = frame.touch_num;
+  // SPD2010 sometimes reports a point with weight==0 during release.
+  // Arduino treats this as an UP edge; LVGL needs this to become "released".
+  if (frame.touch_num > 0) {
+    bool any_nonzero = false;
+    for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
+      if (frame.rpt[i].weight != 0) {
+        any_nonzero = true;
+        break;
+      }
+    }
+    if (!any_nonzero) {
+      frame.touch_num = 0;
+    }
   }
 
   for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
@@ -430,6 +440,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
