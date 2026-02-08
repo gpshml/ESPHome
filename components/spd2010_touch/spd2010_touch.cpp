@@ -1,4 +1,5 @@
 #include "spd2010_touch.h"
+#include "inttypes.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -14,13 +15,22 @@ static constexpr uint16_t REG_POINT_MODE  = 0x5000; // write 0x00 0x00
 static constexpr uint16_t REG_STATUS_LEN  = 0x2000; // read 4 bytes
 static constexpr uint16_t REG_HDP_READ    = 0x0003; // read read_len bytes
 static constexpr uint16_t REG_HDP_STATUS  = 0xFC02; // read 8 bytes
+static constexpr uint16_t REG_FW_INFO     = 0x2600; // read 18 bytes
 
 void SPD2010Touch::notify_display_ready() {
   this->display_ready_ = true;
+
+  // Force a clean init cycle
   this->initialised_ = false;
   this->init_attempts_ = 0;
-  this->next_init_try_ms_ = millis();  // try immediately
-  ESP_LOGI(TAG, "Display marked ready; touch init will begin (I2C 0x%02X)", this->address_);
+
+  // Very important: touch reset AFTER display init (0x29 + delay)
+  this->pulse_shared_reset_();
+
+  // Give the SPD2010 a moment to come up after reset
+  this->next_init_try_ms_ = millis() + 150;
+
+  ESP_LOGI(TAG, "Display marked ready; touch reset pulsed; init scheduled (I2C 0x%02X).", this->address_);
 }
 
 void SPD2010Touch::setup() {
@@ -135,7 +145,7 @@ void SPD2010Touch::try_init_() {
   }
   delay(20);
 
-  // Probe status register 0x2000 (this is the exact operation that is failing in your logs)
+  // Probe status register 0x2000
   uint8_t status_buf[4] = {0};
   if (!this->read16_(REG_STATUS_LEN, status_buf, 4)) {
     ESP_LOGW(TAG, "Init failed: STATUS read (0x2000) failed");
@@ -143,11 +153,17 @@ void SPD2010Touch::try_init_() {
     return;
   }
 
-  ESP_LOGI(TAG, "Init OK. STATUS: %02X %02X %02X %02X",
+  ESP_LOGI(TAG, "STATUS: %02X %02X %02X %02X",
            status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
+
+  // Read-only FW probe (0x2600, 18 bytes)
+  uint16_t dver = 0;
+  uint32_t pid = 0, name_hi = 0, name_lo = 0;
+  (void) this->read_fw_info_(&dver, &pid, &name_hi, &name_lo);
 
   this->initialised_ = true;
   ESP_LOGI(TAG, "SPD2010 touch initialised and active.");
+
 }
 void SPD2010Touch::update_touches() {
   TouchFrame frame{};
@@ -163,29 +179,20 @@ void SPD2010Touch::update_touches() {
   this->send_touches_();
 }
 
-// ---------- I2C helpers (16-bit register addressing) ----------
+// ---------- I2C helpers (16-bit register addressing, ESPHome-native) ----------
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
-  uint8_t regbuf[2] = {static_cast<uint8_t>(reg >> 8), static_cast<uint8_t>(reg & 0xFF)};
-
-  if (!this->write(regbuf, 2)) {
-    ESP_LOGV(TAG, "read16: write reg pointer failed 0x%04X", reg);
-    return false;
-  }
-  if (!this->read(data, len)) {
-    ESP_LOGV(TAG, "read16: read failed 0x%04X len=%u", reg, (unsigned)len);
+  const auto err = this->read_register16(reg, data, len);
+  if (err != esphome::i2c::ERROR_OK) {
+    ESP_LOGV(TAG, "read16: reg=0x%04X len=%u err=%d", reg, (unsigned) len, (int) err);
     return false;
   }
   return true;
 }
 
 bool SPD2010Touch::write16_(uint16_t reg, const uint8_t *data, size_t len) {
-  uint8_t buf[2 + len];
-  buf[0] = static_cast<uint8_t>(reg >> 8);
-  buf[1] = static_cast<uint8_t>(reg & 0xFF);
-  memcpy(buf + 2, data, len);
-
-  if (!this->write(buf, 2 + len)) {
-    ESP_LOGV(TAG, "write16: failed 0x%04X len=%u", reg, (unsigned)len);
+  const auto err = this->write_register16(reg, data, len);
+  if (err != esphome::i2c::ERROR_OK) {
+    ESP_LOGV(TAG, "write16: reg=0x%04X len=%u err=%d", reg, (unsigned) len, (int) err);
     return false;
   }
   return true;
@@ -242,6 +249,40 @@ void SPD2010Touch::log_i2c_probe_scan_() {
   }
 
   this->set_i2c_address(original);      // <-- restore
+}
+
+bool SPD2010Touch::read_fw_info_(uint16_t *dver_out, uint32_t *pid_out, uint32_t *name_hi_out, uint32_t *name_lo_out) {
+  uint8_t b[18] = {0};
+
+  if (!this->read16_(REG_FW_INFO, b, sizeof(b))) {
+    ESP_LOGW(TAG, "FW probe failed: read 0x%04X len=18", REG_FW_INFO);
+    return false;
+  }
+
+  // Mirrors the Arduino parsing (Touch_SPD2010.cpp)
+  const uint16_t dver = (static_cast<uint16_t>(b[5]) << 8) | b[4];
+  const uint32_t pid  = (static_cast<uint32_t>(b[9])  << 24) |
+                        (static_cast<uint32_t>(b[8])  << 16) |
+                        (static_cast<uint32_t>(b[7])  << 8)  |
+                        (static_cast<uint32_t>(b[6]));
+  const uint32_t name_lo = (static_cast<uint32_t>(b[13]) << 24) |
+                           (static_cast<uint32_t>(b[12]) << 16) |
+                           (static_cast<uint32_t>(b[11]) << 8)  |
+                           (static_cast<uint32_t>(b[10]));
+  const uint32_t name_hi = (static_cast<uint32_t>(b[17]) << 24) |
+                           (static_cast<uint32_t>(b[16]) << 16) |
+                           (static_cast<uint32_t>(b[15]) << 8)  |
+                           (static_cast<uint32_t>(b[14]));
+
+  if (dver_out) *dver_out = dver;
+  if (pid_out) *pid_out = pid;
+  if (name_hi_out) *name_hi_out = name_hi;
+  if (name_lo_out) *name_lo_out = name_lo;
+
+  ESP_LOGI(TAG, "FW: DVer=%u PID=%" PRIu32 " NameHi=0x%08" PRIX32 " NameLo=0x%08" PRIX32,
+           (unsigned) dver, pid, name_hi, name_lo);
+
+  return true;
 }
 
 void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
@@ -370,6 +411,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
