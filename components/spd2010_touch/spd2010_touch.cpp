@@ -149,6 +149,19 @@ void SPD2010Touch::try_init_() {
   this->initialised_ = true;
   ESP_LOGI(TAG, "SPD2010 touch initialised and active.");
 }
+void SPD2010Touch::update_touches() {
+  TouchFrame frame{};
+  this->tp_read_data_(&frame);
+
+  if (frame.touch_num > 0) {
+    ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
+  }
+
+  for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
+    this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+  }
+  this->send_touches_();
+}
 
 // ---------- I2C helpers (16-bit register addressing) ----------
 bool SPD2010Touch::read16_(uint16_t reg, uint8_t *data, size_t len) {
@@ -357,5 +370,6 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
