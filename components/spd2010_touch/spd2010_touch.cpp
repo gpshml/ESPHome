@@ -72,6 +72,8 @@ void SPD2010Touch::loop() {
       return;
     }
 
+    delay(50);
+
     // Now try your real init sequence (writes/register setup)
     this->try_init_();
 
@@ -95,76 +97,57 @@ void SPD2010Touch::loop() {
 }
 
 void SPD2010Touch::try_init_() {
-  this->init_attempts_++;
-
-  // First: check if the device ACKs address at all.
-  // A 0-byte write is a good "address probe" in ESPHome I2CDevice.
-  esphome::i2c::ErrorCode err = this->write(nullptr, 0);
-
-  if (err != esphome::i2c::ERROR_OK) {
-    // Not awake yet. Back off and retry.
-    // Use a slightly increasing delay so we don't hammer the bus.
-    const uint32_t backoff_ms = (this->init_attempts_ < 10) ? 200 : 500;
-
-    ESP_LOGW(TAG, "SPD2010 not ACKing 0x%02X (attempt %u, err=%d). Retrying in %ums...",
-             this->address_, this->init_attempts_, err, (unsigned) backoff_ms);
-
-    this->next_init_try_ms_ = millis() + backoff_ms;
-    return;
-  }
-
-  ESP_LOGI(TAG, "SPD2010 ACKed 0x%02X on attempt %u. Sending init sequence...",
-           this->address_, this->init_attempts_);
-
   uint8_t payload[2];
 
   // CPU_START
   payload[0] = 0x01; payload[1] = 0x00;
-  this->write16_(REG_CPU_START, payload, 2);
+  if (!this->write16_(REG_CPU_START, payload, 2)) {
+    ESP_LOGW(TAG, "Init failed: CPU_START write NACK");
+    this->initialised_ = false;
+    return;
+  }
   delay(20);
 
   // POINT_MODE
   payload[0] = 0x00; payload[1] = 0x00;
-  this->write16_(REG_POINT_MODE, payload, 2);
+  if (!this->write16_(REG_POINT_MODE, payload, 2)) {
+    ESP_LOGW(TAG, "Init failed: POINT_MODE write NACK");
+    this->initialised_ = false;
+    return;
+  }
   delay(20);
 
   // TOUCH_START
   payload[0] = 0x00; payload[1] = 0x00;
-  this->write16_(REG_TOUCH_START, payload, 2);
+  if (!this->write16_(REG_TOUCH_START, payload, 2)) {
+    ESP_LOGW(TAG, "Init failed: TOUCH_START write NACK");
+    this->initialised_ = false;
+    return;
+  }
   delay(20);
 
   // CLEAR_INT
   payload[0] = 0x01; payload[1] = 0x00;
-  this->write16_(REG_CLEAR_INT, payload, 2);
+  if (!this->write16_(REG_CLEAR_INT, payload, 2)) {
+    ESP_LOGW(TAG, "Init failed: CLEAR_INT write NACK");
+    this->initialised_ = false;
+    return;
+  }
   delay(20);
 
-  // Quick status probe - not fatal if it fails, but useful signal.
-  ESP_LOGD(TAG, "Probing status register 0x2000...");
+  // Probe status register 0x2000 (this is the exact operation that is failing in your logs)
   uint8_t status_buf[4] = {0};
-  if (this->read16_(REG_STATUS_LEN, status_buf, 4)) {
-    ESP_LOGI(TAG, "Status probe OK: %02X %02X %02X %02X",
-             status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
-  } else {
-    ESP_LOGW(TAG, "Status probe failed; continuing anyway.");
+  if (!this->read16_(REG_STATUS_LEN, status_buf, 4)) {
+    ESP_LOGW(TAG, "Init failed: STATUS read (0x2000) failed");
+    this->initialised_ = false;
+    return;
   }
 
-  // Mark initialised so loop() will start reading touches
+  ESP_LOGI(TAG, "Init OK. STATUS: %02X %02X %02X %02X",
+           status_buf[0], status_buf[1], status_buf[2], status_buf[3]);
+
   this->initialised_ = true;
   ESP_LOGI(TAG, "SPD2010 touch initialised and active.");
-}
-
-void SPD2010Touch::update_touches() {
-  TouchFrame frame{};
-  this->tp_read_data_(&frame);
-
-  if (frame.touch_num > 0) {
-    ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
-  }
-
-  for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-    this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
-  }
-  this->send_touches_();
 }
 
 // ---------- I2C helpers (16-bit register addressing) ----------
@@ -374,4 +357,5 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
