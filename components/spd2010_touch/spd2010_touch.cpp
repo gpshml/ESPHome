@@ -166,11 +166,14 @@ void SPD2010Touch::try_init_() {
 
 }
 void SPD2010Touch::update_touches() {
+  static int last_num = -1;
+
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  if (frame.touch_num > 0) {
-    ESP_LOGD(TAG, "touch_num=%u", frame.touch_num);
+  if ((int)frame.touch_num != last_num) {
+    ESP_LOGI(TAG, "touch_num changed: %d -> %u", last_num, frame.touch_num);
+    last_num = frame.touch_num;
   }
 
   for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
@@ -317,6 +320,7 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
 }
 
 void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
+  
   if (st.read_len < 4 || st.read_len > (4 + 10 * 6)) {
     frame->touch_num = 0;
     return;
@@ -341,6 +345,7 @@ void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
   } else {
     frame->touch_num = 0;
   }
+
 }
 
 void SPD2010Touch::read_tp_hdp_status_(TpHdpStatus *hs) {
@@ -359,7 +364,8 @@ void SPD2010Touch::read_hdp_remain_data_(const TpHdpStatus &hs) {
 void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   TpStatus st{};
   TpHdpStatus hs{};
-
+  frame->touch_num = 0;
+  
   this->read_tp_status_length_(&st);
 
   if (st.high.tic_in_bios) {
@@ -389,6 +395,13 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   if (st.low.pt_exist || st.low.gesture) {
     this->read_tp_hdp_(st, frame);
 
+  if (frame->touch_num > 0) {
+    for (uint8_t i = 0; i < frame->touch_num && i < 5; i++) {
+      ESP_LOGI(TAG, "HDP[%u]: id=%u x=%u y=%u w=%u",
+               i, frame->rpt[i].id, frame->rpt[i].x, frame->rpt[i].y, frame->rpt[i].weight);
+    }
+  }
+    
     uint8_t retries = 0;
   hdp_done_check:
     this->read_tp_hdp_status_(&hs);
@@ -417,6 +430,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
