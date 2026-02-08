@@ -396,8 +396,14 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
       this->write_tp_clear_int_cmd_();
     } else if (hs.status == 0x00) {
       this->read_hdp_remain_data_(hs);
-      if (++retries > 5) { ESP_LOGW(TAG, "HDP loop exceeded retries"); }
+      if (++retries > 5) {
+        ESP_LOGW(TAG, "HDP loop exceeded retries");
+        this->write_tp_clear_int_cmd_();
+        frame->touch_num = 0;
+        return;
+      }
       goto hdp_done_check;
+
     }
     return;
   }
@@ -411,6 +417,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
