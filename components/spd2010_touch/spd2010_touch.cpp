@@ -382,13 +382,18 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   TpStatus st{};
   TpHdpStatus hs{};
 
-  // 0) If status read fails, do nothing (treat as no touch).
-  // (Do NOT try to clear INT aggressively here, because we don't know controller state.)
-  if (!this->read_tp_status_length_(&st)) {
+  // 1) Read status/length (void-returning)
+  this->read_tp_status_length_(&st);
+
+  // If status looks totally empty, treat as no touch.
+  // (This avoids acting on garbage if the underlying I2C read failed.)
+  // You can tighten/relax this check depending on what your chip returns when idle.
+  if (!st.high.cpu_run && !st.high.tic_in_bios && !st.high.tic_in_cpu &&
+      !st.low.pt_exist && !st.low.gesture && st.read_len == 0) {
     return;
   }
 
-  // 1) BIOS mode: re-init touch core, clear INT, return no touch.
+  // 2) BIOS mode: re-init touch core, clear INT, return no touch.
   if (st.high.tic_in_bios) {
     this->write_tp_clear_int_cmd_();
     this->write_tp_cpu_start_cmd_();
@@ -398,7 +403,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
     return;
   }
 
-  // 2) CPU transition mode: nudge, clear INT, return no touch.
+  // 3) CPU transition mode: nudge, clear INT, return no touch.
   if (st.high.tic_in_cpu) {
     this->write_tp_point_mode_cmd_();
     this->write_tp_start_cmd_();
@@ -406,38 +411,27 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
     return;
   }
 
-  // 3) CPU running but no payload: clear INT and return no touch.
-  // This helps prevent latched INT / stuck "pressing".
+  // 4) CPU running but no payload: clear INT and return no touch.
   if (st.high.cpu_run && st.read_len == 0) {
     this->write_tp_clear_int_cmd_();
     return;
   }
 
-  // 4) Touch/gesture indicated: try to read and decode HDP payload.
+  // 5) Touch/gesture indicated: try to read and decode HDP payload.
   if (st.low.pt_exist || st.low.gesture) {
     this->read_tp_hdp_(st, frame);
 
     // If decode produced no touches, clear INT once and return.
-    // (This covers decode failure / invalid payload while pt_exist is set.)
     if (frame->touch_num == 0) {
       this->write_tp_clear_int_cmd_();
       return;
     }
 
-    // Optional debug (keep or remove)
-    // for (uint8_t i = 0; i < frame->touch_num && i < 5; i++) {
-    //   ESP_LOGI(TAG, "HDP[%u]: id=%u x=%u y=%u w=%u",
-    //            i, frame->rpt[i].id, frame->rpt[i].x, frame->rpt[i].y, frame->rpt[i].weight);
-    // }
-
-    // 5) Drain/ack HDP status until done (bounded).
+    // 6) Drain/ack HDP status until done (bounded).
     uint8_t retries = 0;
     while (true) {
-      if (!this->read_tp_hdp_status_(&hs)) {
-        // If we can't read status, clear INT to avoid latch and return the decoded touch.
-        this->write_tp_clear_int_cmd_();
-        return;
-      }
+      hs = TpHdpStatus{};                 // reset before each read
+      this->read_tp_hdp_status_(&hs);     // void-returning
 
       if (hs.status == 0x82) {
         // Done
@@ -452,20 +446,19 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
         if (++retries > 5) {
           ESP_LOGW(TAG, "HDP loop exceeded retries; forcing INT clear");
           this->write_tp_clear_int_cmd_();
-          // Return touch we decoded this cycle; next cycle should recover.
-          return;
+          return; // Return touch we decoded this cycle
         }
         continue;
       }
 
-      // Any other status: clear INT and return (prevents latched state).
-      ESP_LOGV(TAG, "Unexpected HDP status=0x%02X; clearing INT", hs.status);
+      // Unknown/zeroed status: clear INT and return (prevents latch).
+      ESP_LOGV(TAG, "Unexpected/invalid HDP status=0x%02X; clearing INT", hs.status);
       this->write_tp_clear_int_cmd_();
       return;
     }
   }
 
-  // 6) Aux status: clear INT if signalled.
+  // 7) Aux status: clear INT if signalled.
   if (st.high.cpu_run && st.low.aux) {
     this->write_tp_clear_int_cmd_();
   }
@@ -475,6 +468,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
