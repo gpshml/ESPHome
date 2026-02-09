@@ -183,12 +183,13 @@ void SPD2010Touch::update_touches() {
     }
   }
 
-  //for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-  //  this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
-  //}
   //This 'kills' multi-touch but stops erroneous triggers as LVGL does not support multi-touch
   //TODO: Implement a proper multi-touch under a switch but is it worth it with such a tiny screen?
-  this->add_raw_touch_position_(0, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+  for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
+    //this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+    this->add_raw_touch_position_(0, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+  }
+  
   this->send_touches_();
 }
 
@@ -445,6 +446,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
