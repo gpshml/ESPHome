@@ -303,8 +303,13 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
   uint8_t d[4]{0};
 
   bool ok = this->read16_(REG_STATUS_LEN, d, 4);
+
+  // NEW: log but do NOT return early if bytes look meaningful
+  // If ok==false but we got something non-zero, still parse it.
   if (!ok) {
-    // If it's all zeros, treat as dead/no-data. Otherwise parse anyway.
+    ESP_LOGD(TAG, "STATUS read failed raw=%02X %02X %02X %02X", d[0], d[1], d[2], d[3]);
+
+    // If all bytes are zero, treat as failure and bail.
     if (d[0] == 0x00 && d[1] == 0x00 && d[2] == 0x00 && d[3] == 0x00) {
       st->low.pt_exist = 0;
       st->low.gesture = 0;
@@ -315,8 +320,10 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
       st->read_len = 0;
       return;
     }
+    // otherwise: fall through and parse d[]
   }
 
+  // parse as before
   st->low.pt_exist = (d[0] & 0x01);
   st->low.gesture  = (d[0] & 0x02);
   st->low.aux      = (d[0] & 0x08);
@@ -329,6 +336,7 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
 
   st->read_len = (static_cast<uint16_t>(d[3]) << 8) | d[2];
 }
+
 
 void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
   if (st.read_len < 4 || st.read_len > (4 + 10 * 6)) {
@@ -468,6 +476,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
