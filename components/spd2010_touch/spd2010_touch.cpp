@@ -376,76 +376,106 @@ void SPD2010Touch::read_hdp_remain_data_(const TpHdpStatus &hs) {
 }
 
 void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
+  // Always start from a known "no touch" state.
+  frame->touch_num = 0;
+
   TpStatus st{};
   TpHdpStatus hs{};
-  frame->touch_num = 0;
-  
-  this->read_tp_status_length_(&st);
 
+  // 0) If status read fails, do nothing (treat as no touch).
+  // (Do NOT try to clear INT aggressively here, because we don't know controller state.)
+  if (!this->read_tp_status_length_(&st)) {
+    return;
+  }
+
+  // 1) BIOS mode: re-init touch core, clear INT, return no touch.
   if (st.high.tic_in_bios) {
     this->write_tp_clear_int_cmd_();
     this->write_tp_cpu_start_cmd_();
     this->write_tp_point_mode_cmd_();
     this->write_tp_start_cmd_();
     this->write_tp_clear_int_cmd_();
-    frame->touch_num = 0;
     return;
   }
 
+  // 2) CPU transition mode: nudge, clear INT, return no touch.
   if (st.high.tic_in_cpu) {
     this->write_tp_point_mode_cmd_();
     this->write_tp_start_cmd_();
     this->write_tp_clear_int_cmd_();
-    frame->touch_num = 0;
     return;
   }
 
+  // 3) CPU running but no payload: clear INT and return no touch.
+  // This helps prevent latched INT / stuck "pressing".
   if (st.high.cpu_run && st.read_len == 0) {
     this->write_tp_clear_int_cmd_();
-    frame->touch_num = 0;
     return;
   }
 
+  // 4) Touch/gesture indicated: try to read and decode HDP payload.
   if (st.low.pt_exist || st.low.gesture) {
     this->read_tp_hdp_(st, frame);
 
-  if (frame->touch_num > 0) {
-    for (uint8_t i = 0; i < frame->touch_num && i < 5; i++) {
-      ESP_LOGI(TAG, "HDP[%u]: id=%u x=%u y=%u w=%u",
-               i, frame->rpt[i].id, frame->rpt[i].x, frame->rpt[i].y, frame->rpt[i].weight);
-    }
-  }
-    
-    uint8_t retries = 0;
-    
-  hdp_done_check:
-    
-    this->read_tp_hdp_status_(&hs);
-    if (hs.status == 0x82) {
+    // If decode produced no touches, clear INT once and return.
+    // (This covers decode failure / invalid payload while pt_exist is set.)
+    if (frame->touch_num == 0) {
       this->write_tp_clear_int_cmd_();
-    } else if (hs.status == 0x00) {
-      this->read_hdp_remain_data_(hs);
-      if (++retries > 5) {
-        ESP_LOGW(TAG, "HDP loop exceeded retries");
+      return;
+    }
+
+    // Optional debug (keep or remove)
+    // for (uint8_t i = 0; i < frame->touch_num && i < 5; i++) {
+    //   ESP_LOGI(TAG, "HDP[%u]: id=%u x=%u y=%u w=%u",
+    //            i, frame->rpt[i].id, frame->rpt[i].x, frame->rpt[i].y, frame->rpt[i].weight);
+    // }
+
+    // 5) Drain/ack HDP status until done (bounded).
+    uint8_t retries = 0;
+    while (true) {
+      if (!this->read_tp_hdp_status_(&hs)) {
+        // If we can't read status, clear INT to avoid latch and return the decoded touch.
         this->write_tp_clear_int_cmd_();
-        frame->touch_num = 0;
         return;
       }
-      goto hdp_done_check;
 
+      if (hs.status == 0x82) {
+        // Done
+        this->write_tp_clear_int_cmd_();
+        return;
+      }
+
+      if (hs.status == 0x00) {
+        // Remaining data; drain it
+        this->read_hdp_remain_data_(hs);
+
+        if (++retries > 5) {
+          ESP_LOGW(TAG, "HDP loop exceeded retries; forcing INT clear");
+          this->write_tp_clear_int_cmd_();
+          // Return touch we decoded this cycle; next cycle should recover.
+          return;
+        }
+        continue;
+      }
+
+      // Any other status: clear INT and return (prevents latched state).
+      ESP_LOGV(TAG, "Unexpected HDP status=0x%02X; clearing INT", hs.status);
+      this->write_tp_clear_int_cmd_();
+      return;
     }
-    return;
   }
 
+  // 6) Aux status: clear INT if signalled.
   if (st.high.cpu_run && st.low.aux) {
     this->write_tp_clear_int_cmd_();
   }
 
-  frame->touch_num = 0;
+  // No touch; frame->touch_num already 0.
 }
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
