@@ -163,16 +163,13 @@ void SPD2010Touch::try_init_() {
 
   this->initialised_ = true;
   ESP_LOGI(TAG, "SPD2010 touch initialised and active.");
-
 }
-void SPD2010Touch::update_touches() {
-  static int last_num = -1;
 
+void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  // SPD2010 sometimes reports a point with weight==0 during release.
-  // Arduino treats this as an UP edge; LVGL needs this to become "released".
+  // NEW: if all touches have weight 0, treat as release
   if (frame.touch_num > 0) {
     bool any_nonzero = false;
     for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
@@ -186,9 +183,12 @@ void SPD2010Touch::update_touches() {
     }
   }
 
-  for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-    this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
-  }
+  //for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
+  //  this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+  //}
+  //This 'kills' multi-touch but stops erroneous triggers as LVGL does not support multi-touch
+  //TODO: Implement a proper multi-touch under a switch but is it worth it with such a tiny screen?
+  this->add_raw_touch_position_(0, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
   this->send_touches_();
 }
 
@@ -330,14 +330,18 @@ void SPD2010Touch::read_tp_status_length_(TpStatus *st) {
 }
 
 void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
-  
   if (st.read_len < 4 || st.read_len > (4 + 10 * 6)) {
     frame->touch_num = 0;
     return;
   }
 
   uint8_t buf[4 + 10 * 6]{0};
-  this->read16_(REG_HDP_READ, buf, st.read_len);
+
+  // NEW: check read success
+  if (!this->read16_(REG_HDP_READ, buf, st.read_len)) {
+    frame->touch_num = 0;
+    return;
+  }
 
   const uint8_t check_id = buf[4];
 
@@ -355,7 +359,6 @@ void SPD2010Touch::read_tp_hdp_(const TpStatus &st, TouchFrame *frame) {
   } else {
     frame->touch_num = 0;
   }
-
 }
 
 void SPD2010Touch::read_tp_hdp_status_(TpHdpStatus *hs) {
@@ -413,7 +416,9 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
   }
     
     uint8_t retries = 0;
+    
   hdp_done_check:
+    
     this->read_tp_hdp_status_(&hs);
     if (hs.status == 0x82) {
       this->write_tp_clear_int_cmd_();
@@ -440,6 +445,7 @@ void SPD2010Touch::tp_read_data_(TouchFrame *frame) {
 
 }  // namespace spd2010_touch
 }  // namespace esphome
+
 
 
 
