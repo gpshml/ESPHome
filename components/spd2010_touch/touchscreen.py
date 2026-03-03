@@ -6,12 +6,11 @@ from esphome.components import i2c, touchscreen
 from esphome.components import pca9554
 from esphome.const import CONF_ID, CONF_INTERRUPT_PIN, CONF_ADDRESS
 
-import os
-print("SPD2010_TOUCHSCREEN.PY LOADED FROM:", __file__)
 
 CONF_PCA9554_ID = "pca9554_id"
 CONF_POLLING_FALLBACK_MS = "polling_fallback_ms"
 CONF_RESET_IO = "reset_io"
+CONF_REQUIRE_DISPLAY_READY = "require_display_ready"
 
 DEPENDENCIES = ["i2c", "pca9554"]
 AUTO_LOAD = ["touchscreen"]
@@ -35,6 +34,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_PCA9554_ID): cv.use_id(pca9554.PCA9554Component),
             cv.Optional(CONF_RESET_IO): cv.int_range(min=0, max=7),
             cv.Optional(CONF_POLLING_FALLBACK_MS, default=50): cv.int_range(min=10, max=2000),
+            cv.Optional(CONF_REQUIRE_DISPLAY_READY, default=False): cv.boolean,
         }
     )
     .extend(i2c.i2c_device_schema(0x53))
@@ -54,6 +54,9 @@ async def to_code(config):
         cg.add(var.set_reset_expander(exp, config[CONF_RESET_IO]))
 
     cg.add(var.set_polling_fallback_ms(config[CONF_POLLING_FALLBACK_MS]))
+    # Keep default behavior aligned with the known-good reference: start touch bring-up
+    # immediately unless the user explicitly enables display-ready gating.
+    cg.add(var.set_require_display_ready(config[CONF_REQUIRE_DISPLAY_READY]))
 
 
 

@@ -52,6 +52,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
  public:
   void set_interrupt_pin(InternalGPIOPin *pin) { this->irq_pin_ = pin; }
   void set_polling_fallback_ms(uint16_t ms) { this->polling_fallback_ms_ = ms; }
+  void set_require_display_ready(bool require_display_ready) { this->require_display_ready_ = require_display_ready; }
 
   // NEW:
   // NEW: expander reset control (avoids "pin used in multiple places")
@@ -107,6 +108,7 @@ class SPD2010Touch : public touchscreen::Touchscreen,
 
   // New state for deferred init
   bool display_ready_{false};
+  bool require_display_ready_{false};
   bool initialised_{false};
   uint32_t next_probe_ms_{0};
   uint32_t boot_ms_{0};
