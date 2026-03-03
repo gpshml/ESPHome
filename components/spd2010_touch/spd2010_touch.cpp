@@ -183,11 +183,18 @@ void SPD2010Touch::update_touches() {
     }
   }
 
-  //This 'kills' multi-touch but stops erroneous triggers as LVGL does not support multi-touch
-  //TODO: Implement a proper multi-touch under a switch but is it worth it with such a tiny screen?
-  for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-    //this->add_raw_touch_position_(frame.rpt[i].id, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
-    this->add_raw_touch_position_(0, frame.rpt[i].x, frame.rpt[i].y, frame.rpt[i].weight);
+  // LVGL consumes a single pointer stream. Publishing multiple contacts in one cycle
+  // (especially with a forced shared ID) can produce jittery/incorrect UI events.
+  // Pick one stable primary contact and report only that pointer.
+  if (frame.touch_num > 0) {
+    uint8_t primary = 0;
+    for (uint8_t i = 1; i < frame.touch_num && i < 5; i++) {
+      if (frame.rpt[i].weight > frame.rpt[primary].weight) {
+        primary = i;
+      }
+    }
+
+    this->add_raw_touch_position_(0, frame.rpt[primary].x, frame.rpt[primary].y, frame.rpt[primary].weight);
   }
   
   this->send_touches_();
