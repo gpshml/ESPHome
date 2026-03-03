@@ -37,6 +37,15 @@ void SPD2010Touch::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SPD2010 touch... Address 0x%02X", this->address_);
   this->boot_ms_ = millis();
 
+  // Default behavior for this component should match the reference driver: initialize
+  // touch immediately from setup/loop without requiring a separate display callback.
+  // `require_display_ready_` remains available for setups that explicitly want the
+  // touch controller to be held until display init has finished.
+  if (!this->require_display_ready_) {
+    this->display_ready_ = true;
+    this->next_init_try_ms_ = millis();
+  }
+
   // Optional: configure IRQ
   if (this->irq_pin_ != nullptr) {
     this->irq_pin_->setup();
@@ -54,6 +63,7 @@ void SPD2010Touch::dump_config() {
   LOG_I2C_DEVICE(this);
   LOG_PIN("  Interrupt Pin: ", this->irq_pin_);
   ESP_LOGCONFIG(TAG, "  Polling fallback: %ums", this->polling_fallback_ms_);
+  ESP_LOGCONFIG(TAG, "  Require display-ready callback: %s", this->require_display_ready_ ? "YES" : "NO");
   ESP_LOGCONFIG(TAG, "  Display-ready gating: %s", this->display_ready_ ? "YES" : "NO");
   ESP_LOGCONFIG(TAG, "  Initialised: %s", this->initialised_ ? "YES" : "NO");
 }
@@ -213,20 +223,8 @@ void SPD2010Touch::update_touches() {
     this->primary_touch_active_ = false;
   }
 
-  // LVGL consumes a single pointer stream. Publishing multiple contacts in one cycle
-  // (especially with a forced shared ID) can produce jittery/incorrect UI events.
-  // Pick one stable primary contact and report only that pointer.
-  if (frame.touch_num > 0) {
-    uint8_t primary = 0;
-    for (uint8_t i = 1; i < frame.touch_num && i < 5; i++) {
-      if (frame.rpt[i].weight > frame.rpt[primary].weight) {
-        primary = i;
-      }
-    }
-
-    this->add_raw_touch_position_(0, frame.rpt[primary].x, frame.rpt[primary].y, frame.rpt[primary].weight);
-  }
-  
+  // Important: publish exactly once per cycle to avoid pointer jitter.
+  // The stable-id selection above determines the single contact we report.
   this->send_touches_();
 }
 
@@ -270,11 +268,12 @@ void SPD2010Touch::write_tp_clear_int_cmd_() {
 void SPD2010Touch::pulse_shared_reset_() {
   if (this->reset_expander_ == nullptr || this->reset_expander_pin_ > 7) return;
 
-  // Active-low reset pulse
+  // Active-low reset pulse. We intentionally mirror the known-good reference timing
+  // (50ms low + 50ms high) to avoid marginal boot behavior on SPD2010 revisions.
   this->reset_expander_->digital_write(this->reset_expander_pin_, false);
-  delay(20);
+  delay(50);
   this->reset_expander_->digital_write(this->reset_expander_pin_, true);
-  delay(80);
+  delay(50);
 }
 
 bool SPD2010Touch::probe_ack_() {
