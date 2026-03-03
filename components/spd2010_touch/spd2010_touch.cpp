@@ -169,18 +169,48 @@ void SPD2010Touch::update_touches() {
   TouchFrame frame{};
   this->tp_read_data_(&frame);
 
-  // NEW: if all touches have weight 0, treat as release
+  ESP_LOGV(TAG, "Touch frame: count=%u active_primary=%s primary_id=%u", frame.touch_num,
+           this->primary_touch_active_ ? "yes" : "no", this->primary_touch_id_);
+
+  // LVGL consumes a single pointer stream, but the controller can report multiple contacts.
+  // Keep a stable primary contact (by hardware touch id) across frames to avoid pointer jumps.
   if (frame.touch_num > 0) {
-    bool any_nonzero = false;
-    for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
-      if (frame.rpt[i].weight != 0) {
-        any_nonzero = true;
-        break;
+    uint8_t primary = 0;
+    bool found_previous = false;
+
+    if (this->primary_touch_active_) {
+      for (uint8_t i = 0; i < frame.touch_num && i < 5; i++) {
+        if (frame.rpt[i].id == this->primary_touch_id_) {
+          primary = i;
+          found_previous = true;
+          break;
+        }
       }
     }
-    if (!any_nonzero) {
-      frame.touch_num = 0;
+
+    if (!found_previous) {
+      const uint8_t old_primary_id = this->primary_touch_id_;
+
+      // Choose a deterministic new primary contact.
+      for (uint8_t i = 1; i < frame.touch_num && i < 5; i++) {
+        if (frame.rpt[i].id < frame.rpt[primary].id) {
+          primary = i;
+        }
+      }
+
+      this->primary_touch_id_ = frame.rpt[primary].id;
+      this->primary_touch_active_ = true;
+      ESP_LOGV(TAG, "Primary touch selected/switched: old_id=%u new_id=%u", old_primary_id, this->primary_touch_id_);
     }
+
+    ESP_LOGV(TAG, "Reporting primary touch: id=%u x=%u y=%u weight=%u", frame.rpt[primary].id,
+             frame.rpt[primary].x, frame.rpt[primary].y, frame.rpt[primary].weight);
+    this->add_raw_touch_position_(0, frame.rpt[primary].x, frame.rpt[primary].y, frame.rpt[primary].weight);
+  } else {
+    if (this->primary_touch_active_) {
+      ESP_LOGV(TAG, "Touch release: clearing primary id=%u", this->primary_touch_id_);
+    }
+    this->primary_touch_active_ = false;
   }
 
   // LVGL consumes a single pointer stream. Publishing multiple contacts in one cycle
