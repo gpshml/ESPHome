@@ -101,6 +101,10 @@ class SPD2010Touch : public touchscreen::Touchscreen,
   uint32_t last_poll_ms_{0};
   uint16_t polling_fallback_ms_{50};
 
+  // LVGL is single-pointer; keep one stable contact while multiple are present.
+  bool primary_touch_active_{false};
+  uint8_t primary_touch_id_{0};
+
   // New state for deferred init
   bool display_ready_{false};
   bool initialised_{false};
