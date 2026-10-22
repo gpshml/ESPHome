@@ -184,16 +184,20 @@ def create_3d_visualization():
     ax.set_xlabel('Width (mm) - Foot (left) to Head (right) →', fontsize=11, labelpad=12)
     ax.set_ylabel('Depth (mm) - Back to Front →', fontsize=11, labelpad=12)
     ax.set_zlabel('Height (mm) ↑', fontsize=11, labelpad=12)
-    ax.set_title('3D VIEW - Looking INTO alcove from front-right (origin at back-left corner)', 
+    ax.set_title('3D VIEW - Looking INTO alcove (foot LEFT / orange-yellow, head RIGHT)', 
                 fontsize=15, fontweight='bold', pad=20)
     
     ax.set_xlim(0, OVERALL_WIDTH + 300)
     ax.set_ylim(0, OVERALL_DEPTH + 300)
     ax.set_zlim(0, OVERALL_HEIGHT + 300)
     
-    # View from front-right looking toward back-left corner (INTO the alcove)
-    # azim=45° means looking from positive Y (front) toward origin (back corner)
+    # Keep front toward viewer / back at far corner (azim=45 — user confirmed this front/rear).
+    # Matplotlib draws X increasing right→left at this angle, so invert X so:
+    #   LEFT of screen  = FOOT (X=0, orange/yellow)
+    #   RIGHT of screen = HEAD (X=max, 326mm fascia)
+    # Matches top plan. Do NOT change geometry — only the camera/axis display.
     ax.view_init(elev=20, azim=45)
+    ax.invert_xaxis()
     
     ax.legend(loc='upper right', fontsize=10)
     ax.grid(True, alpha=0.3)
