@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabin Bed Project - Complete Plans</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 5px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .summary-box {
+            background: #ecf0f1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #e74c3c;
+        }
+        
+        .summary-box h3 {
+            margin-top: 0;
+            color: #e74c3c;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            background: #fff;
+            border: 2px solid #3498db;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .info-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .drawing-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .drawing-section img {
+            width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .materials-list {
+            background: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+        }
+        
+        .materials-list h3 {
+            color: #27ae60;
+        }
+        
+        .materials-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .materials-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .materials-list li:before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .cost-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .cost-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+        }
+        
+        .warning-box strong {
+            color: #856404;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 10px 10px 0;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #2980b9;
+        }
+        
+        .print-btn {
+            background: #27ae60;
+        }
+        
+        .print-btn:hover {
+            background: #229954;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+            
+            .download-btn {
+                display: none;
+            }
+            
+            .drawing-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛏️ Cabin Bed Project - Complete Construction Plans</h1>
+        
+        <div class="summary-box">
+            <h3>Project Overview</h3>
+            <p>Complete plans for a custom cabin day bed with integrated storage, shelving, and tablet mount. 
+            This elevated bed design features a climbing access, under-bed drawers, and surrounding stud wall 
+            construction with flush-mounted shelving.</p>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Overall Dimensions</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li><strong>Width:</strong> 2246mm</li>
+                    <li><strong>Depth:</strong> 1222mm</li>
+                    <li><strong>Height:</strong> 2380mm</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h4>Sleeping Area</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li><strong>Mattress:</strong> 1900 × 900mm</li>
+                    <li><strong>Platform Height:</strong> 530mm</li>
+                    <li><strong>Mattress Top:</strong> 750mm</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h4>Construction Method</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li>70mm metal stud frame</li>
+                    <li>12.5mm plasterboard</li>
+                    <li>18mm plywood shelving</li>
+                </ul>
+            </div>
+            
+            <div class="info-card">
+                <h4>Key Features</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✓ Elevated platform design</li>
+                    <li>✓ Access opening (1300mm)</li>
+                    <li>✓ 2 × under-bed drawers</li>
+                    <li>✓ Integrated tablet mount</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h2>📐 Technical Drawings</h2>
+        
+        <div class="drawing-section">
+            <h3>1. Front Elevation View</h3>
+            <p>This view shows the front-facing design including the access opening with curtains, 
+            drawer positions, and overall height dimensions.</p>
+            <img src="front_elevation.png" alt="Front Elevation">
+        </div>
+        
+        <div class="drawing-section">
+            <h3>2. Top Plan View</h3>
+            <p>Overhead view showing the bed layout, mattress position, shelf placements, 
+            and access opening location.</p>
+            <img src="top_plan.png" alt="Top Plan View">
+        </div>
+        
+        <div class="drawing-section">
+            <h3>3. Side Elevation View</h3>
+            <p>Side view showing the platform height, mattress thickness, wall positions, 
+            and vertical proportions.</p>
+            <img src="side_elevation.png" alt="Side Elevation">
+        </div>
+        
+        <div class="drawing-section">
+            <h3>4. 3D Visualization</h3>
+            <p>Three-dimensional perspective showing how all components fit together in space.</p>
+            <img src="3d_visualization.png" alt="3D Visualization">
+        </div>
+        
+        <div class="drawing-section">
+            <h3>5. Drawer Details</h3>
+            <p>Detailed views of drawer construction and dimensions.</p>
+            <img src="drawer_detail.png" alt="Drawer Front Detail">
+            <br><br>
+            <img src="drawer_side_detail.png" alt="Drawer Side Detail">
+        </div>
+        
+        <h2>📦 Materials List</h2>
+        
+        <div class="materials-list">
+            <h3>Metal Stud System (70mm)</h3>
+            <ul>
+                <li>12 × 3m C-studs (cut to 1188mm heights)</li>
+                <li>5 × 3m floor track</li>
+                <li>5 × 3m head track</li>
+                <li>100 × self-drilling metal screws</li>
+                <li>30 × floor fixings (type depends on floor)</li>
+            </ul>
+        </div>
+        
+        <div class="materials-list">
+            <h3>Plasterboard & Finishing</h3>
+            <ul>
+                <li>3 × sheets 12.5mm plasterboard (2400 × 1200mm)</li>
+                <li>1000 × drywall screws (25mm)</li>
+                <li>50m × jointing tape roll</li>
+                <li>12kg × jointing compound</li>
+                <li>10m × metal corner bead</li>
+                <li>2.5L × primer</li>
+                <li>5L × paint (color of choice)</li>
+            </ul>
+        </div>
+        
+        <div class="materials-list">
+            <h3>Sheet Goods</h3>
+            <ul>
+                <li>2-3 × sheets 18mm plywood (2440 × 1220mm) - platform, shelves, bed frame, drawer fronts</li>
+                <li>1 × sheet 12mm plywood (2440 × 1220mm) - drawer sides and backs</li>
+                <li>1 × sheet 6mm plywood (2440 × 1220mm) - drawer bases</li>
+                <li>20m × iron-on edge tape</li>
+                <li>500ml × wood glue</li>
+            </ul>
+        </div>
+        
+        <div class="materials-list">
+            <h3>Hardware & Fixings</h3>
+            <ul>
+                <li>2 pairs × heavy-duty drawer runners (900mm, floor-mounted, 20kg+ rating)</li>
+                <li>2 × drawer handles/pulls</li>
+                <li>1 × curtain rail (1300mm) with brackets</li>
+                <li>1 × 7" tablet mount (universal VESA or tablet-specific)</li>
+                <li>100 × wood screws (various sizes)</li>
+                <li>10 × cable management clips</li>
+            </ul>
+        </div>
+        
+        <div class="materials-list">
+            <h3>Structural Timber</h3>
+            <ul>
+                <li>2m × 20mm × 20mm timber (for middle support legs)</li>
+            </ul>
+        </div>
+        
+        <div class="cost-box">
+            <h3>💷 Estimated Total Cost</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Estimated Cost (GBP)</th>
+                </tr>
+                <tr>
+                    <td>Metal stud system</td>
+                    <td>£80 - £120</td>
+                </tr>
+                <tr>
+                    <td>Plasterboard & finishing</td>
+                    <td>£100 - £150</td>
+                </tr>
+                <tr>
+                    <td>Plywood (all types)</td>
+                    <td>£150 - £200</td>
+                </tr>
+                <tr>
+                    <td>Hardware & fixings</td>
+                    <td>£80 - £120</td>
+                </tr>
+                <tr>
+                    <td>Finishing materials</td>
+                    <td>£50 - £80</td>
+                </tr>
+                <tr>
+                    <td>Curtains & accessories</td>
+                    <td>£40 - £80</td>
+                </tr>
+                <tr>
+                    <th><strong>TOTAL ESTIMATED</strong></th>
+                    <th><strong>£500 - £750</strong></th>
+                </tr>
+            </table>
+            <p style="margin-top: 15px;"><em>Note: Prices vary by supplier, location, and quality. 
+            Add 10-15% contingency for waste and unexpected items.</em></p>
+        </div>
+        
+        <h2>🔧 Construction Sequence</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Task</th>
+                    <th>Key Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Floor Preparation</td>
+                    <td>Mark footprint, install wooden plank base (173mm high), ensure level, 
+                    add middle support legs at 940mm positions</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Left Wall Extension</td>
+                    <td>Cut existing wall 100-200mm, extend frame 237mm, re-plasterboard</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Metal Stud Frame</td>
+                    <td>Install floor/head tracks, vertical studs at 400mm centers, 
+                    noggins at 1150mm (shelf) and 975mm (tablet)</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Services</td>
+                    <td>Route tablet power cable, consider lighting, future-proof with conduit</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Plasterboard</td>
+                    <td>Fix 12.5mm plasterboard, cut access opening (1300 × 580mm), 
+                    tape/joint, sand, prime, paint</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Bed Frame</td>
+                    <td>Build 357mm high frame around platform edge with 18mm plywood</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Shelving</td>
+                    <td>Cut and install rear shelf (2246 × 210mm) and head shelf 
+                    (346 × 900mm), flush-mount, finish</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Drawers</td>
+                    <td>Cut components, assemble (910 × 150 × 900mm each), 
+                    install floor-mounted runners, fit and adjust</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Tablet Mount</td>
+                    <td>Install bracket at center, 975mm height, connect power, 
+                    cable management</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Finishing</td>
+                    <td>Curtain rail, hang curtains, add mattress, safety check all edges</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>⚠️ Important Considerations</h2>
+        
+        <div class="warning-box">
+            <p><strong>Questions Requiring Clarification:</strong></p>
+            <ol>
+                <li><strong>Drawer leg configuration:</strong> Please confirm exact positions of all 4 support legs 
+                (2 ends + 2 middle) to finalize drawer widths (currently calculated at 910mm each)</li>
+                <li><strong>Head shelf depth:</strong> Should it be 900mm or extend to 1110mm to connect with rear shelf?</li>
+                <li><strong>Left wall cut depth:</strong> Confirm 100mm or 200mm for existing wall integration</li>
+                <li><strong>Floor type:</strong> Concrete or timber joists? (affects fixing method)</li>
+                <li><strong>Lighting:</strong> Any integrated LED strips or other lighting required?</li>
+            </ol>
+        </div>
+        
+        <h2>🛡️ Safety Features</h2>
+        
+        <ul style="line-height: 2; margin: 20px 0 20px 40px;">
+            <li>All sharp corners and edges should be rounded or protected with edge guards</li>
+            <li>Access opening perimeter must have smooth, finished edges</li>
+            <li>Drawer runners must have stops to prevent complete removal</li>
+            <li>Tablet mount must be securely fixed to noggins (not just plasterboard)</li>
+            <li>All frame connections must be secure and load-tested</li>
+            <li>Ensure adequate ventilation within enclosed space</li>
+            <li>Check weight capacity of shelves for intended use</li>
+            <li>Maintain clear access to electrical outlets</li>
+        </ul>
+        
+        <h2>📝 Downloads & Next Steps</h2>
+        
+        <div style="margin: 30px 0;">
+            <a href="cabin-bed-specifications.md" class="download-btn" download>
+                📄 Download Full Specifications (MD)
+            </a>
+            <a href="materials_calculation.txt" class="download-btn" download>
+                📋 Download Materials List (TXT)
+            </a>
+            <button onclick="window.print()" class="download-btn print-btn">
+                🖨️ Print This Page
+            </button>
+        </div>
+        
+        <div class="summary-box" style="background: #d4edda; border-left-color: #28a745;">
+            <h3 style="color: #155724;">✅ What You Have Now</h3>
+            <ul style="line-height: 2; margin: 10px 0 10px 20px;">
+                <li>Complete technical drawings with dimensions (front, top, side views)</li>
+                <li>3D visualization of the assembled bed</li>
+                <li>Detailed drawer construction drawings</li>
+                <li>Comprehensive materials list with quantities</li>
+                <li>Estimated costs breakdown</li>
+                <li>Step-by-step construction sequence</li>
+                <li>Safety and finishing guidelines</li>
+            </ul>
+        </div>
+        
+        <div class="warning-box">
+            <p><strong>Before You Start Building:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Answer the clarification questions listed above</li>
+                <li>Verify all measurements fit your available space</li>
+                <li>Check local building codes if applicable</li>
+                <li>Source materials from local suppliers for accurate pricing</li>
+                <li>Consider having a helper for plasterboard installation</li>
+                <li>Test tablet mount and power routing before final assembly</li>
+            </ol>
+        </div>
+        
+        <hr style="margin: 40px 0; border: none; border-top: 2px solid #ddd;">
+        
+        <p style="text-align: center; color: #777; font-size: 0.9em;">
+            Generated: October 21, 2026 | All dimensions in millimeters unless specified
+        </p>
+    </div>
+</body>
+</html>

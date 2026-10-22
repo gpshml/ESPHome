@@ -113,21 +113,26 @@ def create_3d_visualization():
     draw_box(head_wall_x, 0, 0, HEAD_WALL_WIDTH, head_wall_depth, 
              SHELF_TOP_HEIGHT, 'lightgray', 0.5)
     
-    # 5. FRONT WALLS (left, right, below shelf level - up to where access opening is)
-    # Left front wall (foot wall side)
+    # 5. FRONT WALLS around opening (98mm thick only, not full extension depth)
+    # Left front wall (foot wall side) - only to ACCESS_TOP, not ceiling
     front_left_width = ACCESS_START_FROM_LEFT - FOOT_WALL_THICKNESS
-    draw_box(FOOT_WALL_THICKNESS, extension_y_start, 0, front_left_width, 
-             WALL_EXTENSION_DEPTH, ACCESS_TOP, 'lightblue', 0.4)
+    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
+             front_left_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'lightblue', 0.4)
     
-    # Right front wall (head wall side)
+    # Right front wall (head wall side) - only to ACCESS_TOP, not ceiling
     front_right_x = ACCESS_START_FROM_LEFT + ACCESS_WIDTH
     front_right_width = OVERALL_WIDTH - front_right_x
-    draw_box(front_right_x, extension_y_start, 0, front_right_width,
-             WALL_EXTENSION_DEPTH, ACCESS_TOP, 'lightblue', 0.4)
+    draw_box(front_right_x, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
+             front_right_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'lightblue', 0.4)
     
-    # Front wall below access opening (full width)
-    draw_box(FOOT_WALL_THICKNESS, extension_y_start, 0, INTERNAL_WIDTH,
-             WALL_EXTENSION_DEPTH, ACCESS_BOTTOM, 'lightblue', 0.3)
+    # Front wall below access opening (full width, 98mm thick)
+    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
+             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, ACCESS_BOTTOM, 'lightblue', 0.3)
+    
+    # Front wall above access opening (full width, 98mm thick) - from ACCESS_TOP to ceiling
+    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, ACCESS_TOP,
+             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, OVERALL_HEIGHT - ACCESS_TOP, 
+             'lightblue', 0.3)
     
     # 6. WALLS ABOVE SHELF (transparent, extending back over rear shelf area)
     # This covers from front to back, above shelf level
@@ -148,8 +153,8 @@ def create_3d_visualization():
     draw_box(plinth_x, mattress_y_start, PLATFORM_TOP, MATTRESS_WIDTH, 
              MATTRESS_DEPTH, MATTRESS_THICKNESS, 'lightgreen', 0.7)
     
-    # 10. ACCESS OPENING outline (at front wall)
-    opening_y = extension_y_start
+    # 10. ACCESS OPENING outline (at front wall, 98mm thick)
+    opening_y = OVERALL_DEPTH - FOOT_WALL_THICKNESS
     opening_corners = [
         [ACCESS_START_FROM_LEFT, opening_y, ACCESS_BOTTOM],
         [ACCESS_START_FROM_LEFT + ACCESS_WIDTH, opening_y, ACCESS_BOTTOM],
@@ -160,7 +165,7 @@ def create_3d_visualization():
     xs, ys, zs = zip(*opening_corners)
     ax.plot(xs, ys, zs, 'r-', linewidth=5, label='Access Opening')
     
-    ax.text(ACCESS_START_FROM_LEFT + ACCESS_WIDTH/2, opening_y + 100, 
+    ax.text(ACCESS_START_FROM_LEFT + ACCESS_WIDTH/2, OVERALL_DEPTH + 80, 
            ACCESS_BOTTOM + ACCESS_HEIGHT/2,
            f'ACCESS\nOPENING\n{ACCESS_WIDTH}×{ACCESS_HEIGHT}mm',
            fontsize=11, ha='center', fontweight='bold',
@@ -168,23 +173,24 @@ def create_3d_visualization():
     
     # Labels
     ax.text(OVERALL_WIDTH/2, OVERALL_DEPTH/2, OVERALL_HEIGHT + 200,
-           f'CABIN BED 3D VIEW\n{OVERALL_WIDTH}mm W × {OVERALL_DEPTH}mm D × {OVERALL_HEIGHT}mm H\nOrigin at back-left corner',
+           f'CABIN BED 3D VIEW\n{OVERALL_WIDTH}mm W × {OVERALL_DEPTH}mm D × {OVERALL_HEIGHT}mm H\nOrigin (0,0,0) at back-left corner',
            fontsize=14, ha='center', fontweight='bold',
            bbox=dict(boxstyle='round', facecolor='white', alpha=0.9))
     
     # Axis properties
-    ax.set_xlabel('Width (mm) →', fontsize=12, labelpad=12)
-    ax.set_ylabel('Depth (mm) → INTO ROOM', fontsize=12, labelpad=12)
-    ax.set_zlabel('Height (mm) ↑', fontsize=12, labelpad=12)
-    ax.set_title('3D VIEW - From back-left corner (tight against walls)', 
-                fontsize=16, fontweight='bold', pad=20)
+    ax.set_xlabel('Width (mm) - Foot (left) to Head (right) →', fontsize=11, labelpad=12)
+    ax.set_ylabel('Depth (mm) - Back to Front →', fontsize=11, labelpad=12)
+    ax.set_zlabel('Height (mm) ↑', fontsize=11, labelpad=12)
+    ax.set_title('3D VIEW - Looking INTO alcove from front-right (origin at back-left corner)', 
+                fontsize=15, fontweight='bold', pad=20)
     
     ax.set_xlim(-200, OVERALL_WIDTH + 300)
     ax.set_ylim(-200, OVERALL_DEPTH + 300)
     ax.set_zlim(0, OVERALL_HEIGHT + 300)
     
-    # View from front-left corner looking back toward the alcove
-    ax.view_init(elev=20, azim=225)
+    # View from front-right looking toward back-left corner (INTO the alcove)
+    # azim=45° means looking from positive Y (front) toward origin (back corner)
+    ax.view_init(elev=20, azim=45)
     
     ax.legend(loc='upper right', fontsize=10)
     ax.grid(True, alpha=0.3)
