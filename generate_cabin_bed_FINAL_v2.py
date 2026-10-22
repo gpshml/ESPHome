@@ -107,100 +107,84 @@ def create_3d_visualization():
     draw_box(FOOT_WALL_THICKNESS, 0, 0, INTERNAL_WIDTH, REAR_SHELF_DEPTH, 
              SHELF_TOP_HEIGHT, 'wheat', 0.4)
     
-    # 4. HEAD WALL (right side, X = 2018 to 2344) - up to shelf level only
-    head_wall_x = OVERALL_WIDTH - HEAD_WALL_WIDTH  # X = 2018
-    # Head wall spans from rear shelf to where mattress ends
-    head_wall_depth = REAR_SHELF_DEPTH + BED_TOLERANCE + BED_FRAME_DEPTH + BED_TOLERANCE
-    draw_box(head_wall_x, 0, 0, HEAD_WALL_WIDTH, head_wall_depth, 
-             SHELF_TOP_HEIGHT, 'lightgray', 0.5)
-    ax.text(head_wall_x + HEAD_WALL_WIDTH/2, head_wall_depth/2, SHELF_TOP_HEIGHT/2,
-           'HEAD\nWALL\n326mm', fontsize=10, ha='center', fontweight='bold')
+    # Front wall plane (inner face) — bed stays behind this (frame ends Y=1130)
+    front_wall_y = OVERALL_DEPTH - FOOT_WALL_THICKNESS  # 1144mm
     
-    # 5. FRONT WALLS around opening (98mm thick only, not full extension depth)
-    # Left front wall (foot wall side) - only to ACCESS_TOP, not ceiling
-    front_left_width = ACCESS_START_FROM_LEFT - FOOT_WALL_THICKNESS
-    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
-             front_left_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'lightblue', 0.4)
+    # 4. HEAD WALL (right) — back to front wall so bed is enclosed at head end
+    head_wall_x = OVERALL_WIDTH - HEAD_WALL_WIDTH
+    draw_box(head_wall_x, 0, 0, HEAD_WALL_WIDTH, front_wall_y, 
+             SHELF_TOP_HEIGHT, 'lightgray', 0.55)
     
-    # Right front wall (head wall side) - only to ACCESS_TOP, not ceiling
-    front_right_x = ACCESS_START_FROM_LEFT + ACCESS_WIDTH
-    front_right_width = OVERALL_WIDTH - front_right_x
-    draw_box(front_right_x, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
-             front_right_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'lightblue', 0.4)
-    
-    # Front wall below access opening (full width, 98mm thick)
-    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, 0, 
-             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, ACCESS_BOTTOM, 'lightblue', 0.3)
-    
-    # Front wall above access opening (full width, 98mm thick) - from ACCESS_TOP to ceiling
-    draw_box(FOOT_WALL_THICKNESS, OVERALL_DEPTH - FOOT_WALL_THICKNESS, ACCESS_TOP,
-             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, OVERALL_HEIGHT - ACCESS_TOP, 
-             'lightblue', 0.3)
-    
-    # 6. WALLS ABOVE SHELF (transparent, extending back over rear shelf area)
-    # This covers from front to back, above shelf level
+    # 5. WALLS ABOVE SHELF (draw early — behind everything)
     draw_box(FOOT_WALL_THICKNESS, 0, SHELF_TOP_HEIGHT, INTERNAL_WIDTH, OVERALL_DEPTH,
-             WALL_HEIGHT_ABOVE_SHELF, 'lightgray', 0.15)
+             WALL_HEIGHT_ABOVE_SHELF, 'lightgray', 0.12)
     
-    # 7. BASE PLINTH (wooden planks raising bed)
+    # 6. BED first (behind front fascia) — frame Y=210→1130, mattress Y=220→1120
     mattress_y_start = REAR_SHELF_DEPTH + BED_TOLERANCE
     plinth_x = FOOT_WALL_THICKNESS + BED_TOLERANCE
-    draw_box(plinth_x, mattress_y_start, 0, MATTRESS_WIDTH, MATTRESS_DEPTH,
-             PLATFORM_BASE_HEIGHT, 'sandybrown', 0.4)
-    
-    # 8. BED FRAME PLATFORM
-    draw_box(plinth_x, mattress_y_start, PLATFORM_BASE_HEIGHT, MATTRESS_WIDTH, 
-             MATTRESS_DEPTH, PLATFORM_FRAME_HEIGHT, 'brown', 0.4)
-    
-    # 9. MATTRESS
+    frame_y_start = REAR_SHELF_DEPTH
+    draw_box(plinth_x, frame_y_start, 0, MATTRESS_WIDTH, BED_FRAME_DEPTH,
+             PLATFORM_BASE_HEIGHT, 'sandybrown', 0.45)
+    draw_box(plinth_x, frame_y_start, PLATFORM_BASE_HEIGHT, MATTRESS_WIDTH, 
+             BED_FRAME_DEPTH, PLATFORM_FRAME_HEIGHT, 'brown', 0.45)
     draw_box(plinth_x, mattress_y_start, PLATFORM_TOP, MATTRESS_WIDTH, 
-             MATTRESS_DEPTH, MATTRESS_THICKNESS, 'lightgreen', 0.7)
+             MATTRESS_DEPTH, MATTRESS_THICKNESS, 'lightgreen', 0.65)
     
-    # 10. ACCESS OPENING outline (at front wall, 98mm thick)
-    opening_y = OVERALL_DEPTH - FOOT_WALL_THICKNESS
+    # 7. FRONT ENCLOSURE last (more opaque) so bed reads as INSIDE, not in front of it
+    front_left_width = ACCESS_START_FROM_LEFT - FOOT_WALL_THICKNESS
+    front_right_x = ACCESS_START_FROM_LEFT + ACCESS_WIDTH
+    front_right_width = OVERALL_WIDTH - front_right_x
+    # Left fascia (foot side)
+    draw_box(FOOT_WALL_THICKNESS, front_wall_y, 0,
+             front_left_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'steelblue', 0.55)
+    # Right fascia (head side — thicker) wraps in front of bed's front-right corner
+    draw_box(front_right_x, front_wall_y, 0,
+             front_right_width, FOOT_WALL_THICKNESS, ACCESS_TOP, 'steelblue', 0.55)
+    # Below opening
+    draw_box(FOOT_WALL_THICKNESS, front_wall_y, 0,
+             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, ACCESS_BOTTOM, 'steelblue', 0.5)
+    # Above opening to ceiling
+    draw_box(FOOT_WALL_THICKNESS, front_wall_y, ACCESS_TOP,
+             INTERNAL_WIDTH, FOOT_WALL_THICKNESS, OVERALL_HEIGHT - ACCESS_TOP,
+             'steelblue', 0.5)
+    
+    # Access opening on front face
     opening_corners = [
-        [ACCESS_START_FROM_LEFT, opening_y, ACCESS_BOTTOM],
-        [ACCESS_START_FROM_LEFT + ACCESS_WIDTH, opening_y, ACCESS_BOTTOM],
-        [ACCESS_START_FROM_LEFT + ACCESS_WIDTH, opening_y, ACCESS_TOP],
-        [ACCESS_START_FROM_LEFT, opening_y, ACCESS_TOP],
-        [ACCESS_START_FROM_LEFT, opening_y, ACCESS_BOTTOM]
+        [ACCESS_START_FROM_LEFT, front_wall_y, ACCESS_BOTTOM],
+        [ACCESS_START_FROM_LEFT + ACCESS_WIDTH, front_wall_y, ACCESS_BOTTOM],
+        [ACCESS_START_FROM_LEFT + ACCESS_WIDTH, front_wall_y, ACCESS_TOP],
+        [ACCESS_START_FROM_LEFT, front_wall_y, ACCESS_TOP],
+        [ACCESS_START_FROM_LEFT, front_wall_y, ACCESS_BOTTOM]
     ]
     xs, ys, zs = zip(*opening_corners)
     ax.plot(xs, ys, zs, 'r-', linewidth=5, label='Access Opening')
-    
-    ax.text(ACCESS_START_FROM_LEFT + ACCESS_WIDTH/2, OVERALL_DEPTH + 80, 
-           ACCESS_BOTTOM + ACCESS_HEIGHT/2,
-           f'ACCESS\nOPENING\n{ACCESS_WIDTH}×{ACCESS_HEIGHT}mm',
-           fontsize=11, ha='center', fontweight='bold',
+    ax.text(ACCESS_START_FROM_LEFT + ACCESS_WIDTH/2, front_wall_y,
+           (ACCESS_BOTTOM + ACCESS_TOP) / 2,
+           f'ACCESS OPENING\n{ACCESS_WIDTH}×{ACCESS_HEIGHT}mm',
+           fontsize=10, ha='center', fontweight='bold',
            bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.9))
     
-    # Labels
-    ax.text(OVERALL_WIDTH/2, OVERALL_DEPTH/2, OVERALL_HEIGHT + 200,
-           f'CABIN BED 3D VIEW\n{OVERALL_WIDTH}mm W × {OVERALL_DEPTH}mm D × {OVERALL_HEIGHT}mm H\nOrigin (0,0,0) at back-left corner',
-           fontsize=14, ha='center', fontweight='bold',
-           bbox=dict(boxstyle='round', facecolor='white', alpha=0.9))
-    
-    # Axis properties
-    ax.set_xlabel('Width (mm) - Foot (left) to Head (right) →', fontsize=11, labelpad=12)
-    ax.set_ylabel('Depth (mm) - Back to Front →', fontsize=11, labelpad=12)
-    ax.set_zlabel('Height (mm) ↑', fontsize=11, labelpad=12)
-    ax.set_title('3D VIEW - Looking INTO alcove (foot LEFT / orange-yellow, head RIGHT)', 
+    ax.set_xlabel('Width (mm) — Foot ← → Head', fontsize=11, labelpad=10)
+    ax.set_ylabel('Depth (mm) — Back → Front', fontsize=11, labelpad=10)
+    ax.set_zlabel('Height (mm)', fontsize=11, labelpad=10)
+    ax.set_title('3D VIEW — Into alcove (foot LEFT / orange-yellow, head RIGHT)',
                 fontsize=15, fontweight='bold', pad=20)
     
-    ax.set_xlim(0, OVERALL_WIDTH + 300)
-    ax.set_ylim(0, OVERALL_DEPTH + 300)
-    ax.set_zlim(0, OVERALL_HEIGHT + 300)
+    # Flush to model bounds: back-left origin in the far corner of the 3D box
+    ax.set_xlim(0, OVERALL_WIDTH)
+    ax.set_ylim(0, OVERALL_DEPTH)
+    ax.set_zlim(0, OVERALL_HEIGHT)
+    ax.set_box_aspect((OVERALL_WIDTH, OVERALL_DEPTH, OVERALL_HEIGHT))
+    for axis in (ax.xaxis, ax.yaxis, ax.zaxis):
+        axis.pane.fill = False
+        axis.pane.set_edgecolor('#bbbbbb')
     
-    # Keep front toward viewer / back at far corner (azim=45 — user confirmed this front/rear).
-    # Matplotlib draws X increasing right→left at this angle, so invert X so:
-    #   LEFT of screen  = FOOT (X=0, orange/yellow)
-    #   RIGHT of screen = HEAD (X=max, 326mm fascia)
-    # Matches top plan. Do NOT change geometry — only the camera/axis display.
+    # Keep foot LEFT / head RIGHT; back at far corner (no geometry change)
     ax.view_init(elev=20, azim=45)
     ax.invert_xaxis()
     
     ax.legend(loc='upper right', fontsize=10)
-    ax.grid(True, alpha=0.3)
+    ax.grid(True, alpha=0.25)
     
     plt.tight_layout()
     plt.savefig('/workspace/3d_view_FINAL.png', dpi=300, bbox_inches='tight')
