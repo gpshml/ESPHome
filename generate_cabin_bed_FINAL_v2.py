@@ -91,27 +91,30 @@ def create_3d_visualization():
                                edgecolor='black', linewidth=1.5)
         ax.add_collection3d(poly)
     
-    # 1. FOOT WALL (left side, X=0 to 98)
-    draw_box(0, 0, 0, FOOT_WALL_THICKNESS, OVERALL_DEPTH - WALL_EXTENSION_DEPTH, 
-             SHELF_TOP_HEIGHT, 'darkorange', 0.5)
-    
-    # 2. FOOT WALL EXTENSION (237mm at front, shown in yellow)
+    # 1. FOOT WALL (left side, X=0 to 98) - FULL HEIGHT
     extension_y_start = OVERALL_DEPTH - WALL_EXTENSION_DEPTH
+    # Main foot wall (existing part) - full height
+    draw_box(0, 0, 0, FOOT_WALL_THICKNESS, extension_y_start, 
+             OVERALL_HEIGHT, 'darkorange', 0.5)
+    
+    # 2. FOOT WALL EXTENSION (237mm at front, shown in yellow) - FULL HEIGHT
     draw_box(0, extension_y_start, 0, FOOT_WALL_THICKNESS, WALL_EXTENSION_DEPTH,
-             SHELF_TOP_HEIGHT, 'yellow', 0.7)
-    ax.text(FOOT_WALL_THICKNESS/2, extension_y_start + WALL_EXTENSION_DEPTH/2, SHELF_TOP_HEIGHT/2,
-           f'{WALL_EXTENSION_DEPTH}mm\nEXT', fontsize=10, ha='center', fontweight='bold')
+             OVERALL_HEIGHT, 'yellow', 0.7)
+    ax.text(FOOT_WALL_THICKNESS/2, extension_y_start + WALL_EXTENSION_DEPTH/2, OVERALL_HEIGHT/2,
+           f'FOOT\nWALL\n{WALL_EXTENSION_DEPTH}mm\nEXT', fontsize=10, ha='center', fontweight='bold')
     
     # 3. REAR WALL/SHELF (at Y=0, back wall)
     draw_box(FOOT_WALL_THICKNESS, 0, 0, INTERNAL_WIDTH, REAR_SHELF_DEPTH, 
              SHELF_TOP_HEIGHT, 'wheat', 0.4)
     
-    # 4. HEAD WALL (right side, X = 2018 to 2344)
-    head_wall_x = OVERALL_WIDTH - HEAD_WALL_WIDTH
-    # Head wall spans from rear shelf to where mattress starts
+    # 4. HEAD WALL (right side, X = 2018 to 2344) - up to shelf level only
+    head_wall_x = OVERALL_WIDTH - HEAD_WALL_WIDTH  # X = 2018
+    # Head wall spans from rear shelf to where mattress ends
     head_wall_depth = REAR_SHELF_DEPTH + BED_TOLERANCE + BED_FRAME_DEPTH + BED_TOLERANCE
     draw_box(head_wall_x, 0, 0, HEAD_WALL_WIDTH, head_wall_depth, 
              SHELF_TOP_HEIGHT, 'lightgray', 0.5)
+    ax.text(head_wall_x + HEAD_WALL_WIDTH/2, head_wall_depth/2, SHELF_TOP_HEIGHT/2,
+           'HEAD\nWALL\n326mm', fontsize=10, ha='center', fontweight='bold')
     
     # 5. FRONT WALLS around opening (98mm thick only, not full extension depth)
     # Left front wall (foot wall side) - only to ACCESS_TOP, not ceiling
@@ -184,8 +187,8 @@ def create_3d_visualization():
     ax.set_title('3D VIEW - Looking INTO alcove from front-right (origin at back-left corner)', 
                 fontsize=15, fontweight='bold', pad=20)
     
-    ax.set_xlim(-200, OVERALL_WIDTH + 300)
-    ax.set_ylim(-200, OVERALL_DEPTH + 300)
+    ax.set_xlim(0, OVERALL_WIDTH + 300)
+    ax.set_ylim(0, OVERALL_DEPTH + 300)
     ax.set_zlim(0, OVERALL_HEIGHT + 300)
     
     # View from front-right looking toward back-left corner (INTO the alcove)
