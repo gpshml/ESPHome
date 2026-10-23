@@ -55,8 +55,22 @@ Z: 0 → 2380mm   FLOOR → CEILING
 7. Do **not** stop the foot wall at 1200mm — full height.
 8. Do **not** make the front opening surround as deep as the 237mm extension — it is **98mm**.
 
-## Files
+## Source of truth & files
 
-- Generator: `generate_cabin_bed_FINAL_v2.py`
-- Report: `cabin-bed-FINAL.html`
-- Images: `3d_view_FINAL.png`, `front_elevation_FINAL.png`, `top_plan_FINAL.png`, `side_elevation_FINAL.png`
+**Master model:** `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` (interactive Three.js)
+
+Static views are **captured from that model** (not drawn separately):
+
+```bash
+python3 -m http.server 8765   # in repo root
+node capture_static_views.mjs # writes *_FINAL.png from Front / Top / Side / 3D presets
+python3 create_final_report.py
+```
+
+| File | Role |
+|------|------|
+| `cabin_bed_model.js` | Geometry (mm) |
+| `cabin-bed-3d-viewer.html` | Interactive viewer + view presets |
+| `capture_static_views.mjs` | Headless Chrome capture |
+| `cabin-bed-FINAL.html` | Static report with embedded PNGs |
+| `3d_view_FINAL.png` etc. | Captured from the Three.js model |

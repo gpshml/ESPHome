@@ -35,7 +35,7 @@ tr:nth-child(even){{background:#f9f9f9}}
 
 <h1>🛏️ Cabin Bed - Final Technical Drawings</h1>
 <p style="text-align:center;font-size:17px;color:#666;margin-bottom:16px">
-Coordinate system corrected - Origin at back corner
+Static views captured from the interactive Three.js source model
 </p>
 <p style="text-align:center;margin-bottom:30px">
 <a href="cabin-bed-3d-viewer.html"
