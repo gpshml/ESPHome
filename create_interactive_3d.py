@@ -194,16 +194,19 @@ def build_figure():
 
 if __name__ == "__main__":
     fig = build_figure()
+    import os
+
+    # CDN version — small, opens well over http / htmlpreview
     out = "/workspace/cabin-bed-3d-interactive.html"
     fig.write_html(
         out,
-        include_plotlyjs=True,  # self-contained
+        include_plotlyjs="cdn",
         full_html=True,
         config=dict(
             displayModeBar=True,
             scrollZoom=True,
             displaylogo=False,
-            modeBarButtonsToRemove=["toImage"] if False else [],
+            responsive=True,
             toImageButtonOptions=dict(
                 format="png",
                 filename="cabin-bed-3d",
@@ -213,7 +216,11 @@ if __name__ == "__main__":
             ),
         ),
     )
-    import os
-    print(f"✓ Interactive 3D saved: {out}")
-    print(f"  Size: {os.path.getsize(out) / (1024*1024):.2f} MB")
-    print("  Open in any browser — drag to rotate.")
+    print(f"✓ Interactive 3D (CDN): {out} ({os.path.getsize(out)/1024:.1f} KB)")
+
+    # Offline fallback (embedded Plotly)
+    out_off = "/workspace/cabin-bed-3d-interactive-offline.html"
+    fig.write_html(out_off, include_plotlyjs=True, full_html=True,
+                   config=dict(displayModeBar=True, scrollZoom=True, displaylogo=False, responsive=True))
+    print(f"✓ Offline bundle: {out_off} ({os.path.getsize(out_off)/1024/1024:.2f} MB)")
+    print("  Prefer cabin-bed-3d-viewer.html (Three.js) or serve via http.server.")

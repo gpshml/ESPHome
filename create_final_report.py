@@ -38,11 +38,11 @@ tr:nth-child(even){{background:#f9f9f9}}
 Coordinate system corrected - Origin at back corner
 </p>
 <p style="text-align:center;margin-bottom:30px">
-<a href="cabin-bed-3d-interactive.html"
+<a href="cabin-bed-3d-viewer.html"
    style="display:inline-block;background:#2980b9;color:white;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">
    Open interactive 3D (rotate / zoom)
 </a>
-<br><span style="font-size:13px;color:#666">Drag to rotate · scroll to zoom · right-drag to pan · click legend to hide parts</span>
+<br><span style="font-size:13px;color:#666">Serve with a local web server (see below) · left-drag rotate · scroll zoom · right-drag pan</span>
 </p>
 
 <div class="fixes">
