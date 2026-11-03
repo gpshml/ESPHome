@@ -79,8 +79,8 @@ export function buildCabinBed(THREE) {
   // Head wall to front plane
   box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
 
-  // Above shelf (ghost volume)
-  box(root, FOOT, 0, SHELF, INTERNAL_W, D, H - SHELF, 0xdde1e6, 0.14);
+  // No full-depth above-shelf volume (it intersected the front fascia).
+  // Ceiling-height front fascia is drawn separately below.
 
   // Bed (behind front wall)
   const mx = FOOT + TOL;

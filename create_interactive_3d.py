@@ -111,11 +111,7 @@ def build_figure():
         head_x, 0, 0, HEAD_WALL_WIDTH, FRONT_WALL_Y, SHELF_TOP_HEIGHT,
         "#bdc3c7", 0.7, "Head wall 326mm"))
 
-    # Volume above shelf (very light)
-    traces.append(box_mesh(
-        FOOT_WALL_THICKNESS, 0, SHELF_TOP_HEIGHT, INTERNAL_WIDTH, OVERALL_DEPTH,
-        OVERALL_HEIGHT - SHELF_TOP_HEIGHT,
-        "#ecf0f1", 0.12, "Walls above shelf"))
+    # No full-depth above-shelf volume (intersected front fascia).
 
     # Bed stack (behind front wall)
     frame_y = REAR_SHELF_DEPTH

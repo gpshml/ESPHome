@@ -55,7 +55,7 @@ Static views captured from the interactive Three.js source model
 <li>237mm extension shown at <strong>FRONT</strong> of foot wall (yellow/orange, extending into room)</li>
 <li>Front wall properly rendered with access opening visible</li>
 <li>Base plinth and bed frame platform included</li>
-<li>Transparent walls above shelf extend back over rear shelf area</li>
+<li>Front fascia continues to ceiling around the access opening (no ghost volume cutting through the front)</li>
 </ul>
 </li>
 <li><strong>Top Plan:</strong>

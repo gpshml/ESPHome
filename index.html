@@ -121,7 +121,8 @@
       box(footGroup, 0, D - EXT, 0, FOOT, EXT, H, 0xf1c40f, 0.95);
       box(root, FOOT, 0, 0, INTERNAL_W, REAR, SHELF, 0xd4b896, 0.85);
       box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
-      box(root, FOOT, 0, SHELF, INTERNAL_W, D, H - SHELF, 0xdde1e6, 0.14);
+      // No full-depth "above shelf" volume — it cut through the front fascia.
+      // Front wall above the opening is already drawn with the fascia pieces.
 
       const mx = FOOT + TOL, fy = REAR, my = REAR + TOL;
       box(root, mx, fy, 0, MATT_W, FRAME_D, PLINTH, 0xc4a574, 0.95);
