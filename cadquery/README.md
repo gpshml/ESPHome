@@ -24,25 +24,26 @@ C-stud / U-track use real-ish hollow profiles (`STUD_W` 70, flange 45, track web
 
 GitHub renders the mesh in the browser when you open the file:
 
-- Coloured: [`cabin_bed_assembly.obj`](out/cabin_bed_assembly.obj) (keep [`.mtl`](out/cabin_bed_assembly.mtl) alongside in the same folder)
+- Coloured: [`cabin_bed_assembly.obj`](out/cabin_bed_assembly.obj) (keep [`.mtl`](out/cabin_bed_assembly.mtl) alongside)
 - Fallback: [`cabin_bed_assembly.stl`](out/cabin_bed_assembly.stl)
 
-STEP does not preview on GitHub — use FreeCAD / CAD for that. Orbit in the GitHub 3D view; **Marker-HEAD** should end up on the **left** and **Marker-FOOT** on the **right** when looking in from the room.
+OBJ/STL are exported in **metres** (~2.3 × 1.2 × 2.4). STEP stays in **mm** for CAD.
 
-## Review in Blender (optional)
+STEP does not preview on GitHub. In the GitHub 3D view, **Marker-HEAD** = left, **Marker-FOOT** = right when looking in from the room.
 
-Blender does not open STEP natively. Prefer the **coloured OBJ**:
+## Review in Blender
 
-1. Download `cadquery/out/cabin_bed_assembly.obj` **and** `cabin_bed_assembly.mtl` (same folder)
-2. Blender → **File → Import → Wavefront (.obj)**
-   - Transform: **Forward = Y Forward**, **Up = Z Up** (matches this model)
-3. Scene units are **millimetres**. Either:
-   - **Scene Properties → Units → Unit Scale 0.001** (Length = Millimetres), or
-   - Scale by **0.001** if you keep Blender’s default metres
-4. **View → Viewpoint → Front** — you should be looking into the alcove from the room
-5. **Marker-HEAD** must be on the **left**; **Marker-FOOT** on the **right**. If that looks reversed, you are viewing from the back wall — use Front / View opposite.
+The “bizarre slicing” across the model was from importing **mm as Blender units** (~2.4 km tall) — the viewport **clip end** cuts through it. These meshes are now in **metres**.
 
-Materials: painted PB = autumnal olive; studs/track = galvanised; decks/ledgers/lift = timber.
+1. Download `cabin_bed_assembly.obj` **and** `cabin_bed_assembly.mtl` together
+2. **File → Import → Wavefront (.obj)**
+   - Forward = **Y Forward**, Up = **Z Up**
+   - **Do not** scale by 0.001 again
+3. Scene units: **Metres** (Blender default is fine) — envelope ~2.3 m wide
+4. If anything still looks sliced: **Sidebar (N) → View → Clip End** ≥ `100` m
+5. **View → Viewpoint → Front** — **Marker-HEAD** left, **Marker-FOOT** right
+
+Materials: painted PB = autumnal olive; studs/track/noggins = galvanised; decks/ledgers/lift = timber.
 
 ## Coords
 

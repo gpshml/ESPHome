@@ -501,19 +501,33 @@ def iter_parts(assy: cq.Assembly):
         yield name, shape, obj.color
 
 
-def export_stl(assy: cq.Assembly, path: Path, tolerance: float = 0.5) -> None:
+def export_stl(
+    assy: cq.Assembly,
+    path: Path,
+    tolerance: float = 0.5,
+    *,
+    unit_scale: float = 0.001,
+) -> None:
+    """Export STL. Default unit_scale=0.001 → metres (Blender-safe; avoids clip slicing)."""
     comp = assembly_compound(assy)
+    if unit_scale != 1.0:
+        comp = comp.scale(unit_scale)
     path.parent.mkdir(parents=True, exist_ok=True)
+    # CadQuery exporters expect a Workplane/Shape
+    shape = cq.Workplane("XY").newObject([comp])
     cq.exporters.export(
-        cq.Workplane("XY").newObject([comp]),
+        shape,
         str(path),
         exportType="STL",
-        tolerance=tolerance,
-        angularTolerance=tolerance,
+        tolerance=tolerance * unit_scale if unit_scale != 1.0 else tolerance,
+        angularTolerance=0.2,
     )
 
 
 def _mesh_shape(shape, tolerance: float = 0.5):
+    """Return triangles as list of ((x,y,z)*3,) plus flat face normals."""
+    import math
+
     from OCP.BRep import BRep_Tool
     from OCP.BRepMesh import BRepMesh_IncrementalMesh
     from OCP.TopAbs import TopAbs_FACE, TopAbs_FORWARD
@@ -542,11 +556,33 @@ def _mesh_shape(shape, tolerance: float = 0.5):
             for n in (n1, n2, n3):
                 p = triangulation.Node(n).Transformed(trsf)
                 pts.append((p.X(), p.Y(), p.Z()))
-            tris.append(tuple(pts))
+            # Face normal (for Blender shading; avoids weird dark slices)
+            ax, ay, az = pts[0]
+            bx, by, bz = pts[1]
+            cx, cy, cz = pts[2]
+            ux, uy, uz = bx - ax, by - ay, bz - az
+            vx, vy, vz = cx - ax, cy - ay, cz - az
+            nx = uy * vz - uz * vy
+            ny = uz * vx - ux * vz
+            nz = ux * vy - uy * vx
+            ln = math.sqrt(nx * nx + ny * ny + nz * nz) or 1.0
+            normal = (nx / ln, ny / ln, nz / ln)
+            tris.append((tuple(pts), normal))
     return tris
 
 
-def export_obj_mtl(assy: cq.Assembly, obj_path: Path, tolerance: float = 0.5) -> None:
+def export_obj_mtl(
+    assy: cq.Assembly,
+    obj_path: Path,
+    tolerance: float = 0.5,
+    *,
+    unit_scale: float = 0.001,
+) -> None:
+    """Wavefront OBJ + MTL.
+
+    Default unit_scale=0.001 writes **metres** so Blender's default clip range
+    does not slice through a ~2.4 km (mm-as-units) model.
+    """
     obj_path.parent.mkdir(parents=True, exist_ok=True)
     mtl_path = obj_path.with_suffix(".mtl")
     mat_entries: dict[str, tuple[float, float, float]] = {}
@@ -583,9 +619,10 @@ def export_obj_mtl(assy: cq.Assembly, obj_path: Path, tolerance: float = 0.5) ->
         mat_entries[key] = (float(rgba[0]), float(rgba[1]), float(rgba[2]))
         return key
 
+    mesh_tol = tolerance  # OCC meshing stays in mm space
     for name, shape, color in iter_parts(assy):
         key = mat_key(color, name)
-        tris = _mesh_shape(shape, tolerance=tolerance)
+        tris = _mesh_shape(shape, tolerance=mesh_tol)
         objects.append((name, key, tris))
 
     with mtl_path.open("w", encoding="utf-8") as mf:
@@ -594,16 +631,27 @@ def export_obj_mtl(assy: cq.Assembly, obj_path: Path, tolerance: float = 0.5) ->
             mf.write(f"newmtl {key}\nKd {r:.4f} {g:.4f} {b:.4f}\n")
             mf.write("Ka 0.05 0.05 0.05\nKs 0.08 0.08 0.08\nNs 20\nd 1.0\n\n")
 
+    unit_note = "metres" if abs(unit_scale - 0.001) < 1e-12 else f"mm×{unit_scale}"
     with obj_path.open("w", encoding="utf-8") as of:
-        of.write("# Cabin bed (mm) — HEAD left (low X), FOOT right (high X)\n")
+        of.write("# Cabin bed — HEAD left, FOOT right\n")
+        of.write(f"# Units: {unit_note} (scale from mm = {unit_scale})\n")
+        of.write("# Blender: Forward=Y Forward, Up=Z Up; do NOT scale again if this is metres\n")
         of.write(f"mtllib {mtl_path.name}\n")
         v_index = 1
         for name, key, tris in objects:
-            of.write(f"o {name}\nusemtl {key}\n")
-            for tri in tris:
+            of.write(f"o {name}\ng {name}\nusemtl {key}\ns off\n")
+            for tri, normal in tris:
+                nx, ny, nz = normal
                 for pt in tri:
-                    of.write(f"v {pt[0]:.4f} {pt[1]:.4f} {pt[2]:.4f}\n")
-                of.write(f"f {v_index} {v_index + 1} {v_index + 2}\n")
+                    of.write(
+                        f"v {pt[0] * unit_scale:.6f} {pt[1] * unit_scale:.6f} {pt[2] * unit_scale:.6f}\n"
+                    )
+                # One normal per triangle corner (flat shaded, stable in Blender)
+                for _ in range(3):
+                    of.write(f"vn {nx:.6f} {ny:.6f} {nz:.6f}\n")
+                of.write(
+                    f"f {v_index}//{v_index} {v_index + 1}//{v_index + 1} {v_index + 2}//{v_index + 2}\n"
+                )
                 v_index += 3
 
 
@@ -645,11 +693,12 @@ def main() -> int:
         assy.export(str(args.out))
         print(f"Wrote {args.out} ({args.out.stat().st_size:,} bytes)")
         if args.stl and str(args.stl):
-            export_stl(assy, args.stl)
-            print(f"Wrote {args.stl} ({args.stl.stat().st_size:,} bytes)")
+            # Metres — Blender default clip range will not slice the model
+            export_stl(assy, args.stl, unit_scale=0.001)
+            print(f"Wrote {args.stl} ({args.stl.stat().st_size:,} bytes) [metres]")
         if args.obj and str(args.obj):
-            export_obj_mtl(assy, args.obj)
-            print(f"Wrote {args.obj} + {args.obj.with_suffix('.mtl').name}")
+            export_obj_mtl(assy, args.obj, unit_scale=0.001)
+            print(f"Wrote {args.obj} + {args.obj.with_suffix('.mtl').name} [metres]")
     return 0
 
 
