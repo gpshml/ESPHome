@@ -25,7 +25,11 @@ export const DIM = {
   ACCESS_X: 300 + 98, // 398
   ACCESS_BOT: 640,
   ACCESS_TOP: 2080,
-  get FRONT_Y() { return this.D - this.FOOT; }, // 1144
+  get FRONT_Y() { return this.D - this.FOOT; }, // 1144 — inner face of front fascia
+  /** Clear depth available for bed between rear shelf face and front fascia */
+  get BED_BAY() { return this.FRONT_Y - this.REAR; }, // 934
+  /** Equal front/rear tuck gap for the frame inside the bay */
+  get FRAME_TUCK() { return (this.BED_BAY - this.FRAME_D) / 2; }, // 7
   S: 0.001, // mm → scene units
 };
 
@@ -70,7 +74,7 @@ export function buildCabinBed(THREE) {
     return mesh;
   }
 
-  // Foot wall + front extension
+  // Foot wall: existing length against the back, 237mm extension at the FRONT into the room
   box(footGroup, 0, 0, 0, FOOT, D - EXT, H, 0xe67e22, 0.92);
   box(footGroup, 0, D - EXT, 0, FOOT, EXT, H, 0xf1c40f, 0.95);
 
@@ -78,14 +82,13 @@ export function buildCabinBed(THREE) {
   const shelfW = INTERNAL_W - HEAD_W;
   box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
 
-  // Head fascia — from back wall along bed depth; stops short of front (FRONT_Y = 1144)
-  const headDepth = REAR + FRAME_D; // 1130mm
-  box(root, W - HEAD_W, 0, 0, HEAD_W, headDepth, SHELF, 0xbdc3c7, 0.8);
+  // Head fascia — full depth from back wall to front fascia (no void at head/front corner)
+  box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
 
-  // Bed — behind front wall; frame Y = REAR → REAR+FRAME_D
+  // Bed — centred in bay so tuck gap is equal front & rear (covers fall evenly)
   const mx = FOOT + TOL;
-  const fy = REAR;
-  const my = REAR + TOL;
+  const fy = REAR + DIM.FRAME_TUCK;       // 7mm clear behind frame
+  const my = fy + TOL;                    // mattress inset 10mm in frame each end
   box(root, mx, fy, 0, MATT_W, FRAME_D, PLINTH, 0xc4a574, 0.95);
   box(root, mx, fy, PLINTH, MATT_W, FRAME_D, FRAME_H, 0x8B4513, 0.95);
   box(root, mx, my, PLATFORM, MATT_W, MATT_D, MATT_H, 0x2ecc71, 0.98);

@@ -9,11 +9,11 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 | Item | Spec | Qty / length | Notes |
 |------|------|--------------|-------|
-| Floor track | 70mm | ~7.2m total | Perimeter: foot wall 1242, rear 1920 (stops at head), head 1130 (back→bed front), front 2246 |
+| Floor track | 70mm | ~7.2m total | Perimeter: foot wall 1242, rear 1920 (stops at head), head 1144 (back→front fascia), front 2246 |
 | Head / ceiling track | 70mm | ~7.2m total | Match floor where walls go to full height |
 | Vertical studs (full height) | 70mm × 2380mm | 10–12 | Foot wall, front jambs, head end above shelf as needed; @ ~400mm centres |
 | Vertical studs (to shelf) | 70mm × 1200mm | 6–8 | Rear wall only (stops at shelf); width to head fascia |
-| Vertical studs (head fascia) | 70mm × 1200mm | 3–4 | Head wall 326mm wide × 1130mm deep (back wall to bed front) |
+| Vertical studs (head fascia) | 70mm × 1200mm | 3–4 | Head wall 326mm wide × 1144mm deep (back wall to front fascia) |
 | Noggins / horizontals | 70mm | ~12m | At 530mm (platform), ~975mm (tablet), 1200mm (shelf), 640 & 2080 (opening) |
 | Foot wall extension framing | 70mm | +237mm depth | Extend existing foot wall **into the room** |
 

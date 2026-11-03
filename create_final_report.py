@@ -123,8 +123,9 @@ Static views captured from the interactive Three.js source model
 <li><strong>Non-overlapping volumes:</strong>
 <ul>
 <li>Rear shelf width = internal width − head wall (1920mm) — does not run under the head fascia</li>
-<li>Head fascia 326 × 1130mm from the back wall along bed depth — stops 14mm short of the front fascia</li>
-<li>Front opening as a picture-frame: full-width sill, separate jambs, full-width lintel (no corner double-volumes)</li>
+<li>Head fascia 326 × 1144mm from the back wall to the front fascia (no void at the head/front corner)</li>
+<li>Bed centred in the 934mm bay: <span class="highlight">7mm frame / 17mm mattress tuck</span> equal front &amp; rear for covers</li>
+<li>Front opening as a picture-frame: full-width sill, separate jambs, full-width lintel</li>
 </ul>
 </li>
 <li><strong>Foot wall:</strong> 237mm extension at the <strong>front</strong> into the room (yellow)</li>
@@ -147,7 +148,7 @@ Static views captured from the interactive Three.js source model
 
 <div class="drawing">
 <h2>3. Top Plan View</h2>
-<p>Overhead. 237mm foot-wall extension at FRONT (bottom). Back wall at top (Y=0). Head fascia meets rear; shelf stops at head.</p>
+<p>Overhead. Back wall at top (Y=0), front at bottom. Foot left (orange = existing, yellow = 237mm front extension). Head meets front fascia; bed tuck equal front/rear.</p>
 <img src="data:image/png;base64,{top}" alt="Top Plan">
 </div>
 
@@ -168,7 +169,8 @@ Static views captured from the interactive Three.js source model
 <tr><td><strong>Platform Height</strong></td><td>530mm</td><td>173mm base + 357mm frame</td></tr>
 <tr><td><strong>Shelf Level</strong></td><td>1200mm</td><td>Rear wall stops here</td></tr>
 <tr><td><strong>Rear Shelf</strong></td><td>1920 × 210mm</td><td>Stops before 326mm head wall</td></tr>
-<tr><td><strong>Head Wall</strong></td><td>326 × 1130mm</td><td>From back wall to bed front face</td></tr>
+<tr><td><strong>Head Wall</strong></td><td>326 × 1144mm</td><td>From back wall to front fascia</td></tr>
+<tr><td><strong>Bed tuck (F/R)</strong></td><td>7mm frame / 17mm mattress</td><td>Equal each end — covers tuck evenly</td></tr>
 <tr><td><strong>Drawers (×2)</strong></td><td>880 × 900 × 500mm</td><td>Below platform</td></tr>
 </table>
 

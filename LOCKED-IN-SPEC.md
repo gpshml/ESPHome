@@ -37,8 +37,9 @@ Z: 0 → 2380mm   FLOOR → CEILING
 | Shelf top | 1200mm | Rear wall stops here; front/side walls continue |
 | Mattress | 1900 × 900 × 220mm | 10mm clearance → frame opening 1920 × 920 |
 | Platform top | 530mm | 173mm plinth + 357mm frame |
-| Head wall / fascia | 326mm wide × 1130mm deep | Solid wall from back to bed front (REAR+FRAME_D); stops short of front fascia |
+| Head wall / fascia | 326mm wide × 1144mm deep | Solid wall from back wall to inner face of front fascia (no corner void) |
 | Rear shelf | 1920 × 210mm | Depth at back; width stops before head wall (INTERNAL_W − HEAD_W) |
+| Bed tuck clearance | 7mm frame / 17mm mattress each end | Equal front & rear inside the 934mm bay (covers tuck evenly) |
 | Access opening | 1300 × 1440mm | Bottom **640mm** (halfway up mattress); top **2080mm** (300mm below ceiling); start 300mm from left of **internal** space |
 | Front fascia thickness | 98mm | Opening surround depth |
 | Foot wall height | **Full 2380mm** | It is a wall, not a shelf |
@@ -47,7 +48,7 @@ Z: 0 → 2380mm   FLOOR → CEILING
 ## What is NOT true (past mistakes — do not reintroduce)
 
 1. Do **not** put a 200mm “cut-in” block under the foot of the bed.
-2. Do **not** offset the mattress/bed away from the rear shelf.
+2. Do **not** shove the bed flush to the rear only — keep **equal** front/rear tuck clearance for covers (centred in the bay).
 3. Do **not** measure access opening from below the shelf only — use full 2380mm height.
 4. Do **not** put the 237mm extension at the **rear** of the foot wall — it is at the **front**.
 5. Do **not** leave empty space behind the model (−200 limits) — butt to 0.
