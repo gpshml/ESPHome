@@ -7,7 +7,7 @@ import { mkdir } from "fs/promises";
 import path from "path";
 
 const CHROME = process.env.CHROME_PATH || "/usr/local/bin/google-chrome";
-const BASE = process.env.VIEWER_URL || "http://127.0.0.1:8765/cabin-bed-3d-viewer.html";
+const BASE = process.env.VIEWER_URL || "http://127.0.0.1:8877/cabin-bed-3d-viewer.html";
 const OUT = process.env.OUT_DIR || "/workspace";
 const VIEWS = ["3d", "front", "top", "side"];
 const FILES = {

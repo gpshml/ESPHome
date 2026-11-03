@@ -62,7 +62,7 @@ Z: 0 → 2380mm   FLOOR → CEILING
 Static views are **captured from that model** (not drawn separately):
 
 ```bash
-python3 -m http.server 8765   # in repo root
+python3 -m http.server 8877   # in repo root
 node capture_static_views.mjs # writes *_FINAL.png from Front / Top / Side / 3D presets
 python3 create_final_report.py
 ```
