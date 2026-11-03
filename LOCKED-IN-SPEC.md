@@ -37,8 +37,8 @@ Z: 0 → 2380mm   FLOOR → CEILING
 | Shelf top | 1200mm | Rear wall stops here; front/side walls continue |
 | Mattress | 1900 × 900 × 220mm | 10mm clearance → frame opening 1920 × 920 |
 | Platform top | 530mm | 173mm plinth + 357mm frame |
-| Head wall / fascia | 326mm | Solid wall at head end |
-| Rear shelf depth | 210mm | At back |
+| Head wall / fascia | 326mm wide × 1130mm deep | Solid wall from back to bed front (REAR+FRAME_D); stops short of front fascia |
+| Rear shelf | 1920 × 210mm | Depth at back; width stops before head wall (INTERNAL_W − HEAD_W) |
 | Access opening | 1300 × 1440mm | Bottom **640mm** (halfway up mattress); top **2080mm** (300mm below ceiling); start 300mm from left of **internal** space |
 | Front fascia thickness | 98mm | Opening surround depth |
 | Foot wall height | **Full 2380mm** | It is a wall, not a shelf |
