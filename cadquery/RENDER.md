@@ -20,7 +20,7 @@ Paint direction: **autumnal olive** on all visible PB (alcove, room face, reveal
 1. Import OBJ (Forward **Y**, Up **Z**) — already metres; do not scale.
 2. World: **Sky Texture** (Nishita) or HDRI of a small room; strength ~0.6–1.0.
 3. Add a warm area light in the alcove (~3000–3500 K) behind the front opening, and a soft fill from the room.
-4. Camera: inside the room looking into the alcove, FOV ~40–50°, head left / foot right.
+4. Camera: inside the room looking into the alcove, FOV ~40–50° — **HEAD left / FOOT right**.
 5. Render: Cycles, 128–256 samples + denoising; enable ambient occlusion in the view for a cheap check.
 
 ## EEVEE (fast preview)
@@ -38,7 +38,9 @@ Inside the access opening (jambs, sill, lintel soffit):
 
 ## What to check visually
 
-- **FOOT left / HEAD right**; narrow pier at the foot  
+- **HEAD left / FOOT right**; narrow pier at the **foot (right)**  
 - Foot extension flush with existing wall (X) and front fascia room face (Y)  
+- Ledgers tight under shelf decks (no gap)  
+- Head bed-face PB only on the exposed bay (not through to the rear wall)  
 - Alcove PB + reveals cover stud fronts  
 - Model stands **upright** in Blender (Y-up export)  

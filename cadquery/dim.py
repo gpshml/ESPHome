@@ -1,10 +1,10 @@
 """Locked cabin-bed dimensions — mirror of cabin_bed_model.js `DIM`.
 
-Orientation = locked top plan (top_plan_FINAL.png):
-  Looking into the alcove — FOOT LEFT, HEAD RIGHT.
-  Narrow access pier (~300mm) at the FOOT.
-  Origin = back-left-floor (rear ∩ foot wall ∩ floor)
-  X: foot → head
+Orientation (user-confirmed Nov 2026 review — see BUILD-SEQUENCE.md):
+  Looking into the alcove — HEAD LEFT, FOOT RIGHT.
+  Narrow access pier (~300mm) at the FOOT (right).
+  Origin = back-left-floor (rear ∩ head wall ∩ floor)
+  X: head → foot
   Y: back → front (into room)
   Z: floor → ceiling
 """
@@ -44,6 +44,8 @@ class Dim:
     LEDGER_H: float = 45.0
     NOGGIN_H: float = 40.0
     NOGGIN_ZS: tuple[float, ...] = (600.0, 1200.0, 1800.0)
+    # Clear pier beside foot wall (opening set out from the foot)
+    FOOT_PIER: float = 300.0
 
     @property
     def W(self) -> float:
@@ -58,8 +60,14 @@ class Dim:
         return self.MATT_D + 2 * self.TOL  # 920
 
     @property
+    def FOOT_X0(self) -> float:
+        """Existing foot wall starts (right)."""
+        return self.W - self.FOOT  # 2246 == INTERNAL_W
+
+    @property
     def ACCESS_X(self) -> float:
-        return self.FOOT + 300.0  # 398 — narrow pier at foot
+        """Left edge of access opening. Narrow FOOT_PIER remains at the foot (right)."""
+        return self.INTERNAL_W - self.ACCESS_W - self.FOOT_PIER  # 646
 
     @property
     def FRONT_Y(self) -> float:
@@ -80,6 +88,16 @@ class Dim:
     @property
     def shelf_w(self) -> float:
         return self.INTERNAL_W - self.HEAD_W  # 1920
+
+    @property
+    def ledger_z(self) -> float:
+        """Ledger bottom so its top meets deck underside."""
+        return self.SHELF - self.DECK_T - self.LEDGER_H
+
+    @property
+    def fascia_h(self) -> float:
+        """Shelf fascia uprights stop under the deck."""
+        return self.SHELF - self.DECK_T
 
 
 DIM = Dim()

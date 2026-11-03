@@ -29,7 +29,7 @@ GitHub renders the mesh in the browser when you open the file:
 
 OBJ/STL are exported in **metres** (~2.3 × 1.2 × 2.4). STEP stays in **mm** for CAD.
 
-STEP does not preview on GitHub. **Marker-FOOT** left, **Marker-HEAD** right (locked top plan).
+STEP does not preview on GitHub. **Marker-HEAD** left, **Marker-FOOT** right; narrow pier at the foot.
 
 ## Review in Blender
 
@@ -38,10 +38,10 @@ OBJ/STL are **metres** and **Y-up** (so the model stands upright with Blender de
 1. Download `cabin_bed_assembly.obj` **and** `.mtl` together  
 2. **File → Import → Wavefront (.obj)** — defaults OK; do **not** scale by 0.001  
 3. Clip End ≥ 100 m if anything still clips  
-4. Looking into the alcove: **FOOT left**, **HEAD right**; narrow pier at the foot  
+4. Looking into the alcove: **HEAD left**, **FOOT right**; narrow pier at the foot (right)  
 
-Opening reveals = 12.5mm PB, drywall screws to studs/track, stop bead. See [`RENDER.md`](RENDER.md).
+Opening reveals = 12.5mm PB, drywall screws to studs/track, stop bead. See [`RENDER.md`](RENDER.md) and [`../BUILD-SEQUENCE.md`](../BUILD-SEQUENCE.md).
 
 ## Coords
 
-CAD: origin back-left-floor; X foot→head, Y back→front, Z up (mm). OBJ export converts to Blender Y-up.
+CAD: origin back-left-floor; X head→foot, Y back→front, Z up (mm). OBJ export converts to Blender Y-up.
