@@ -3,7 +3,7 @@
 Researched for UK supply against `PARTS-LIST.md` (bed already owned; buy **lift + alcove + drawers + electronics**).  
 Prices are indicative web list prices (inc. or ex. VAT as noted) and will move; treat as order-of-magnitude.
 
-**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (Bence + Wickes paths, ~£0.85–1.3k materials all-in after correcting stud qty to **14×3m**, not 75m).
+**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (~£750–£1,150 materials). Metal stud is **front + foot extension only** (**8×3m stud / 3× track**); rear/head shelves fix to existing walls — see zone breakdown in `PARTS-LIST.md`.
 
 ---
 

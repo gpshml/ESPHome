@@ -3,149 +3,169 @@
 Derived from locked dimensions (`LOCKED-IN-SPEC.md` / `cabin_bed_model.js`).  
 Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
-**Bed status:** the bed (frame + mattress) is **already purchased**. Buy only what is needed to **raise** it (plinth / risers / legs), plus the alcove structure, drawers, and finishes below. Do **not** order a new bed frame or mattress support rails.
+**Bed status:** already purchased. Buy **lift + new front/foot framing + shelf boards + drawers + fit-out** only.
 
-**Buying / delivery:** see [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) (Bence vs Wickes/TP vs trade drylining + electronics parcels).
+**Construction rule:** **existing back and head walls carry the shelves** — no metal uprights or noggins along the *back* of the rear or head shelves. Metal stud is mainly **front fascia** + **foot-wall extension**.
 
----
-
-## 1. Metal stud framing (70mm C-stud system)
-
-Small alcove — do **not** buy a house-worth of stud. Take-off below is for **new** framing only (foot wall mostly exists; only +237mm extension is new).
-
-### Piece take-off (@ ~400–600mm centres)
-
-| Location | Pieces | Cut length | Notes |
-|----------|--------|------------|-------|
-| Foot extension (new only) | 2 | 2380mm | Return into room |
-| Front jambs (L + R of opening) | 4 | 2380mm | 1–2 left (300mm pier), 2 right (646mm pier) |
-| Opening cripples (sill/lintel) | 4 | ~640 / ~300mm | Cut from offcuts or 1× 3.0m |
-| Rear shelf wall | 5 | 1200mm | 1920mm wide → studs at ends + ~400–480mm |
-| Head fascia box | 4 | 1200mm | 326 × 1144 plan |
-| Noggins / rails | — | **~6–8m** | Platform 530, tablet ~975, opening 640 & 2080, shelf line — **not** 12m+ |
-
-### Buy list (3.0m stock — ceiling is 2380mm so 2.4m is too short for full-height)
-
-| Item | Buy qty | Total metres | Notes |
-|------|---------|--------------|-------|
-| 70mm C-stud × 3.0m | **14** | **42m** | 6 full-height + 5 lengths → ten 1200mm cuts (rear/head) + 2 for noggins/cripples/spare |
-| 72mm U-track × 3.0m | **5** | **15m** | ~10–12m needed (front F+C, rear F+shelf head, head wall floor, foot ext); 5×3m with waste |
-
-**Was wrong before:** 25×3m stud (75m) and 10× track — that treated every wall as full new partitions both faces. Corrected above.
-
-**Plasterboard join tip:** strip ~200mm of existing plasterboard back from the foot-wall end before tying new studs in.
+**Buying / delivery:** [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) · priced BOQ [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md).
 
 ---
 
-## 2. Plasterboard & finish
+## Where each part goes (by zone)
 
-| Item | Spec | Qty | Notes |
-|------|------|-----|-------|
-| Plasterboard | 12.5mm | **6–8** sheets (2400×1200) | Visible faces ≈ 10–16m² depending on one/both sides; 8 includes spare |
-| Tape & joint compound | — | 1 set | All seams |
-| Corner beads | metal/PVC | ~12m | External corners, opening reveals |
-| Primer + emulsion | — | as required | Inside alcove + fascia |
+### A. Rear shelf — 1920 × 210mm, top at 1200mm AFF
 
----
+| Part | Qty / size | Role |
+|------|------------|------|
+| Wall plugs + screws / resin anchors | as required | Fix **ledger** into **existing back wall** |
+| Softwood ledger | 1× ~45×70×1920mm (or equiv.) | Continuous support fixed to back wall |
+| Shelf board | 18mm ply/MDF **1920 × 210** (or two pieces) | Shelf deck on ledger (+ optional brackets mid-span) |
+| Optional mid brackets | 2 | Extra support if board spans feel soft |
+| Front fascia trim | 1× 20×40–60×1920mm | Flush front edge only — **not** a stud wall |
+| Tablet mount block | 1× noggin ~300–400mm | Fixed to **existing back wall** at ~975mm AFF (under shelf) — **not** a stud noggin run |
 
-## 3. Timber — lift only (bed already owned)
-
-Raise the **existing** bed (**360mm** measured frame height) on a **170mm** lift so platform top = **530mm** AFF (170 + 360).
-
-| Item | Size | Qty | Notes |
-|------|------|-----|-------|
-| Base plinth / risers | ~45 × **170mm** × ~1900mm | 3 | Longitudinal bearers under the existing bed; short screws + grab adhesive (cables under floor) |
-| Cross bearers | ~45 × **170mm** × ~900mm | 2–3 | Tie risers; stop racking |
-| Support legs / packs | to finish at **170mm** | 6 | Corners + mid-span; pack 47×150 (~145–150mm) on edge up to 170mm if not ripping full-depth stock |
-| Shelf fascia (rear) | 20×40–60×1920mm | 1 | Optional decorative front edge of rear shelf (flush, not proud) |
-| Head fascia trim | 20×40–60×326mm | 1 | Optional finish on head wall |
-
-**Practical timber:** 47×150 C16 on edge + ~20–25mm packs to **170mm**, or have Bence rip softwood to 170mm deep. Avoid relying on thin CLS alone.
-
-**Not required (already owned):** bed frame rails, mattress, mattress base / slats, new bed carcass.
-
-**Floor fixing:** max screw penetration **25–30mm**; prefer grab adhesive; cable-detect before drilling.  
-**Fit check:** centre the lifted bed in the bay with equal front/rear tuck (~17mm to mattress) and ~10mm at foot/head.
+**No C-stud uprights. No rear-wall track. No horizontal stud noggins behind the shelf.**
 
 ---
 
-## 4. Drawers × 2 (under raised bed)
+### B. Head shelf / fascia — 326mm wide × ~1144mm deep (to front)
 
-| Component | Size (each) | Material | Qty |
-|-----------|-------------|----------|-----|
-| Front / back | 880 × 500 × 18mm | Plywood / MDF | 2+2 |
-| Sides | 900 × 500 × 18mm | Plywood / MDF | 2+2 |
-| Base | 880 × 900 × 12mm | Plywood | 2 |
-| Floor runners | 900mm heavy-duty | Metal slides | 4 per drawer (8 total) |
-| Handles | — | — | 2 |
+Uses the **existing head (right) wall** the same way: shelf/fascia carried off that wall, not a freestanding stud box.
 
-Clearances: ~20mm bottom (runners), ~10mm top under the raised bed. Void height ≈ 500mm usable under the platform.
+| Part | Qty / size | Role |
+|------|------------|------|
+| Wall plugs + screws | as required | Fix ledgers/brackets to **existing head wall** |
+| Softwood ledger(s) | 1–2× along depth / width | Support shelf deck and/or fascia lining |
+| Shelf / lining board | 18mm sheet offcuts | Deck and/or face of 326mm fascia |
+| Optional short timber uprights | 0–2 | Only if needed to stiffen the **front** of the fascia — fixed to existing wall / shelf, **not** a back row of studs |
+| Head fascia trim | 1× 20×40–60×326mm | Finish strip |
 
----
-
-## 5. Front access opening
-
-| Item | Spec | Notes |
-|------|------|-------|
-| Opening | 1300 × 1440mm | From 640mm AFF to 2080mm AFF; starts 300mm from left of **internal** width |
-| Curtain track | 1300mm+ | Inside reveal or face-fix |
-| Curtain fabric | pair | Floor- or sill-length as preferred |
-| Reveal lining | 12.5mm PB or timber | Finish opening edges |
-
-Front fascia thickness: **98mm** (stud + plasterboard), not the 237mm wall extension depth.
+**No C-stud “head box”. No uprights along the back of the head shelf.**
 
 ---
 
-## 6. Electronics & lighting
+### C. Front fascia — access opening (main metal-stud job)
 
-| Item | Spec | Qty |
-|------|------|-----|
-| ESP32 board | DevKit or equivalent | 1 |
-| 7" touchscreen | ESP32-compatible | 1 |
-| Mount noggin | at ~975mm AFF, rear shelf centre | 1 |
-| Ambient LED | WS2812B RGBW, 5V, ~5m | 1 |
-| Reading light | 4000K, CRI>90, dimmable ~1m | 1 |
-| Starfield | Fibre optic kit and/or WS2812B points | 1 set |
-| PSU | 5V 10A (50–60W) | 1 |
-| Speaker | Compact BT/Wi‑Fi, head corner | 1 |
-| Cable | 5V LED + signal, mains to PSU | as required |
+Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), starting 300mm from left of internal width.
 
-Route cables in stud cavities **before** boarding. Qualified electrician for mains.
+| Part | Qty / size | Role |
+|------|------------|------|
+| Floor U-track | 1 run × **2246mm** | Base of front wall |
+| Ceiling U-track | 1 run × **2246mm** | Head of front wall |
+| C-stud jambs (left pier ~300mm) | **2** × 2380mm | Full-height left of opening |
+| C-stud jambs (right pier ~646mm) | **2** × 2380mm | Full-height right of opening |
+| Sill rail | 1× ~2246mm (track or stud on side) | At **640mm** AFF (bottom of opening) |
+| Lintel rail | 1× ~2246mm | At **2080mm** AFF (top of opening) |
+| Optional cripples | 2–4 short | Only if boarding needs extra fixings under sill / over lintel — cut from offcuts |
+| Plasterboard | ~3–4 sheets worth | Face (± back of fascia if exposed) |
+| Corner / stop bead | ~6–8m | Opening reveals + external corners |
+| Curtain track | ≥1300mm | In reveal or face-fix |
 
----
-
-## 7. Consumables & hardware
-
-| Item | Notes |
-|------|-------|
-| Grab adhesive | Primary floor / plinth fixing under the existing bed |
-| Screws | Short for floor (≤30mm); stud & board screws as normal |
-| Wall plugs | If fixing into masonry head wall |
-| Cable detector | Mandatory before floor fixings |
-| Expanding foam / sealant | Gaps at wall junctions |
+**This is where almost all the C-stud and track is used.**
 
 ---
 
-## 8. Cutting summary (quick reference)
+### D. Foot wall extension — +237mm into the room (full height)
 
-| Material | Cut list (approx.) |
-|----------|-------------------|
-| 70mm track | 2×2344, 2×1242, 2×2246, extras for opening & head |
-| 70mm stud | 10–12×2380, 8–10×1200, noggins ~12m |
-| 12.5mm PB | ~8 sheets |
-| Softwood (lift only) | ~5× 47×150×2.4m + packs → **170mm** (3×1900 + 2–3×900 bearers) |
-| 70mm C-stud | **14× 3.0m** (42m) — not 75m |
-| 72mm track | **5× 3.0m** (15m) |
-| 18mm sheet | Drawer boxes (**2** sheets) |
-| 12mm sheet | Drawer bases (1 sheet) |
+Existing foot wall stays; only the **front 237mm** is new studwork tied in.
+
+| Part | Qty / size | Role |
+|------|------------|------|
+| Floor + ceiling track | 2× ~237–300mm | Short runs for the extension |
+| C-stud uprights | **2** × 2380mm | New return |
+| Plasterboard | ~0.5–1 sheet | Both faces of extension / make-good |
+| Join work | — | Strip ~200mm existing PB before tying in |
 
 ---
 
-## 9. Safety checklist
+### E. Bed lift — under existing 360mm bed → 530mm platform
+
+| Part | Qty / size | Role |
+|------|------------|------|
+| Risers | 3× ~45×**170**×1900mm | Long bearers |
+| Cross bearers | 2–3× ~45×**170**×900mm | Tie frame |
+| Packs / legs | to **170mm** | Corners + mid-span |
+| Grab adhesive + short screws | — | Floor fix (≤25–30mm), cable-detect first |
+
+**No metal stud in the lift.**
+
+---
+
+### F. Drawers ×2 — under raised bed
+
+| Part | Qty / size | Role |
+|------|------------|------|
+| 18mm ply/MDF | **2** sheets 8×4 | Drawer boxes |
+| 12mm ply | **1** sheet 8×4 | Bases |
+| 900mm 100kg runners | **2** pairs | Heavy under-bed slides |
+| Handles | 2 | |
+
+---
+
+### G. Electrics / lighting (parcels — not merchant stud)
+
+| Part | Where |
+|------|--------|
+| ESP32 + 7" touch | Rear shelf centre ~975mm (on wall mount block) |
+| LED strip ~5m + 5V 10A PSU | Shelf lip / fascia cavities |
+| Reading light, starfield, speaker | Head / ceiling as preferred |
+| Mains to PSU | Qualified electrician |
+
+---
+
+## Metal stud — buy list only (after wall-supported shelves)
+
+| Item | Buy | Metres | Used on |
+|------|-----|--------|---------|
+| 70mm C-stud × 3.0m | **8** | **24m** | Front: 4 jambs; Foot ext: 2; **+2 spare**/cripples |
+| 72mm U-track × 3.0m | **3** | **9m** | Front floor+ceiling (~4.5m) + sill/lintel (~4.5m) + foot ext scraps |
+
+Rough cut plan for **8× stud**: four → front jambs @ 2380; two → foot ext @ 2380; two → spare / short cripples / sill packing.  
+Rough cut plan for **3× track**: cut into front floor, front ceiling, sill, lintel, two short foot-ext tracks.
+
+---
+
+## Plasterboard & finish
+
+| Item | Qty | Used on |
+|------|-----|---------|
+| 12.5mm PB 2400×1200 | **5–6** sheets | Front fascia (main), foot extension, make-goods; shelf decks are **ply/MDF** not full PB walls |
+| Joint compound + tape | 1 set | Front + foot |
+| Corner / stop bead | **~8m** (3× 3m lengths) | Opening reveals + foot/front corners |
+| Primer + emulsion | as required | Alcove faces |
+
+---
+
+## Softwood summary
+
+| Item | Qty | Used on |
+|------|-----|---------|
+| 47×150×2.4m (or rip to 170mm) | **5** | Bed lift bearers + packs |
+| Ledger 45×70 (or similar) | ~3–4m | Rear + head shelf wall supports |
+| Shelf board 18mm | from drawer sheet offcuts or 1 extra half-sheet | Rear 1920×210 + head deck |
+| Fascia trims | 1920 + 326 | Rear + head front edges |
+
+---
+
+## Cutting summary (quick)
+
+| Material | Buy |
+|----------|-----|
+| 70mm C-stud 3.0m | **8** (24m) |
+| 72mm U-track 3.0m | **3** (9m) |
+| 12.5mm PB | **5–6** sheets |
+| Softwood lift | **5×** 47×150×2.4m + packs → 170mm |
+| Softwood ledgers | ~1× 2.4m + offcuts |
+| 18mm sheet | **2** (drawers; shelf decks from offcuts if possible) |
+| 12mm sheet | **1** (drawer bases) |
+
+---
+
+## Safety checklist
 
 - [ ] Cable-detect timber floor before any screws  
 - [ ] Screws into floor ≤25–30mm  
-- [ ] Risers finished at **170mm** under **360mm** bed → platform top **530mm** AFF  
-- [ ] Fire-safe finishes in enclosed sleeping space  
+- [ ] Shelf ledgers fixed into **sound existing walls** (find structure; don’t rely on plasterboard alone)  
+- [ ] Risers **170mm** under **360mm** bed → platform **530mm** AFF  
 - [ ] Mains work by qualified electrician  
-- [ ] Opening edges finished (no raw plasterboard)  
+- [ ] Opening edges finished  
