@@ -36,8 +36,8 @@ Z: 0 → 2380mm   FLOOR → CEILING
 | Foot wall extension | **237mm at FRONT** | Extends wall **into the room**, not at the rear; not a cut-in under the bed |
 | Overall height | 2380mm | Full height |
 | Shelf top | 1200mm | Rear wall stops here; front/side walls continue |
-| Mattress | 1900 × 900 × 220mm | 10mm clearance → frame opening 1920 × 920 |
-| Platform top | 530mm | 173mm plinth + 357mm frame |
+| Mattress / bed | 1900 × 900 × 220mm | **Already purchased** — model clearance 10mm → bay 1920 × 920 |
+| Platform top | 530mm | Existing bed on a lift/plinth (modelled ~173mm riser + ~357mm bed frame) — buy lift materials only |
 | Head wall / fascia | 326mm wide × 1144mm deep | Solid wall from back wall to inner face of front fascia (no corner void) |
 | Rear shelf | 1920 × 210mm | Depth at back; width stops before head wall (INTERNAL_W − HEAD_W) |
 | Bed tuck clearance | 7mm frame / 17mm mattress each end | Equal front & rear inside the 934mm bay (covers tuck evenly) |
