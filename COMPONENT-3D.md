@@ -34,7 +34,7 @@ python3 cadquery/build_assembly.py
 
 ## Source of truth
 
-Same as `LOCKED-IN-SPEC.md` / `BUILD-SEQUENCE.md`: origin back-left-floor; X **head→foot**, Y back→front, Z up.
+Same as `LOCKED-IN-SPEC.md` / `BUILD-SEQUENCE.md`: origin back-left-floor; X **foot→head**, Y back→front, Z up. Looking in: **FOOT left, HEAD right**.
 
 ```bash
 # After editing cabin_bed_model.js:
@@ -49,11 +49,11 @@ python3 create_final_report.py
 Copy this into another agent or CAD assistant:
 
 > **Project:** UK metal-stud + plasterboard alcove cabin/daybed, Cheltenham GL53.  
-> **Alcove:** 2344 × 1242 × 2380 mm. Origin back-left-floor. X **head→foot**, Y back→front, Z up.  
-> **Head (left):** 326 mm fascia; PB on exposed bay + front return only (not through to rear wall).  
-> **Foot (right):** existing 98 mm + 237 mm front extension — flush with existing wall and front fascia end.  
-> **Front:** 98 mm both faces + **12.5mm PB reveals**; access @ X=646 (**300 mm pier at foot / right**).  
-> **Ledgers** tight under decks. **Noggins** + **13×** C-stud — see `PARTS-LIST.md` / `BUILD-SEQUENCE.md`.
+> **Alcove:** 2344 × 1242 × 2380 mm. Origin back-left-floor. X **foot→head**, Y back→front, Z up.  
+> **Foot (left):** existing 98 mm + 237 mm front extension — flush with existing wall and front fascia end.  
+> **Head (right):** 326 mm fascia; PB on exposed bay + front return only (not through to rear wall).  
+> **Front:** 98 mm both faces + **12.5mm PB reveals**; access @ X=398 (**300 mm pier at foot / left**).  
+> **Ledgers** tight under decks. **Noggins** + **13×** C-stud — see `PARTS-LIST.md` / `BUILD-SEQUENCE.md`. Do not invert head/foot for a mirrored 3D view.
 
 ## Recommendation — which AI / tool for CAD-grade work
 

@@ -2,7 +2,7 @@
 
 Reconciles `PARTS-LIST.md` (zone BOM + cutting summary) with `COST-ESTIMATE-GL53.md` (priced BOQ) and `SOURCING-AND-DELIVERY.md` (where to buy / how to deliver).
 
-**Orientation:** head **left**, foot **right** when looking into the alcove (`LOCKED-IN-SPEC.md`, Nov 2026).
+**Orientation:** foot **left**, head **right** when looking into the alcove (`LOCKED-IN-SPEC.md` / `top_plan_FINAL.png`).
 
 ---
 

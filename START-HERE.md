@@ -3,7 +3,7 @@
 > **Current source of truth (use these first):**  
 > [`LOCKED-IN-SPEC.md`](LOCKED-IN-SPEC.md) · [`BUILD-SEQUENCE.md`](BUILD-SEQUENCE.md) · [`PARTS-LIST.md`](PARTS-LIST.md) · [`PARTS-PURCHASE-CROSSREF.md`](PARTS-PURCHASE-CROSSREF.md) · [`COMPONENT-3D.md`](COMPONENT-3D.md) · interactive [`cabin-bed-3d-viewer.html`](cabin-bed-3d-viewer.html) · OBJ [`cadquery/out/cabin_bed_assembly.obj`](cadquery/out/cabin_bed_assembly.obj) · report [`cabin-bed-FINAL.html`](cabin-bed-FINAL.html)
 >
-> Looking into the alcove: **HEAD left, FOOT right**. Narrow pier at the **foot (right)**. Full-height PB needs **noggins** (buy **13×** C-stud).
+> Looking into the alcove: **FOOT left, HEAD right** (locked image). Narrow pier at the **foot (left)**. Full-height PB needs **noggins** (buy **13×** C-stud).
 
 ## ✅ Updated with Your Clarifications!
 

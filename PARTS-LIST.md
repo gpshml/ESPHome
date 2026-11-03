@@ -5,7 +5,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 **Bed status:** already purchased. Buy **lift + new front/foot framing + shelf boards + drawers + fit-out** only.
 
-**Orientation:** looking into the alcove — **HEAD left, FOOT right** (`LOCKED-IN-SPEC.md` / `BUILD-SEQUENCE.md`). Narrow access pier at the **foot** (right).
+**Orientation:** looking into the alcove — **FOOT left, HEAD right** (`LOCKED-IN-SPEC.md` / `top_plan_FINAL.png`). Narrow access pier at the **foot** (left).
 
 **Construction rule:** **existing back and head walls carry the shelves** — no uprights along the *back* of those shelves. The **front of each shelf is still plasterboard-faced** (light frame at the fascia line only). Full-height metal stud remains mainly **room front fascia** + **foot-wall extension**, with **horizontal noggins** between studs wherever full-height PB is fixed.
 
@@ -35,7 +35,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ---
 
-### B. Head shelf / fascia — 326mm wide × ~1144mm deep (to front) — **LEFT**
+### B. Head shelf / fascia — 326mm wide × ~1144mm deep (to front) — **RIGHT**
 
 **Back / against room head wall:** carried on **existing head wall** (no stud row against that wall).  
 **Exposed faces:** plasterboard on bed face (from rear-shelf front forward) and front return only.
@@ -57,14 +57,14 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ### C. Front fascia — access opening (main metal-stud job)
 
-Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), with **300mm pier at the foot (right)** and ~646mm pier at the head (left).
+Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), with **300mm pier at the foot (left)** and ~646mm pier at the head (right).
 
 | Part | Qty / size | Role |
 |------|------------|------|
 | Floor U-track | 1 run × **2246mm** | Base of front wall |
 | Ceiling U-track | 1 run × **2246mm** | Head of front wall |
-| C-stud jambs (left pier ~646mm, **head** side) | **2** × 2380mm | Full-height left of opening |
-| C-stud jambs (right pier **300mm**, **foot** side) | **2** × 2380mm | Full-height right of opening |
+| C-stud jambs (left pier **300mm**, **foot** side) | **2** × 2380mm | Full-height left of opening |
+| C-stud jambs (right pier ~646mm, **head** side) | **2** × 2380mm | Full-height right of opening |
 | Sill rail | 1× ~2246mm (track or stud on side) | At **640mm** AFF (bottom of opening) |
 | Lintel rail | 1× ~2246mm | At **2080mm** AFF (top of opening) |
 | **Noggins (required)** | see cut list below | Between pier studs for full-height PB |
@@ -74,16 +74,16 @@ Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), w
 
 **Opening reveal facings:** **12.5mm PB** on left/right jambs, sill and lintel soffit. Fixed with **drywall screws** into studs / noggins / track (~300mm centres). Finish edges with **stop/corner bead**, tape and joint, then paint.
 
-**Noggins — front piers:** at **600 / 1200 / 1800mm AFF**, plus band noggins **~320** and **~2230**. Wide **head-side (left)** pier is the critical bay.
+**Noggins — front piers:** at **600 / 1200 / 1800mm AFF**, plus band noggins **~320** and **~2230**. Wide **head-side (right)** pier is the critical bay.
 
 **This is where almost all the C-stud and track is used.**
 
 ---
 
-### D. Foot wall extension — +237mm into the room (full height) — **RIGHT** side
+### D. Foot wall extension — +237mm into the room (full height) — **LEFT** side
 
 Existing foot wall stays; only the **front 237mm** is new studwork tied in.  
-**Flush rules:** same X footprint as existing (**2246..2344**); inner face meets front fascia at **X=2246**; front face meets front wall room face at **Y=1242**.
+**Flush rules:** same X footprint as existing (**0..98**); inner face meets front fascia at **X=98**; front face meets front wall room face at **Y=1242**.
 
 | Part | Qty / size | Role |
 |------|------------|------|

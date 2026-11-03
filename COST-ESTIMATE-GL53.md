@@ -60,4 +60,4 @@
 > **GL53 0DF #22.** Shelves hang off existing back/head walls; **PB still faces the front of those shelves.**  
 > 13× 70mm C-stud 3.0m (incl. **noggins** for full-height PB), 4× 72mm track 3.0m, 8× 12.5mm 2400×1200 TE PB, beads, compound, tape, screws.  
 > 5× 47×150×2.4m for **170mm** lift (360mm bed → 530mm platform), 2× ledger lengths, 2× 18mm + 1× 12mm 8×4 ply, grab adhesive. Crane if needed.  
-> Orientation: **head left, foot right** when looking into the alcove.
+> Orientation: **foot left, head right** when looking into the alcove (locked front aspect).

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Build cabin-bed STEP assembly from COMPONENT-3D.md / DIM / BUILD-SEQUENCE.md.
 
-Orientation (user-confirmed): HEAD left, FOOT right; narrow pier at foot (right).
+Orientation = locked front aspect: FOOT left, HEAD right; narrow pier at foot (left).
 OBJ/STL export is metres + Blender Y-up (so the model is not on its side).
+Do NOT invert head/foot for viewer mirroring — fix the view, not the room.
 """
 
 from __future__ import annotations
@@ -140,16 +141,14 @@ def add_noggin_x(
 
 
 def build_foot_extension(assy: cq.Assembly) -> None:
-    """Foot return +237 mm at FRONT (RIGHT). Same X footprint as existing (FOOT_X0..W).
+    """Foot return +237 mm at FRONT (LEFT). Same X footprint as existing (0..FOOT).
 
-    Outer face x=W flush with existing outer wall; inner face x=FOOT_X0 flush with
-    the right end of the front fascia; front face Y=D flush with front wall room face.
+    Outer face x=0 flush with existing outer wall; inner face x=FOOT flush with
+    the left end of the front fascia; front face Y=D flush with front wall room face.
     """
     D = DIM
     y0 = D.D - D.EXT
-    x0 = D.FOOT_X0
-    # Studs between PB skins: outer PB at W-PB..W, inner at x0..x0+PB
-    stud_x = D.W - D.PB - D.STUD_W
+    stud_x = D.PB  # between PB skins
     add_vstud(assy, "FootExt-Stud-Rear", stud_x, y0 + 40, 0, D.H, color=COL["stud"])
     add_vstud(
         assy,
@@ -160,7 +159,7 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         D.H,
         color=COL["stud"],
     )
-    xc = x0 + D.FOOT / 2
+    xc = D.FOOT / 2
     add_track_y(assy, "FootExt-Track-Floor", xc, y0, 0, D.EXT, color=COL["track"])
     add_track_y(
         assy,
@@ -186,17 +185,16 @@ def build_foot_extension(assy: cq.Assembly) -> None:
             D.NOGGIN_H,
             COL["noggin"],
         )
-    add_box(assy, "FootExt-PB-Outer", D.W - D.PB, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
-    add_box(assy, "FootExt-PB-Inner", x0, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
-    add_box(assy, "FootExt-PB-Front", x0, D.D - D.PB, 0, D.FOOT, D.PB, D.H, COL["painted"])
+    add_box(assy, "FootExt-PB-Outer", 0, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
+    add_box(assy, "FootExt-PB-Inner", D.FOOT - D.PB, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
+    add_box(assy, "FootExt-PB-Front", 0, D.D - D.PB, 0, D.FOOT, D.PB, D.H, COL["painted"])
 
 
 def build_rear_shelf(assy: cq.Assembly) -> None:
-    """Rear shelf on back wall; starts after head fascia (LEFT)."""
+    """Rear shelf on back wall; stops before head fascia (RIGHT)."""
     D = DIM
-    sx = D.HEAD_W
+    sx = D.FOOT
     sw = D.shelf_w
-    # Ledger top meets deck underside
     add_box(assy, "Rear-Ledger", sx, 0, D.ledger_z, sw, D.LEDGER, D.LEDGER_H, COL["timber"])
     add_box(assy, "Rear-Deck", sx, 0, D.SHELF - D.DECK_T, sw, D.REAR, D.DECK_T, COL["deck"])
     fascia_y = D.REAR - D.STUD_FL
@@ -219,7 +217,7 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
         "Rear-Fascia-Track",
         sx,
         fascia_y + D.STUD_FL / 2,
-        D.fascia_h,  # track top = deck underside
+        D.fascia_h,
         sw,
         invert_legs=True,
         color=COL["track"],
@@ -229,13 +227,13 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
 
 
 def build_head_shelf(assy: cq.Assembly) -> None:
-    """Head fascia on LEFT (0..HEAD_W). Studs inside shelf behind bed-face PB."""
+    """Head fascia on RIGHT (W-HEAD_W..W). Studs inside shelf behind bed-face PB."""
     D = DIM
-    # Ledger on existing head wall; top meets deck
+    hx = D.W - D.HEAD_W
     add_box(
         assy,
         "Head-Ledger",
-        0,
+        D.W - D.LEDGER,
         0,
         D.ledger_z,
         D.LEDGER,
@@ -243,19 +241,18 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         D.LEDGER_H,
         COL["timber"],
     )
-    add_box(assy, "Head-Deck", 0, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
-    # Uprights only forward of the rear shelf line (exposed bay)
+    add_box(assy, "Head-Deck", hx, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
     ys = [D.REAR + 40, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
     for i, y in enumerate(ys, start=1):
         add_vstud(
             assy,
             f"Head-Fascia-Stud-{i}",
-            D.HEAD_W,  # bed face; flange_sign=-1 into shelf (−X)
+            hx,  # bed face; flange_sign=+1 into shelf (+X toward head wall)
             y,
             0,
             D.fascia_h,
             web_along_x=False,
-            flange_sign=-1,
+            flange_sign=1,
             color=COL["stud"],
         )
     for i in range(len(ys) - 1):
@@ -267,7 +264,7 @@ def build_head_shelf(assy: cq.Assembly) -> None:
             add_box(
                 assy,
                 f"Head-Fascia-Noggin-{i + 1}-{j}",
-                D.HEAD_W - D.STUD_FL,
+                hx,
                 y0,
                 z - 20,
                 D.STUD_FL,
@@ -275,11 +272,11 @@ def build_head_shelf(assy: cq.Assembly) -> None:
                 40,
                 COL["noggin"],
             )
-    # Bed-face PB: exposed bay only (Y=REAR..FRONT_Y) — not a hidden sheet to the rear wall
+    # Bed-face PB: exposed bay only — not a hidden sheet to the rear wall
     add_box(
         assy,
         "Head-PB-BedFace",
-        D.HEAD_W,
+        hx - D.PB,
         D.REAR,
         0,
         D.PB,
@@ -287,20 +284,20 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         D.fascia_h,
         COL["painted"],
     )
-    add_box(assy, "Head-PB-FrontFace", 0, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.fascia_h, COL["painted"])
+    add_box(assy, "Head-PB-FrontFace", hx, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.fascia_h, COL["painted"])
 
 
 def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None:
-    """Picture-frame PB across full internal width X=0..INTERNAL_W."""
+    """Picture-frame PB across full internal width X=FOOT..W."""
     D = DIM
-    left_w = D.ACCESS_X  # wide pier at head (left)
+    left_w = D.ACCESS_X - D.FOOT  # narrow pier at foot (left) = FOOT_PIER
     right_x = D.ACCESS_X + D.ACCESS_W
-    right_w = D.INTERNAL_W - right_x  # narrow pier at foot (right) = FOOT_PIER
-    add_box(assy, f"{prefix}-Below", 0, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
+    right_w = D.W - right_x  # wide pier at head (right)
+    add_box(assy, f"{prefix}-Below", D.FOOT, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
     add_box(
         assy,
         f"{prefix}-LeftPier",
-        0,
+        D.FOOT,
         pb_y,
         D.ACCESS_BOT,
         left_w,
@@ -322,7 +319,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
     add_box(
         assy,
         f"{prefix}-Above",
-        0,
+        D.FOOT,
         pb_y,
         D.ACCESS_TOP,
         D.INTERNAL_W,
@@ -333,7 +330,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
 
 
 def build_front_fascia(assy: cq.Assembly) -> None:
-    """Front wall X=0..INTERNAL_W. Wide pier at HEAD (left); narrow FOOT_PIER at FOOT (right)."""
+    """Front wall X=FOOT..W. Narrow FOOT_PIER at FOOT (left); wide pier at HEAD (right)."""
     D = DIM
     y = D.FRONT_Y
     ty = y + (D.FOOT - D.TRACK_WEB) / 2
@@ -341,11 +338,11 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     y_track_c = ty + D.TRACK_WEB / 2
     right_x = D.ACCESS_X + D.ACCESS_W
 
-    add_track_x(assy, "Front-Track-Floor", 0, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
+    add_track_x(assy, "Front-Track-Floor", D.FOOT, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
     add_track_x(
         assy,
         "Front-Track-Ceiling",
-        0,
+        D.FOOT,
         y_track_c,
         D.H,
         D.INTERNAL_W,
@@ -355,7 +352,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Sill",
-        0,
+        D.FOOT,
         y_track_c,
         D.ACCESS_BOT - D.TRACK_LEG,
         D.INTERNAL_W,
@@ -364,15 +361,15 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Lintel",
-        0,
+        D.FOOT,
         y_track_c,
         D.ACCESS_TOP,
         D.INTERNAL_W,
         color=COL["track"],
     )
 
-    left_studs = [25.0, D.ACCESS_X - D.STUD_W - 25]
-    right_studs = [right_x + 25, D.INTERNAL_W - D.STUD_W - 25]
+    left_studs = [D.FOOT + 25, D.ACCESS_X - D.STUD_W - 25]
+    right_studs = [right_x + 25, D.W - D.STUD_W - 25]
     for i, x in enumerate(left_studs, start=1):
         add_vstud(assy, f"Front-Jamb-L{i}", x, sy, 0, D.H, color=COL["stud"])
     for i, x in enumerate(right_studs, start=1):
@@ -397,7 +394,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
 
 def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
     D = DIM
-    mx = D.HEAD_W + D.TOL  # pillow toward head (left)
+    mx = D.FOOT + D.TOL  # pillow toward head (right)
     fy = D.REAR + D.FRAME_TUCK
     my = fy + D.TOL
     rw = 45.0
@@ -445,13 +442,14 @@ def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
 
 def build_existing_ghost(assy: cq.Assembly) -> None:
     D = DIM
-    add_box(assy, "Existing-FootWall", D.FOOT_X0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
+    add_box(assy, "Existing-FootWall", 0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
 
 
 def build_orientation_markers(assy: cq.Assembly) -> None:
+    """Review-only cubes (not build parts) — FOOT left, HEAD right."""
     D = DIM
-    add_box(assy, "Marker-HEAD", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
-    add_box(assy, "Marker-FOOT", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
+    add_box(assy, "Marker-FOOT", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
+    add_box(assy, "Marker-HEAD", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
 
 
 def build_assembly() -> cq.Assembly:
@@ -639,7 +637,7 @@ def export_obj_mtl(
 
     unit_note = "metres" if abs(unit_scale - 0.001) < 1e-12 else f"mm×{unit_scale}"
     with obj_path.open("w", encoding="utf-8") as of:
-        of.write("# Cabin bed — HEAD left, FOOT right; narrow pier at foot (right)\n")
+        of.write("# Cabin bed — FOOT left, HEAD right (locked front aspect)\n")
         of.write(f"# Units: {unit_note}; axes: Blender Y-up (−Z forward) from CAD Z-up\n")
         of.write("# Blender import: defaults OK (Y up). Do NOT scale again if metres.\n")
         of.write(f"mtllib {mtl_path.name}\n")
@@ -678,8 +676,8 @@ def main() -> int:
     args = parser.parse_args()
 
     print(f"DIM envelope: {DIM.W:.0f} × {DIM.D:.0f} × {DIM.H:.0f} mm")
-    print(f"Orientation: HEAD left (X=0..{DIM.HEAD_W:.0f}), FOOT right (X={DIM.FOOT_X0:.0f}..{DIM.W:.0f})")
-    print(f"ACCESS_X={DIM.ACCESS_X:.0f} (narrow pier at foot/right)  PLATFORM={DIM.PLATFORM:.0f}")
+    print(f"Orientation: FOOT left (X=0), HEAD right (X={DIM.W - DIM.HEAD_W:.0f}..{DIM.W:.0f})")
+    print(f"ACCESS_X={DIM.ACCESS_X:.0f} (narrow pier at foot/left)  PLATFORM={DIM.PLATFORM:.0f}")
     print("Building assembly…")
     assy = build_assembly()
     names = [name for name, _obj in assy.traverse()]
@@ -687,31 +685,32 @@ def main() -> int:
     for n in names:
         print(f"  - {n}")
 
-    left_pier = DIM.ACCESS_X  # head side
-    right_pier = DIM.INTERNAL_W - (DIM.ACCESS_X + DIM.ACCESS_W)  # foot side
-    assert right_pier < left_pier, "narrow pier must be at foot (right)"
-    assert abs(right_pier - DIM.FOOT_PIER) < 0.1, right_pier
-    print(f"Piers: head/left={left_pier:.0f}mm  foot/right={right_pier:.0f}mm")
+    left_pier = DIM.ACCESS_X - DIM.FOOT  # foot side
+    right_pier = DIM.W - (DIM.ACCESS_X + DIM.ACCESS_W)  # head side
+    assert left_pier < right_pier, "narrow pier must be at foot (left)"
+    assert abs(left_pier - DIM.FOOT_PIER) < 0.1, left_pier
+    print(f"Piers: foot/left={left_pier:.0f}mm  head/right={right_pier:.0f}mm")
 
     for name, shape, _ in iter_parts(assy):
         bb = shape.BoundingBox()
         if name == "Front-Track-Floor":
-            assert abs(bb.xmin) < 1 and abs(bb.xmax - DIM.INTERNAL_W) < 1, (bb.xmin, bb.xmax)
+            assert abs(bb.xmin - DIM.FOOT) < 1 and abs(bb.xmax - DIM.W) < 1, (bb.xmin, bb.xmax)
         if name.startswith("FootExt-PB-Outer"):
-            assert abs(bb.xmax - DIM.W) < 0.1 and abs(bb.xmin - (DIM.W - DIM.PB)) < 0.1
+            assert abs(bb.xmin) < 0.1 and abs(bb.xmax - DIM.PB) < 0.1
         if name.startswith("FootExt-PB-Inner"):
-            assert abs(bb.xmin - DIM.FOOT_X0) < 0.1
+            assert abs(bb.xmax - DIM.FOOT) < 0.1
         if name.startswith("FootExt-PB-Front"):
             assert abs(bb.ymax - DIM.D) < 0.1
-        if name.startswith("Marker-HEAD"):
-            assert bb.xmax <= 0.1, name
         if name.startswith("Marker-FOOT"):
+            assert bb.xmax <= 0.1, name
+        if name.startswith("Marker-HEAD"):
             assert bb.xmin >= DIM.W - 0.1, name
         if name in ("Rear-Ledger", "Head-Ledger"):
             assert abs(bb.zmax - (DIM.SHELF - DIM.DECK_T)) < 0.1, (name, bb.zmax)
         if name == "Head-PB-BedFace":
             assert bb.ymin >= DIM.REAR - 0.1, (name, bb.ymin)
-            assert bb.xmin >= DIM.HEAD_W - 0.1, name
+            hx = DIM.W - DIM.HEAD_W
+            assert bb.xmax <= hx + 0.1, name
 
     if not args.no_export:
         args.out.parent.mkdir(parents=True, exist_ok=True)
