@@ -1,0 +1,23 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Complete construction plans for a custom cabin day bed with integrated storage, shelving, and tablet mount. This elevated bed design features climbing access, under-bed drawers, and surrounding metal stud wall construction with flush-mounted shelving.",
+  "main": "cabin_bed_model.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gpshml/ESPHome.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gpshml/ESPHome/issues"
+  },
+  "homepage": "https://github.com/gpshml/ESPHome#readme",
+  "dependencies": {
+    "puppeteer-core": "^25.16.0"
+  }
+}
