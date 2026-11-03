@@ -1,9 +1,10 @@
 """Locked cabin-bed dimensions — mirror of cabin_bed_model.js `DIM`.
 
-Orientation (user-corrected Nov 2026): looking into the alcove from the room,
-HEAD is LEFT, FOOT is RIGHT.
-  Origin = back-left-floor (rear wall ∩ head wall ∩ floor)
-  X: head → foot
+Orientation = locked top plan (top_plan_FINAL.png):
+  Looking into the alcove — FOOT LEFT, HEAD RIGHT.
+  Narrow access pier (~300mm) at the FOOT.
+  Origin = back-left-floor (rear ∩ foot wall ∩ floor)
+  X: foot → head
   Y: back → front (into room)
   Z: floor → ceiling
 """
@@ -58,12 +59,15 @@ class Dim:
 
     @property
     def ACCESS_X(self) -> float:
-        # Internal spans X=0..INTERNAL_W (head on left inside that). 300mm from left of internal.
-        return 300.0
+        return self.FOOT + 300.0  # 398 — narrow pier at foot
 
     @property
     def FRONT_Y(self) -> float:
         return self.D - self.FOOT  # 1144
+
+    @property
+    def FRONT_ROOM_Y(self) -> float:
+        return self.D  # room face of front wall / foot extension front
 
     @property
     def BED_BAY(self) -> float:
@@ -76,14 +80,6 @@ class Dim:
     @property
     def shelf_w(self) -> float:
         return self.INTERNAL_W - self.HEAD_W  # 1920
-
-    @property
-    def FOOT_X0(self) -> float:
-        return self.W - self.FOOT  # 2246 (= INTERNAL_W)
-
-    @property
-    def INTERNAL_X0(self) -> float:
-        return 0.0
 
 
 DIM = Dim()

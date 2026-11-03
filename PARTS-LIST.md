@@ -5,7 +5,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 **Bed status:** already purchased. Buy **lift + new front/foot framing + shelf boards + drawers + fit-out** only.
 
-**Orientation:** looking into the alcove — **HEAD left, FOOT right** (`LOCKED-IN-SPEC.md`).
+**Orientation:** looking into the alcove — **FOOT left, HEAD right** (`LOCKED-IN-SPEC.md` / `top_plan_FINAL.png`). Narrow access pier at the **foot**.
 
 **Construction rule:** **existing back and head walls carry the shelves** — no uprights along the *back* of those shelves. The **front of each shelf is still plasterboard-faced** (light frame at the fascia line only). Full-height metal stud remains mainly **room front fascia** + **foot-wall extension**, with **horizontal noggins** between studs wherever full-height PB is fixed.
 
@@ -57,37 +57,40 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ### C. Front fascia — access opening (main metal-stud job)
 
-Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), starting **300mm from left of internal** (head / left side).
+Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), starting **300mm from left of internal** (**foot** / left side → narrow pier).
 
 | Part | Qty / size | Role |
 |------|------------|------|
 | Floor U-track | 1 run × **2246mm** | Base of front wall |
 | Ceiling U-track | 1 run × **2246mm** | Head of front wall |
-| C-stud jambs (left pier ~300mm, head side) | **2** × 2380mm | Full-height left of opening |
-| C-stud jambs (right pier ~646mm, foot side) | **2** × 2380mm | Full-height right of opening |
+| C-stud jambs (left pier ~300mm, **foot** side) | **2** × 2380mm | Full-height left of opening |
+| C-stud jambs (right pier ~646mm, **head** side) | **2** × 2380mm | Full-height right of opening |
 | Sill rail | 1× ~2246mm (track or stud on side) | At **640mm** AFF (bottom of opening) |
 | Lintel rail | 1× ~2246mm | At **2080mm** AFF (top of opening) |
-| **Noggins (required)** | see cut list below | Horizontal cross-members between pier studs for full-height PB |
-| Plasterboard | ~3–4 sheets worth | **Room face + alcove face** of front wall |
+| **Noggins (required)** | see cut list below | Between pier studs for full-height PB |
+| Plasterboard | ~3–4 sheets worth | Room face + alcove face + **opening reveals** |
 | Corner / stop bead | ~6–8m | Opening reveals + external corners |
 | Curtain track | ≥1300mm | In reveal or face-fix |
 
-**Noggins — front piers (required, not optional):** between each pair of jamb studs at **600 / 1200 / 1800mm AFF**, plus mid-band noggins in the boarded zones **below the sill (~320)** and **above the lintel (~2230)**. Wide right pier (~550mm stud clear span) is the critical bay; left pier still needs the same heights.
+**Opening reveal facings:** **12.5mm PB** on left/right jambs, sill and lintel soffit. Fixed with **drywall screws** into studs / noggins / track (~300mm centres). Finish edges with **stop/corner bead**, tape and joint, then paint.
+
+**Noggins — front piers:** at **600 / 1200 / 1800mm AFF**, plus band noggins **~320** and **~2230**. Wide **head-side** pier is the critical bay.
 
 **This is where almost all the C-stud and track is used.**
 
 ---
 
-### D. Foot wall extension — +237mm into the room (full height) — **RIGHT** side
+### D. Foot wall extension — +237mm into the room (full height) — **LEFT** side
 
-Existing foot wall stays; only the **front 237mm** is new studwork tied in.
+Existing foot wall stays; only the **front 237mm** is new studwork tied in.  
+**Flush rules:** same X footprint as existing (**0..98**); inner face meets front fascia at **X=98**; front face meets front wall room face at **Y=1242**.
 
 | Part | Qty / size | Role |
 |------|------------|------|
 | Floor + ceiling track | 2× ~237–300mm | Short runs for the extension |
 | C-stud uprights | **2** × 2380mm | New return |
-| **Noggins** | **3** × ~100–150mm | Between uprights at 600 / 1200 / 1800 AFF — full-height PB both faces |
-| Plasterboard | ~0.5–1 sheet | Both faces + front end, flush to studs |
+| **Noggins** | **3** × ~100–150mm | Between uprights at 600 / 1200 / 1800 AFF |
+| Plasterboard | ~0.5–1 sheet | Outer, inner, and front end — flush as above |
 | Join work | — | Strip ~200mm existing PB before tying in |
 
 ---

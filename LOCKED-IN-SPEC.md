@@ -1,31 +1,31 @@
 # Cabin Bed — Locked-In Spec (do not invent)
 
-Last updated from user confirmation through **3 Nov 2026** (head/foot orientation corrected).
+Last updated **3 Nov 2026** — orientation restored to match `top_plan_FINAL.png`.
 
 ## Orientation (matches top plan — single source of truth)
 
 | Direction | What it is |
 |-----------|------------|
-| **LEFT** | **HEAD** — 326mm solid fascia / head wall (carried on existing head wall; PB on exposed faces) |
-| **RIGHT** | **FOOT** — existing wall + full-height foot wall (98mm) + **237mm extension at the front** into the room |
+| **LEFT** | **FOOT** — existing wall + full-height foot wall (98mm) + **237mm extension at the front** into the room |
+| **RIGHT** | **HEAD** — 326mm solid fascia / head wall (carried on existing head wall; PB on exposed faces) |
 | **BACK / REAR** | Rear wall + **210mm rear shelf**, wall structure stops at **1200mm** shelf top |
 | **FRONT** | Into the room — access opening with curtains, front fascia **98mm** thick |
 
-> **Nov 2026 correction:** earlier drafts had foot on the left. Looking into the alcove from the room, **head is left, foot is right**. Do not reintroduce the old left=foot layout.
+Looking into the alcove: **foot LEFT, head RIGHT**. Access opening starts **300mm from the left of internal** → **narrow pier at the foot**, wider pier at the head.
+
+> Do **not** swap foot/head relative to the top plan. (A mid-Nov trial swap was reverted — it conflicted with the locked drawings.)
 
 ## Coordinate system (3D master → all 2D slices)
 
 ```
-Origin (0,0,0) = BACK-LEFT-FLOOR corner (rear wall ∩ head wall ∩ floor)
-X: 0 → 2344mm   HEAD (left) → FOOT (right)
+Origin (0,0,0) = BACK-LEFT-FLOOR corner (rear wall ∩ foot wall ∩ floor)
+X: 0 → 2344mm   FOOT (left) → HEAD (right)
 Y: 0 → 1242mm   BACK → FRONT (into room)
 Z: 0 → 2380mm   FLOOR → CEILING
 ```
 
-- 3D viewport must start at **0,0,0** (no negative axis padding / void behind walls).
-- Looking **into** the alcove: front toward viewer, back in the far corner.
-- On screen: **head LEFT, foot RIGHT** — pillow end toward the head fascia.
-- Side elevation is **from the foot** (right side): rear shelf LEFT, front wall RIGHT in that section view.
+- Foot extension: same X footprint as existing foot wall (**0..98**); front face at **Y=D** flush with the front wall’s room face; inner face at **X=FOOT** flush with the left end of the front fascia.
+- Blender OBJ/STL are exported **Y-up** (metres) so the model stands upright with default import settings.
 
 ## Dimensions that are locked
 
@@ -35,55 +35,44 @@ Z: 0 → 2380mm   FLOOR → CEILING
 | Foot wall thickness | 98mm | 70mm stud + plasterboard |
 | Total external width | 2344mm | 2246 + 98 |
 | Overall depth | 1242mm | Target alcove depth |
-| Foot wall extension | **237mm at FRONT** | Extends wall **into the room**, not at the rear; not a cut-in under the bed |
+| Foot wall extension | **237mm at FRONT** | Into the room; flush with existing wall + front fascia end |
 | Overall height | 2380mm | Full height |
-| Shelf top | 1200mm | Rear wall stops here; front/side walls continue |
-| Mattress / bed | 1900 × 900 × 220mm | **Already purchased** — model clearance 10mm → bay 1920 × 920 |
-| Existing bed height | **360mm** | Measured — frame only (before lift) |
-| Lift / plinth | **170mm** | 530 − 360; buy risers/packs only |
-| Platform top | **530mm** | Top of existing bed after lift (AFF) |
-| Head wall / fascia | 326mm wide × 1144mm deep | On the **left**; carried on **existing head wall**; **PB-faced** on exposed/front faces |
-| Rear shelf | 1920 × 210mm | Ledger on **existing back wall**; **PB-faced front fascia**; width = INTERNAL_W − HEAD_W (stops before foot) |
-| Bed tuck clearance | 7mm frame / 17mm mattress each end | Equal front & rear inside the bay |
-| Access opening | 1300 × 1440mm | Bottom **640mm**; top **2080mm**; start **300mm from left of internal** (head side) |
-| Front fascia thickness | 98mm | Opening surround depth |
-| Foot wall height | **Full 2380mm** | It is a wall, not a shelf |
-| Drawers ×2 | ~880 × 900 × 500mm | Full void under platform |
-| **Noggins** | Required | Horizontal cross-members between studs for full-height PB — see `PARTS-LIST.md` |
+| Shelf top | 1200mm | Rear wall stops here |
+| Mattress / bed | 1900 × 900 × 220mm | Already purchased |
+| Lift / platform | 170mm → platform **530mm** AFF | Bed frame 360mm owned |
+| Head wall / fascia | 326mm × 1144mm deep | On the **right** |
+| Rear shelf | 1920 × 210mm | INTERNAL_W − HEAD_W; stops before head |
+| Access opening | 1300 × 1440mm | 640–2080 AFF; starts **300mm from left of internal (foot side)** |
+| Front fascia | 98mm thick | Both faces + opening reveals boarded |
+| Noggins | Required | Full-height PB support — see `PARTS-LIST.md` |
+
+## Opening reveal facings (inside the access opening)
+
+| Item | Spec |
+|------|------|
+| Material | **12.5mm tapered-edge plasterboard** (same as other boarded faces) |
+| Where | Left & right jamb reveals, sill top, lintel soffit — wrapping the 98mm wall thickness |
+| Fixing | **Drywall screws** into C-stud jambs, noggins, and sill/lintel track (typically ~300mm centres) |
+| Edges | **Metal stop bead / corner bead** on external corners of the opening, then tape + joint compound |
+| Finish | Primer + emulsion (autumnal olive on visible faces) |
 
 ## What is NOT true (past mistakes — do not reintroduce)
 
-1. Do **not** put a 200mm “cut-in” block under the foot of the bed.
-2. Do **not** shove the bed flush to the rear only — keep **equal** front/rear tuck clearance for covers (centred in the bay).
-3. Do **not** measure access opening from below the shelf only — use full 2380mm height.
-4. Do **not** put the 237mm extension at the **rear** of the foot wall — it is at the **front**.
-5. Do **not** leave empty space behind the model (−200 limits) — butt to 0.
-6. Do **not** put **foot on the left** — head is left, foot is right (Nov 2026).
-7. Do **not** stop the foot wall at 1200mm — full height.
-8. Do **not** make the front opening surround as deep as the 237mm extension — it is **98mm**.
-9. Do **not** omit noggins on full-height boarded stud walls (front piers + foot extension).
+1. Do **not** put a 200mm “cut-in” under the foot of the bed.
+2. Do **not** omit equal front/rear bed tuck.
+3. Do **not** put the 237mm extension at the **rear** of the foot wall.
+4. Do **not** swap foot/head vs the top plan (foot stays **left**).
+5. Do **not** stop the foot wall at 1200mm.
+6. Do **not** omit noggins on full-height boarded stud walls.
+7. Do **not** leave the foot extension proud of / short of the existing wall or front fascia room face.
 
 ## Source of truth & files
 
-**Master model:** `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` (component assembly — studs, track, noggins, ledgers, PB, lift, bed)
-
-Fidelity limits and CAD/BIM handoff: see **`COMPONENT-3D.md`**.
-
-```bash
-node sync_viewer.mjs
-python3 -m http.server 8877
-node capture_static_views.mjs
-python3 create_final_report.py
-pip install -r cadquery/requirements.txt && python3 cadquery/build_assembly.py
-```
-
 | File | Role |
 |------|------|
-| `cabin_bed_model.js` | Component geometry (mm) — `DIM` SoT |
-| `cabin-bed-3d-viewer.html` | Interactive viewer |
-| `COMPONENT-3D.md` | Fidelity note + CAD brief |
-| `cadquery/` | CadQuery STEP / OBJ exporter |
-| `PARTS-LIST.md` | Zone BOM incl. noggins |
-| `COST-ESTIMATE-GL53.md` | Priced BOQ |
-| `SOURCING-AND-DELIVERY.md` | Purchase / delivery plan |
-| `PARTS-PURCHASE-CROSSREF.md` | Parts list ↔ purchase plan reconciliation |
+| `cabin_bed_model.js` | Geometry + `DIM` |
+| `top_plan_FINAL.png` | Locked plan view |
+| `LOCKED-IN-SPEC.md` | This file |
+| `PARTS-LIST.md` / `PARTS-PURCHASE-CROSSREF.md` | BOM + purchase |
+| `cadquery/` | STEP (mm) + OBJ/STL (metres, Blender Y-up) |
+| `cadquery/RENDER.md` | Materials / render notes |

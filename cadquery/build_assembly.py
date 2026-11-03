@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build cabin-bed STEP assembly from COMPONENT-3D.md / DIM.
 
-Orientation: looking into the alcove, HEAD left, FOOT right (user-corrected Nov 2026).
-Includes horizontal noggins for full-height plasterboard support.
+Orientation = locked top plan: FOOT left, HEAD right; narrow pier at foot.
+OBJ/STL export is metres + Blender Y-up (so the model is not on its side).
 """
 
 from __future__ import annotations
@@ -140,21 +140,25 @@ def add_noggin_x(
 
 
 def build_foot_extension(assy: cq.Assembly) -> None:
-    """Foot return on the RIGHT (+237 mm). Studs flush to outer face x=W."""
+    """Foot return +237 mm at FRONT (LEFT). Same X footprint as existing (0..FOOT).
+
+    Outer face x=0 flush with existing outer wall; inner face x=FOOT flush with
+    the left end of the front fascia; front face Y=D flush with front wall room face.
+    """
     D = DIM
     y0 = D.D - D.EXT
-    stud_x = D.W - D.STUD_W
-    add_vstud(assy, "FootExt-Stud-Rear", stud_x, y0 + 50, 0, D.H, color=COL["stud"])
+    stud_x = D.PB  # between PB skins
+    add_vstud(assy, "FootExt-Stud-Rear", stud_x, y0 + 40, 0, D.H, color=COL["stud"])
     add_vstud(
         assy,
         "FootExt-Stud-Front",
         stud_x,
-        y0 + D.EXT - D.STUD_FL - 50,
+        D.D - D.STUD_FL - 40,
         0,
         D.H,
         color=COL["stud"],
     )
-    xc = stud_x + D.STUD_W / 2
+    xc = D.FOOT / 2
     add_track_y(assy, "FootExt-Track-Floor", xc, y0, 0, D.EXT, color=COL["track"])
     add_track_y(
         assy,
@@ -166,63 +170,30 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         invert_legs=True,
         color=COL["track"],
     )
-    # Noggins between uprights (along Y)
-    y_a = y0 + 50 + D.STUD_FL
-    y_b = y0 + D.EXT - D.STUD_FL - 50
-    y_nog = min(y_a, y_b)
-    nog_d = abs(y_b - y_a)
+    y_a = y0 + 40 + D.STUD_FL
+    y_b = D.D - D.STUD_FL - 40
     for i, z in enumerate(D.NOGGIN_ZS, start=1):
         add_box(
             assy,
             f"FootExt-Noggin-{i}",
             stud_x,
-            y_nog,
+            y_a,
             z - D.NOGGIN_H / 2,
             D.STUD_W,
-            nog_d,
+            y_b - y_a,
             D.NOGGIN_H,
             COL["noggin"],
         )
-    add_box(assy, "FootExt-PB-Outer", D.W, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
-    add_box(
-        assy,
-        "FootExt-PB-Inner",
-        stud_x - D.PB,
-        y0,
-        0,
-        D.PB,
-        D.EXT,
-        D.H,
-        COL["painted"],
-    )
-    add_box(
-        assy,
-        "FootExt-PB-Front",
-        stud_x,
-        D.D - D.PB,
-        0,
-        D.STUD_W,
-        D.PB,
-        D.H,
-        COL["painted"],
-    )
+    add_box(assy, "FootExt-PB-Outer", 0, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
+    add_box(assy, "FootExt-PB-Inner", D.FOOT - D.PB, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
+    add_box(assy, "FootExt-PB-Front", 0, D.D - D.PB, 0, D.FOOT, D.PB, D.H, COL["painted"])
 
 
 def build_rear_shelf(assy: cq.Assembly) -> None:
     D = DIM
-    sx = D.HEAD_W
+    sx = D.FOOT
     sw = D.shelf_w
-    add_box(
-        assy,
-        "Rear-Ledger",
-        sx,
-        0,
-        D.SHELF - 80,
-        sw,
-        D.LEDGER,
-        D.LEDGER_H,
-        COL["timber"],
-    )
+    add_box(assy, "Rear-Ledger", sx, 0, D.SHELF - 80, sw, D.LEDGER, D.LEDGER_H, COL["timber"])
     add_box(assy, "Rear-Deck", sx, 0, D.SHELF - D.DECK_T, sw, D.REAR, D.DECK_T, COL["deck"])
     fascia_y = D.REAR - D.STUD_FL
     xs = [sx + 30, sx + sw / 2 - D.STUD_W / 2, sx + sw - D.STUD_W - 30]
@@ -250,26 +221,17 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
         color=COL["track"],
     )
     add_box(assy, "Rear-Fascia-PB", sx, D.REAR, 0, sw, D.PB, D.SHELF, COL["painted"])
-    add_box(
-        assy,
-        "Rear-Tablet-Block",
-        sx + sw / 2 - 150,
-        0,
-        935,
-        300,
-        40,
-        80,
-        COL["timber"],
-    )
+    add_box(assy, "Rear-Tablet-Block", sx + sw / 2 - 150, 0, 935, 300, 40, 80, COL["timber"])
 
 
 def build_head_shelf(assy: cq.Assembly) -> None:
-    """Head fascia on LEFT (0..HEAD_W). Studs inside shelf, flanges toward −X from bed face."""
+    """Head fascia on RIGHT (W-HEAD_W..W). Studs inside shelf behind bed-face PB."""
     D = DIM
+    hx = D.W - D.HEAD_W
     add_box(
         assy,
         "Head-Ledger",
-        0,
+        D.W - D.LEDGER,
         0,
         D.SHELF - 80,
         D.LEDGER,
@@ -277,19 +239,18 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         D.LEDGER_H,
         COL["timber"],
     )
-    add_box(assy, "Head-Deck", 0, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
-    stud_x = D.HEAD_W - D.STUD_FL  # flanges fill [HEAD_W-STUD_FL, HEAD_W]
+    add_box(assy, "Head-Deck", hx, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
     ys = [D.REAR + 40, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
     for i, y in enumerate(ys, start=1):
         add_vstud(
             assy,
             f"Head-Fascia-Stud-{i}",
-            D.HEAD_W,  # bed face; flange_sign=-1 places into shelf
+            hx,
             y,
             0,
             D.SHELF,
             web_along_x=False,
-            flange_sign=-1,
+            flange_sign=1,
             color=COL["stud"],
         )
     for i in range(len(ys) - 1):
@@ -301,7 +262,7 @@ def build_head_shelf(assy: cq.Assembly) -> None:
             add_box(
                 assy,
                 f"Head-Fascia-Noggin-{i + 1}-{j}",
-                stud_x,
+                hx,
                 y0,
                 z - 20,
                 D.STUD_FL,
@@ -309,21 +270,21 @@ def build_head_shelf(assy: cq.Assembly) -> None:
                 40,
                 COL["noggin"],
             )
-    add_box(assy, "Head-PB-BedFace", D.HEAD_W, 0, 0, D.PB, D.FRONT_Y, D.SHELF, COL["painted"])
-    add_box(assy, "Head-PB-FrontFace", 0, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.SHELF, COL["painted"])
+    add_box(assy, "Head-PB-BedFace", hx - D.PB, 0, 0, D.PB, D.FRONT_Y, D.SHELF, COL["painted"])
+    add_box(assy, "Head-PB-FrontFace", hx, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.SHELF, COL["painted"])
 
 
 def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None:
-    """Picture-frame PB across full internal width X=0..INTERNAL_W."""
+    """Picture-frame PB across full internal width X=FOOT..W."""
     D = DIM
-    left_w = D.ACCESS_X
+    left_w = D.ACCESS_X - D.FOOT
     right_x = D.ACCESS_X + D.ACCESS_W
-    right_w = D.INTERNAL_W - right_x
-    add_box(assy, f"{prefix}-Below", 0, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
+    right_w = D.W - right_x
+    add_box(assy, f"{prefix}-Below", D.FOOT, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
     add_box(
         assy,
         f"{prefix}-LeftPier",
-        0,
+        D.FOOT,
         pb_y,
         D.ACCESS_BOT,
         left_w,
@@ -345,7 +306,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
     add_box(
         assy,
         f"{prefix}-Above",
-        0,
+        D.FOOT,
         pb_y,
         D.ACCESS_TOP,
         D.INTERNAL_W,
@@ -356,7 +317,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
 
 
 def build_front_fascia(assy: cq.Assembly) -> None:
-    """Front wall spans full internal width (meets head at X=0, stops at foot wall)."""
+    """Front wall X=FOOT..W. Narrow pier (~300) at FOOT; wide pier at HEAD."""
     D = DIM
     y = D.FRONT_Y
     ty = y + (D.FOOT - D.TRACK_WEB) / 2
@@ -364,11 +325,11 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     y_track_c = ty + D.TRACK_WEB / 2
     right_x = D.ACCESS_X + D.ACCESS_W
 
-    add_track_x(assy, "Front-Track-Floor", 0, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
+    add_track_x(assy, "Front-Track-Floor", D.FOOT, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
     add_track_x(
         assy,
         "Front-Track-Ceiling",
-        0,
+        D.FOOT,
         y_track_c,
         D.H,
         D.INTERNAL_W,
@@ -378,7 +339,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Sill",
-        0,
+        D.FOOT,
         y_track_c,
         D.ACCESS_BOT - D.TRACK_LEG,
         D.INTERNAL_W,
@@ -387,15 +348,15 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Lintel",
-        0,
+        D.FOOT,
         y_track_c,
         D.ACCESS_TOP,
         D.INTERNAL_W,
         color=COL["track"],
     )
 
-    left_studs = [25.0, D.ACCESS_X - D.STUD_W - 25]
-    right_studs = [right_x + 25, D.INTERNAL_W - D.STUD_W - 25]
+    left_studs = [D.FOOT + 25, D.ACCESS_X - D.STUD_W - 25]
+    right_studs = [right_x + 25, D.W - D.STUD_W - 25]
     for i, x in enumerate(left_studs, start=1):
         add_vstud(assy, f"Front-Jamb-L{i}", x, sy, 0, D.H, color=COL["stud"])
     for i, x in enumerate(right_studs, start=1):
@@ -408,11 +369,9 @@ def build_front_fascia(assy: cq.Assembly) -> None:
         for i, z in enumerate((320.0, 2230.0), start=1):
             add_noggin_x(assy, f"Front-Noggin-{label}-Band-{i}", x0, x1, sy, z, height=40.0)
 
-    # Room face + alcove face (covers studs from inside the cabin)
     _front_pb_picture_frame(assy, "Front-PB-Room", y + D.FOOT - D.PB)
     _front_pb_picture_frame(assy, "Front-PB-Alcove", y)
 
-    # Opening reveals — faces into the aperture so stud edges are not bare
     oh = D.ACCESS_TOP - D.ACCESS_BOT
     add_box(assy, "Front-Reveal-Left", D.ACCESS_X - D.PB, y, D.ACCESS_BOT, D.PB, D.FOOT, oh, COL["painted"])
     add_box(assy, "Front-Reveal-Right", right_x, y, D.ACCESS_BOT, D.PB, D.FOOT, oh, COL["painted"])
@@ -422,7 +381,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
 
 def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
     D = DIM
-    mx = D.HEAD_W + D.TOL  # pillow end toward head (left)
+    mx = D.FOOT + D.TOL  # pillow toward head (right)
     fy = D.REAR + D.FRAME_TUCK
     my = fy + D.TOL
     rw = 45.0
@@ -470,13 +429,13 @@ def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
 
 def build_existing_ghost(assy: cq.Assembly) -> None:
     D = DIM
-    add_box(assy, "Existing-FootWall", D.FOOT_X0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
+    add_box(assy, "Existing-FootWall", 0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
 
 
 def build_orientation_markers(assy: cq.Assembly) -> None:
     D = DIM
-    add_box(assy, "Marker-HEAD", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
-    add_box(assy, "Marker-FOOT", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
+    add_box(assy, "Marker-FOOT", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
+    add_box(assy, "Marker-HEAD", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
 
 
 def build_assembly() -> cq.Assembly:
@@ -510,6 +469,11 @@ def iter_parts(assy: cq.Assembly):
         yield name, shape, obj.color
 
 
+def _to_blender_y_up(x: float, y: float, z: float) -> tuple[float, float, float]:
+    """CAD Z-up, Y-forward → Blender Y-up, −Z-forward: (x, y, z) → (x, z, −y)."""
+    return (x, z, -y)
+
+
 def export_stl(
     assy: cq.Assembly,
     path: Path,
@@ -517,18 +481,24 @@ def export_stl(
     *,
     unit_scale: float = 0.001,
 ) -> None:
-    """Export STL. Default unit_scale=0.001 → metres (Blender-safe; avoids clip slicing)."""
+    """Export STL in metres, rotated upright for Blender default axes."""
+    from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
+    from OCP.gp import gp_Trsf, gp_Ax1, gp_Pnt, gp_Dir
+
     comp = assembly_compound(assy)
+    # Rotate −90° about X so Z-up becomes Y-up, then scale to metres
+    tr = gp_Trsf()
+    tr.SetRotation(gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(1, 0, 0)), -3.141592653589793 / 2.0)
+    rotated = cq.Shape.cast(BRepBuilderAPI_Transform(comp.wrapped, tr, True).Shape())
     if unit_scale != 1.0:
-        comp = comp.scale(unit_scale)
+        rotated = rotated.scale(unit_scale)
     path.parent.mkdir(parents=True, exist_ok=True)
-    # CadQuery exporters expect a Workplane/Shape
-    shape = cq.Workplane("XY").newObject([comp])
+    shape = cq.Workplane("XY").newObject([rotated])
     cq.exporters.export(
         shape,
         str(path),
         exportType="STL",
-        tolerance=tolerance * unit_scale if unit_scale != 1.0 else tolerance,
+        tolerance=max(tolerance * unit_scale, 1e-4),
         angularTolerance=0.2,
     )
 
@@ -653,22 +623,29 @@ def export_obj_mtl(
 
     unit_note = "metres" if abs(unit_scale - 0.001) < 1e-12 else f"mm×{unit_scale}"
     with obj_path.open("w", encoding="utf-8") as of:
-        of.write("# Cabin bed — HEAD left, FOOT right\n")
-        of.write(f"# Units: {unit_note} (scale from mm = {unit_scale})\n")
-        of.write("# Blender: Forward=Y Forward, Up=Z Up; do NOT scale again if this is metres\n")
+        of.write("# Cabin bed — FOOT left, HEAD right (locked top plan)\n")
+        of.write(f"# Units: {unit_note}; axes: Blender Y-up (−Z forward) from CAD Z-up\n")
+        of.write("# Blender import: defaults OK (Y up). Do NOT scale again if metres.\n")
         of.write(f"mtllib {mtl_path.name}\n")
         v_index = 1
         for name, key, tris in objects:
             of.write(f"o {name}\ng {name}\nusemtl {key}\ns off\n")
             for tri, normal in tris:
-                nx, ny, nz = normal
-                for pt in tri:
-                    of.write(
-                        f"v {pt[0] * unit_scale:.6f} {pt[1] * unit_scale:.6f} {pt[2] * unit_scale:.6f}\n"
-                    )
-                # One normal per triangle corner (flat shaded, stable in Blender)
+                # Transform positions and normals into Blender Y-up
+                btri = [
+                    _to_blender_y_up(p[0] * unit_scale, p[1] * unit_scale, p[2] * unit_scale)
+                    for p in tri
+                ]
+                bn = _to_blender_y_up(*normal)
+                # Renormalise (rotation only — length preserved, but be safe)
+                import math
+
+                ln = math.sqrt(bn[0] ** 2 + bn[1] ** 2 + bn[2] ** 2) or 1.0
+                bn = (bn[0] / ln, bn[1] / ln, bn[2] / ln)
+                for pt in btri:
+                    of.write(f"v {pt[0]:.6f} {pt[1]:.6f} {pt[2]:.6f}\n")
                 for _ in range(3):
-                    of.write(f"vn {nx:.6f} {ny:.6f} {nz:.6f}\n")
+                    of.write(f"vn {bn[0]:.6f} {bn[1]:.6f} {bn[2]:.6f}\n")
                 of.write(
                     f"f {v_index}//{v_index} {v_index + 1}//{v_index + 1} {v_index + 2}//{v_index + 2}\n"
                 )
@@ -685,8 +662,8 @@ def main() -> int:
     args = parser.parse_args()
 
     print(f"DIM envelope: {DIM.W:.0f} × {DIM.D:.0f} × {DIM.H:.0f} mm")
-    print(f"Orientation: HEAD left (X=0), FOOT right (X={DIM.FOOT_X0:.0f}..{DIM.W:.0f})")
-    print(f"ACCESS_X={DIM.ACCESS_X:.0f}  shelf_w={DIM.shelf_w:.0f}  PLATFORM={DIM.PLATFORM:.0f}")
+    print(f"Orientation: FOOT left (X=0), HEAD right (X={DIM.W - DIM.HEAD_W:.0f}..{DIM.W:.0f})")
+    print(f"ACCESS_X={DIM.ACCESS_X:.0f} (narrow pier at foot)  PLATFORM={DIM.PLATFORM:.0f}")
     print("Building assembly…")
     assy = build_assembly()
     names = [name for name, _obj in assy.traverse()]
@@ -694,17 +671,24 @@ def main() -> int:
     for n in names:
         print(f"  - {n}")
 
-    # Sanity checks
+    left_pier = DIM.ACCESS_X - DIM.FOOT
+    right_pier = DIM.W - (DIM.ACCESS_X + DIM.ACCESS_W)
+    assert left_pier < right_pier, "narrow pier must be at foot (left)"
+    print(f"Piers: foot/left={left_pier:.0f}mm  head/right={right_pier:.0f}mm")
+
     for name, shape, _ in iter_parts(assy):
         bb = shape.BoundingBox()
-        if name.startswith("FootExt-Stud"):
-            assert bb.xmax <= DIM.W + 0.1 and bb.xmin >= DIM.W - DIM.STUD_W - 0.1, name
-        if name.startswith("Head-Fascia-Stud"):
-            assert bb.xmax <= DIM.HEAD_W + 0.1, f"{name} leaks past bed face"
-            assert bb.xmin >= DIM.HEAD_W - DIM.STUD_FL - 0.1, name
-        if name.startswith("Marker-HEAD"):
-            assert bb.xmax <= 0.1, name
+        if name == "Front-Track-Floor":
+            assert abs(bb.xmin - DIM.FOOT) < 1 and abs(bb.xmax - DIM.W) < 1, (bb.xmin, bb.xmax)
+        if name.startswith("FootExt-PB-Outer"):
+            assert abs(bb.xmin) < 0.1 and abs(bb.xmax - DIM.PB) < 0.1
+        if name.startswith("FootExt-PB-Inner"):
+            assert abs(bb.xmax - DIM.FOOT) < 0.1
+        if name.startswith("FootExt-PB-Front"):
+            assert abs(bb.ymax - DIM.D) < 0.1
         if name.startswith("Marker-FOOT"):
+            assert bb.xmax <= 0.1, name
+        if name.startswith("Marker-HEAD"):
             assert bb.xmin >= DIM.W - 0.1, name
 
     if not args.no_export:

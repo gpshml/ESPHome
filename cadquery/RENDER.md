@@ -27,8 +27,18 @@ Paint direction: **autumnal olive** on all visible PB (alcove, room face, reveal
 
 Material Preview / EEVEE is enough to verify boarding and reveals. Turn on **Screen Space Reflections** and a single sun + area light.
 
+## Opening reveal build-up
+
+Inside the access opening (jambs, sill, lintel soffit):
+
+1. **12.5mm TE plasterboard** cut to the 98mm wall depth  
+2. **Drywall screws** into C-stud jambs, noggins, and sill/lintel track (~300mm centres)  
+3. **Stop bead / corner bead** on the room and alcove edges of the reveal  
+4. Tape, joint compound, primer, emulsion (olive)
+
 ## What to check visually
 
-- Front wall runs **X = 0 → 2.246 m** (full internal) — flush to head, stops at foot wall  
-- Alcove-side PB + opening **reveals** cover stud fronts  
-- Olive paint on boarded faces; grey metal only where still exposed framing  
+- **FOOT left / HEAD right**; narrow pier at the foot  
+- Foot extension flush with existing wall (X) and front fascia room face (Y)  
+- Alcove PB + reveals cover stud fronts  
+- Model stands **upright** in Blender (Y-up export)  

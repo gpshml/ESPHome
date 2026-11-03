@@ -29,23 +29,19 @@ GitHub renders the mesh in the browser when you open the file:
 
 OBJ/STL are exported in **metres** (~2.3 × 1.2 × 2.4). STEP stays in **mm** for CAD.
 
-STEP does not preview on GitHub. In the GitHub 3D view, **Marker-HEAD** = left, **Marker-FOOT** = right when looking in from the room.
+STEP does not preview on GitHub. **Marker-FOOT** left, **Marker-HEAD** right (locked top plan).
 
 ## Review in Blender
 
-The “bizarre slicing” across the model was from importing **mm as Blender units** (~2.4 km tall) — the viewport **clip end** cuts through it. These meshes are now in **metres**.
+OBJ/STL are **metres** and **Y-up** (so the model stands upright with Blender defaults — not on its side).
 
-1. Download `cabin_bed_assembly.obj` **and** `cabin_bed_assembly.mtl` together
-2. **File → Import → Wavefront (.obj)**
-   - Forward = **Y Forward**, Up = **Z Up**
-   - **Do not** scale by 0.001 again
-3. Scene units: **Metres** (Blender default is fine) — envelope ~2.3 m wide
-4. If anything still looks sliced: **Sidebar (N) → View → Clip End** ≥ `100` m
-5. **View → Viewpoint → Front** — **Marker-HEAD** left, **Marker-FOOT** right
+1. Download `cabin_bed_assembly.obj` **and** `.mtl` together  
+2. **File → Import → Wavefront (.obj)** — defaults OK; do **not** scale by 0.001  
+3. Clip End ≥ 100 m if anything still clips  
+4. Looking into the alcove: **FOOT left**, **HEAD right**; narrow pier at the foot  
 
-Materials: painted PB = autumnal olive; studs/track/noggins = galvanised; decks/ledgers/lift = timber.  
-See [`RENDER.md`](RENDER.md) for Blender Principled setups and lighting.
+Opening reveals = 12.5mm PB, drywall screws to studs/track, stop bead. See [`RENDER.md`](RENDER.md).
 
 ## Coords
 
-Origin back-left-floor; X **head→foot**, Y back→front, Z up (mm). HEAD left, FOOT right.
+CAD: origin back-left-floor; X foot→head, Y back→front, Z up (mm). OBJ export converts to Blender Y-up.

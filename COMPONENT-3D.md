@@ -34,7 +34,7 @@ python3 cadquery/build_assembly.py
 
 ## Source of truth
 
-Same as `LOCKED-IN-SPEC.md`: origin back-left-floor; X **head→foot**, Y back→front, Z up.
+Same as `LOCKED-IN-SPEC.md`: origin back-left-floor; X **foot→head**, Y back→front, Z up.
 
 ```bash
 # After editing cabin_bed_model.js:
@@ -49,14 +49,11 @@ python3 create_final_report.py
 Copy this into another agent or CAD assistant:
 
 > **Project:** UK metal-stud + plasterboard alcove cabin/daybed, Cheltenham GL53.  
-> **Alcove:** 2344 × 1242 × 2380 mm (W×D×H). Origin = back-left-floor. X **head→foot**, Y back→front, Z up.  
-> **Head (left):** 326 mm fascia; ledgers on existing head wall; PB on exposed faces; studs inside shelf.  
-> **Foot (right):** existing 98 mm wall + 237 mm front extension (full height); PB flush to studs.  
-> **Rear:** 210 mm shelf, top 1200 mm; ledger on existing back wall; PB front fascia; shelf width = INTERNAL_W − HEAD_W (stops before foot).  
-> **Front:** 98 mm fascia both faces + opening reveals; spans full internal X=0..2246 (meets head, stops at foot wall); access 1300 × 1440 @ X=300, Z=640–2080; **noggins** at 600/1200/1800 (+ band noggins).  
-> **Bed:** owned; frame 360 mm; lift-only 170 mm → platform 530; mattress 1900×900 (+10 mm); pillow toward head (left).  
-> **Stud buy:** **13×** 3 m C-stud (incl. noggins) + 4× track — see `PARTS-LIST.md` / `PARTS-PURCHASE-CROSSREF.md`.  
-> **Ask:** parametric model with real 70 mm C-stud / track / noggin profiles, named parts matching the BOQ, STEP export. Do not invent dimensions — use `LOCKED-IN-SPEC.md` and `DIM`.
+> **Alcove:** 2344 × 1242 × 2380 mm. Origin back-left-floor. X **foot→head**, Y back→front, Z up.  
+> **Foot (left):** existing 98 mm + 237 mm front extension — flush with existing wall and front fascia end.  
+> **Head (right):** 326 mm fascia; PB on exposed faces.  
+> **Front:** 98 mm both faces + **12.5mm PB reveals** (drywall-screwed to studs/track); access @ X=398 (300mm from left of internal — **narrow pier at foot**).  
+> **Noggins** + **13×** C-stud — see `PARTS-LIST.md`. Do not invent dims — use `LOCKED-IN-SPEC.md` / `DIM` / `top_plan_FINAL.png`.
 
 ## Recommendation — which AI / tool for CAD-grade work
 
