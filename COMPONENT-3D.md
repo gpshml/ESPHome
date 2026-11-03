@@ -9,8 +9,8 @@
 | Interactive component assembly (studs, track, ledgers, PB, decks, lift, bed, drawers) | `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` |
 | Static captures from that model | `3d_view_FINAL.png`, `front_elevation_FINAL.png`, `top_plan_FINAL.png`, `side_elevation_FINAL.png` |
 | CadQuery STEP assembly (named parts, C-stud / U-track profiles) | `cadquery/` → `cadquery/out/cabin_bed_assembly.step` |
-| Coloured OBJ for Blender (olive painted PB + material colours) | `cadquery/out/cabin_bed_assembly.obj` + `.mtl` |
-| STL mesh fallback | `cadquery/out/cabin_bed_assembly.stl` |
+| Coloured OBJ (GitHub 3D preview + Blender) | `cadquery/out/cabin_bed_assembly.obj` + `.mtl` |
+| STL mesh fallback (also GitHub-previewable) | `cadquery/out/cabin_bed_assembly.stl` |
 | Serve locally | `python3 -m http.server 8877` → open `/cabin-bed-3d-viewer.html` |
 
 Open the viewer, use **3D / Front / Top / Side**, and **Toggle front** to inspect framing behind the fascia.
