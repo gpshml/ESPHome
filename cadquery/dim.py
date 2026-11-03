@@ -58,7 +58,8 @@ class Dim:
 
     @property
     def ACCESS_X(self) -> float:
-        return self.HEAD_W + 300.0  # 626 — 300mm from left of internal
+        # Internal spans X=0..INTERNAL_W (head on left inside that). 300mm from left of internal.
+        return 300.0
 
     @property
     def FRONT_Y(self) -> float:
@@ -78,11 +79,11 @@ class Dim:
 
     @property
     def FOOT_X0(self) -> float:
-        return self.W - self.FOOT  # 2246
+        return self.W - self.FOOT  # 2246 (= INTERNAL_W)
 
     @property
     def INTERNAL_X0(self) -> float:
-        return self.HEAD_W  # 326
+        return 0.0
 
 
 DIM = Dim()

@@ -16,7 +16,7 @@ import cadquery as cq
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from dim import DIM  # noqa: E402
-from materials import COL  # noqa: E402
+from materials import COL, MTL_HINTS  # noqa: E402
 from profiles import board, c_stud, place_min, u_track  # noqa: E402
 
 # Extra material key for noggins (galvanised-ish)
@@ -314,15 +314,16 @@ def build_head_shelf(assy: cq.Assembly) -> None:
 
 
 def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None:
+    """Picture-frame PB across full internal width X=0..INTERNAL_W."""
     D = DIM
-    left_w = D.ACCESS_X - D.HEAD_W
+    left_w = D.ACCESS_X
     right_x = D.ACCESS_X + D.ACCESS_W
-    right_w = D.FOOT_X0 - right_x
-    add_box(assy, f"{prefix}-Below", D.HEAD_W, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
+    right_w = D.INTERNAL_W - right_x
+    add_box(assy, f"{prefix}-Below", 0, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
     add_box(
         assy,
         f"{prefix}-LeftPier",
-        D.HEAD_W,
+        0,
         pb_y,
         D.ACCESS_BOT,
         left_w,
@@ -344,7 +345,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
     add_box(
         assy,
         f"{prefix}-Above",
-        D.HEAD_W,
+        0,
         pb_y,
         D.ACCESS_TOP,
         D.INTERNAL_W,
@@ -355,6 +356,7 @@ def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None
 
 
 def build_front_fascia(assy: cq.Assembly) -> None:
+    """Front wall spans full internal width (meets head at X=0, stops at foot wall)."""
     D = DIM
     y = D.FRONT_Y
     ty = y + (D.FOOT - D.TRACK_WEB) / 2
@@ -362,11 +364,11 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     y_track_c = ty + D.TRACK_WEB / 2
     right_x = D.ACCESS_X + D.ACCESS_W
 
-    add_track_x(assy, "Front-Track-Floor", D.HEAD_W, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
+    add_track_x(assy, "Front-Track-Floor", 0, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
     add_track_x(
         assy,
         "Front-Track-Ceiling",
-        D.HEAD_W,
+        0,
         y_track_c,
         D.H,
         D.INTERNAL_W,
@@ -376,7 +378,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Sill",
-        D.HEAD_W,
+        0,
         y_track_c,
         D.ACCESS_BOT - D.TRACK_LEG,
         D.INTERNAL_W,
@@ -385,21 +387,20 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Lintel",
-        D.HEAD_W,
+        0,
         y_track_c,
         D.ACCESS_TOP,
         D.INTERNAL_W,
         color=COL["track"],
     )
 
-    left_studs = [D.HEAD_W + 25, D.ACCESS_X - D.STUD_W - 25]
-    right_studs = [right_x + 25, D.FOOT_X0 - D.STUD_W - 25]
+    left_studs = [25.0, D.ACCESS_X - D.STUD_W - 25]
+    right_studs = [right_x + 25, D.INTERNAL_W - D.STUD_W - 25]
     for i, x in enumerate(left_studs, start=1):
         add_vstud(assy, f"Front-Jamb-L{i}", x, sy, 0, D.H, color=COL["stud"])
     for i, x in enumerate(right_studs, start=1):
         add_vstud(assy, f"Front-Jamb-R{i}", x, sy, 0, D.H, color=COL["stud"])
 
-    # Full-height + band noggins between pier studs
     for label, pair in (("L", left_studs), ("R", right_studs)):
         x0, x1 = pair[0] + D.STUD_W, pair[1]
         for i, z in enumerate(D.NOGGIN_ZS, start=1):
@@ -407,8 +408,16 @@ def build_front_fascia(assy: cq.Assembly) -> None:
         for i, z in enumerate((320.0, 2230.0), start=1):
             add_noggin_x(assy, f"Front-Noggin-{label}-Band-{i}", x0, x1, sy, z, height=40.0)
 
+    # Room face + alcove face (covers studs from inside the cabin)
     _front_pb_picture_frame(assy, "Front-PB-Room", y + D.FOOT - D.PB)
     _front_pb_picture_frame(assy, "Front-PB-Alcove", y)
+
+    # Opening reveals — faces into the aperture so stud edges are not bare
+    oh = D.ACCESS_TOP - D.ACCESS_BOT
+    add_box(assy, "Front-Reveal-Left", D.ACCESS_X - D.PB, y, D.ACCESS_BOT, D.PB, D.FOOT, oh, COL["painted"])
+    add_box(assy, "Front-Reveal-Right", right_x, y, D.ACCESS_BOT, D.PB, D.FOOT, oh, COL["painted"])
+    add_box(assy, "Front-Reveal-Sill", D.ACCESS_X, y, D.ACCESS_BOT - D.PB, D.ACCESS_W, D.FOOT, D.PB, COL["painted"])
+    add_box(assy, "Front-Reveal-Lintel", D.ACCESS_X, y, D.ACCESS_TOP, D.ACCESS_W, D.FOOT, D.PB, COL["painted"])
 
 
 def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
@@ -626,10 +635,21 @@ def export_obj_mtl(
         objects.append((name, key, tris))
 
     with mtl_path.open("w", encoding="utf-8") as mf:
-        mf.write("# Cabin bed materials\n")
+        mf.write("# Cabin bed materials — map Kd/Ns to Principled BSDF in Blender (see RENDER.md)\n")
         for key, (r, g, b) in sorted(mat_entries.items()):
-            mf.write(f"newmtl {key}\nKd {r:.4f} {g:.4f} {b:.4f}\n")
-            mf.write("Ka 0.05 0.05 0.05\nKs 0.08 0.08 0.08\nNs 20\nd 1.0\n\n")
+            hint = MTL_HINTS.get(key, {"Ns": 20, "Ni": 1.45})
+            ns = hint.get("Ns", 20)
+            ni = hint.get("Ni", 1.45)
+            # Specular from Ns: higher → shinier metal/paint
+            ks = 0.35 if ns >= 80 else 0.12 if ns >= 25 else 0.04
+            mf.write(f"newmtl {key}\n")
+            mf.write(f"Kd {r:.4f} {g:.4f} {b:.4f}\n")
+            mf.write(f"Ka {r * 0.03:.4f} {g * 0.03:.4f} {b * 0.03:.4f}\n")
+            mf.write(f"Ks {ks:.4f} {ks:.4f} {ks:.4f}\n")
+            mf.write(f"Ns {ns}\nNi {ni}\nillum 2\nd 1.0\n")
+            if "roughness" in hint:
+                mf.write(f"# Blender Principled: Roughness={hint['roughness']} Metallic={hint.get('metallic', 0)}\n")
+            mf.write("\n")
 
     unit_note = "metres" if abs(unit_scale - 0.001) < 1e-12 else f"mm×{unit_scale}"
     with obj_path.open("w", encoding="utf-8") as of:

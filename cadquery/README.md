@@ -43,7 +43,8 @@ The “bizarre slicing” across the model was from importing **mm as Blender un
 4. If anything still looks sliced: **Sidebar (N) → View → Clip End** ≥ `100` m
 5. **View → Viewpoint → Front** — **Marker-HEAD** left, **Marker-FOOT** right
 
-Materials: painted PB = autumnal olive; studs/track/noggins = galvanised; decks/ledgers/lift = timber.
+Materials: painted PB = autumnal olive; studs/track/noggins = galvanised; decks/ledgers/lift = timber.  
+See [`RENDER.md`](RENDER.md) for Blender Principled setups and lighting.
 
 ## Coords
 

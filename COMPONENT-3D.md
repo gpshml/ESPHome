@@ -53,7 +53,7 @@ Copy this into another agent or CAD assistant:
 > **Head (left):** 326 mm fascia; ledgers on existing head wall; PB on exposed faces; studs inside shelf.  
 > **Foot (right):** existing 98 mm wall + 237 mm front extension (full height); PB flush to studs.  
 > **Rear:** 210 mm shelf, top 1200 mm; ledger on existing back wall; PB front fascia; shelf width = INTERNAL_W − HEAD_W (stops before foot).  
-> **Front:** 98 mm fascia both faces; access 1300 × 1440 @ X=626, Z=640–2080; **noggins** between pier studs at 600/1200/1800 (+ band noggins).  
+> **Front:** 98 mm fascia both faces + opening reveals; spans full internal X=0..2246 (meets head, stops at foot wall); access 1300 × 1440 @ X=300, Z=640–2080; **noggins** at 600/1200/1800 (+ band noggins).  
 > **Bed:** owned; frame 360 mm; lift-only 170 mm → platform 530; mattress 1900×900 (+10 mm); pillow toward head (left).  
 > **Stud buy:** **13×** 3 m C-stud (incl. noggins) + 4× track — see `PARTS-LIST.md` / `PARTS-PURCHASE-CROSSREF.md`.  
 > **Ask:** parametric model with real 70 mm C-stud / track / noggin profiles, named parts matching the BOQ, STEP export. Do not invent dimensions — use `LOCKED-IN-SPEC.md` and `DIM`.

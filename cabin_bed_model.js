@@ -25,8 +25,9 @@ export const DIM = {
   TOL: 10,
   FRAME_D: 900 + 20, // 920
   ACCESS_W: 1300,
-  // 300mm from left of internal (= after head fascia)
-  get ACCESS_X() { return this.HEAD_W + 300; }, // 626
+  // Internal spans X=0..INTERNAL_W (head is inside that, on the left). Foot wall is outside.
+  // Access starts 300mm from left of internal.
+  ACCESS_X: 300,
   ACCESS_BOT: 640,
   ACCESS_TOP: 2080,
   STUD_W: 70,
@@ -39,8 +40,8 @@ export const DIM = {
   get FRONT_Y() { return this.D - this.FOOT; },
   get BED_BAY() { return this.FRONT_Y - this.REAR; },
   get FRAME_TUCK() { return (this.BED_BAY - this.FRAME_D) / 2; },
-  get FOOT_X0() { return this.W - this.FOOT; }, // 2246 — foot wall starts
-  get INTERNAL_X0() { return this.HEAD_W; }, // 326
+  get FOOT_X0() { return this.W - this.FOOT; }, // 2246 — foot wall starts (= INTERNAL_W)
+  get INTERNAL_X0() { return 0; }, // front / internal run from the head end
   S: 0.001,
 };
 
@@ -207,23 +208,26 @@ export function buildCabinBed(THREE) {
     box(root, mx + dw + 35, fy + 50, 25, dw, FRAME_D - 100, PLINTH - 45, COL.drawer, 0.4, 1);
   }
 
-  // —— Front fascia: tracks, 4 jambs, sill/lintel, noggins, PB both faces ——
+  // —— Front fascia: full internal width X=0..INTERNAL_W (meets head, stops at foot wall) ——
   {
     const g = frontGroup;
-    const leftW = ACCESS_X - HEAD_W; // pier beside head (~300)
+    const leftW = ACCESS_X; // ~300 from head end
     const rightX = ACCESS_X + ACCESS_W;
-    const rightW = FOOT_X0 - rightX; // pier beside foot (~646)
+    const rightW = INTERNAL_W - rightX; // ~646 to foot wall
     const y = FRONT_Y;
     const ty = y + (FOOT - 72) / 2;
     const sy = y + (FOOT - STUD_FL) / 2;
+    const roomY = y + FOOT - PB; // room-face PB
+    const alcoveY = y; // alcove-face PB (covers studs from inside)
 
-    box(g, HEAD_W, ty, 0, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(g, HEAD_W, ty, H - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(g, HEAD_W, ty, ACCESS_BOT - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(g, HEAD_W, ty, ACCESS_TOP, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    // Tracks across full internal width
+    box(g, 0, ty, 0, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, 0, ty, H - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, 0, ty, ACCESS_BOT - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, 0, ty, ACCESS_TOP, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
 
-    const leftStuds = [HEAD_W + 25, ACCESS_X - STUD_W - 25];
-    const rightStuds = [rightX + 25, FOOT_X0 - STUD_W - 25];
+    const leftStuds = [25, ACCESS_X - STUD_W - 25];
+    const rightStuds = [rightX + 25, INTERNAL_W - STUD_W - 25];
     for (const x of leftStuds) {
       box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     }
@@ -231,19 +235,25 @@ export function buildCabinBed(THREE) {
       box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     }
 
-    // Full-height noggins between pier studs (PB support)
     nogginsBetween(g, leftStuds[0] + STUD_W, leftStuds[1], sy, nogginZs);
     nogginsBetween(g, rightStuds[0] + STUD_W, rightStuds[1], sy, nogginZs);
-    // Mid noggins in boarded bands above lintel / below sill
     nogginsBetween(g, leftStuds[0] + STUD_W, leftStuds[1], sy, [320, 2230], 40);
     nogginsBetween(g, rightStuds[0] + STUD_W, rightStuds[1], sy, [320, 2230], 40);
 
-    for (const pbY of [y + FOOT - PB, y]) {
-      box(g, HEAD_W, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.92, 2);
-      box(g, HEAD_W, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-      box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-      box(g, HEAD_W, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.92, 2);
+    // Room face + alcove face (internal stud front) — full picture frame
+    for (const pbY of [roomY, alcoveY]) {
+      box(g, 0, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, 0, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, 0, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.98, 2);
     }
+
+    // Opening reveals (faces into the aperture — wrap the stud front)
+    const oh = ACCESS_TOP - ACCESS_BOT;
+    box(g, ACCESS_X - PB, y, ACCESS_BOT, PB, FOOT, oh, COL.pb, 0.98, 2); // left reveal
+    box(g, rightX, y, ACCESS_BOT, PB, FOOT, oh, COL.pb, 0.98, 2); // right reveal
+    box(g, ACCESS_X, y, ACCESS_BOT - PB, ACCESS_W, FOOT, PB, COL.pb, 0.98, 2); // sill
+    box(g, ACCESS_X, y, ACCESS_TOP, ACCESS_W, FOOT, PB, COL.pb, 0.98, 2); // lintel soffit
 
     const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;
     const oz0 = ACCESS_BOT * S, oz1 = ACCESS_TOP * S;
