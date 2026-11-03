@@ -49,8 +49,10 @@ export function buildCabinBed(THREE) {
   const root = new THREE.Group();
   const frontGroup = new THREE.Group();
   const footGroup = new THREE.Group();
+  const headGroup = new THREE.Group();
   root.add(frontGroup);
   root.add(footGroup);
+  root.add(headGroup);
 
   function box(parent, x, y, z, w, d, h, color, opacity = 1, renderOrder = 0) {
     const geo = new THREE.BoxGeometry(w * S, h * S, d * S);
@@ -83,7 +85,7 @@ export function buildCabinBed(THREE) {
   box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
 
   // Head fascia — full depth from back wall to front fascia (no void at head/front corner)
-  box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
+  box(headGroup, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
 
   // Bed — centred in bay so tuck gap is equal front & rear (covers fall evenly)
   const mx = FOOT + TOL;
@@ -121,5 +123,5 @@ export function buildCabinBed(THREE) {
   openLine.renderOrder = 3;
   root.add(openLine);
 
-  return { root, frontGroup, footGroup, DIM };
+  return { root, frontGroup, footGroup, headGroup, DIM };
 }

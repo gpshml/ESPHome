@@ -97,8 +97,10 @@
       const root = new THREE.Group();
       const frontGroup = new THREE.Group();
       const footGroup = new THREE.Group();
+      const headGroup = new THREE.Group();
       root.add(frontGroup);
       root.add(footGroup);
+      root.add(headGroup);
 
       function box(parent, x, y, z, w, d, h, color, opacity = 1, renderOrder = 0) {
         const geo = new THREE.BoxGeometry(w * S, h * S, d * S);
@@ -126,7 +128,7 @@
       box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
 
       // Head fascia — full depth from back wall to front fascia (no void at head/front corner)
-      box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
+      box(headGroup, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
 
       // Bed — centred in bay so tuck gap is equal front & rear (covers fall evenly)
       const bedBay = FRONT_Y - REAR;                 // 934
@@ -163,7 +165,7 @@
       );
       openLine.renderOrder = 3;
       root.add(openLine);
-      return { root, frontGroup, footGroup };
+      return { root, frontGroup, footGroup, headGroup };
     }
 
     const S = DIM.S, W = DIM.W, D = DIM.D, H = DIM.H;
@@ -193,7 +195,7 @@
     fill.position.set(2, 2, -1);
     scene.add(fill);
 
-    const { root, frontGroup, footGroup } = buildCabinBed();
+    const { root, frontGroup, footGroup, headGroup } = buildCabinBed();
     scene.add(root);
 
     const ground = new THREE.Mesh(
@@ -230,6 +232,7 @@
         controls.enableRotate = true;
         controls.enableDamping = true;
         footGroup.visible = true;
+        headGroup.visible = true;
         frontGroup.visible = true;
         persp.position.set(-2.4, 2.8, 2.8);
         controls.target.set(W * S * 0.55, H * S * 0.35, D * S * 0.4);
@@ -238,6 +241,7 @@
       },
       front: () => {
         footGroup.visible = true;
+        headGroup.visible = true;
         frontGroup.visible = true;
         useOrtho(W * S, H * S, false);
         ortho.position.set(W * S * 0.5, H * S * 0.5, D * S + 4);
@@ -247,6 +251,7 @@
       },
       top: () => {
         footGroup.visible = true;
+        headGroup.visible = true;
         frontGroup.visible = true;
         useOrtho(W * S, D * S, false);
         ortho.position.set(W * S * 0.5, H * S + 4, D * S * 0.5);
@@ -255,12 +260,13 @@
         ortho.updateMatrixWorld(true);
       },
       side: () => {
-        // From foot looking toward head: front wall on the RIGHT, rear shelf on the LEFT
-        // (previous mirrored view read as a head-end perspective)
+        // Section through the bed bay (hide foot + head end walls) from the foot:
+        // rear shelf LEFT, front wall RIGHT — equal tuck gaps visible both sides of bed
         footGroup.visible = false;
+        headGroup.visible = false;
         frontGroup.visible = true;
         useOrtho(D * S, H * S, false);
-        ortho.position.set(DIM.FOOT * S + 0.05, H * S * 0.5, D * S * 0.5);
+        ortho.position.set((DIM.FOOT + DIM.MATT_W * 0.5) * S, H * S * 0.5, D * S * 0.5);
         ortho.up.set(0, 1, 0);
         ortho.lookAt(W * S * 0.5, H * S * 0.5, D * S * 0.5);
         ortho.updateMatrixWorld(true);
@@ -279,6 +285,7 @@
     function setView(name) {
       if (!views[name]) return false;
       footGroup.visible = true;
+      headGroup.visible = true;
       frontGroup.visible = true;
       currentView = name;
       views[name]();
