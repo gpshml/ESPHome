@@ -29,7 +29,7 @@ Prices below are **indicative retail (mostly Wickes web, Nov 2026)** so the math
 | JC | Ready-mix joint compound 10kg | **2** | Tape + finish |
 | JT | Joint tape | **1** roll | |
 | DWS | Drywall screws to metal (1000) | **1** box | ~10/m² × ~25m² boarded |
-| CLS | CLS 38×89×2400 (or equiv.) | **8** | Lift bearers / packs — rip/stack to measured **riser H** |
+| RISER | Softwood for **170mm** lift (e.g. 47×150×2.4m + packs) | **8** | Bed is **360mm**; 170 + 360 = **530mm** platform |
 | PLY18 | 18mm plywood 1220×2440 | **3** | Drawer boxes (~2.5 sheets) |
 | PLY12 | 12mm plywood 1220×2440 | **1** | Drawer bases |
 | GA | Grab adhesive | **3** tubes | Floor / plinth |
@@ -56,7 +56,7 @@ Prices below are **indicative retail (mostly Wickes web, Nov 2026)** so the math
 | Joint compound 10kg | £30.00 | 2 | **£60** |
 | Joint tape | ~£8 | 1 | **£8** |
 | Drywall screws 1000 | ~£15 | 1 | **£15** |
-| CLS 38×89×2400 | £6.65 | 8 | **£53** |
+| 47×150×2.4m (or equiv.) + packs to 170mm | ~£8–£12 | 8 | **£80** |
 | Plywood 18mm 8×4 | £37.50 | 3 | **£113** |
 | Plywood 12mm 8×4 | £29.00 | 1 | **£29** |
 | Grab adhesive | ~£6 | 3 | **£18** |
@@ -65,7 +65,7 @@ Prices below are **indicative retail (mostly Wickes web, Nov 2026)** so the math
 | Primer + emulsion (small alcove) | — | — | **£60** |
 | Curtain track | ~£25 | 1 | **£25** |
 | Drawer handles | ~£8 | 2 | **£16** |
-| **Merchant subtotal** | | | **≈ £998** |
+| **Merchant subtotal** | | | **≈ £1,025** |
 
 ### Delivery (Wickes → GL53)
 - GL53 is **not** on Wickes exclusion list.  
@@ -73,7 +73,7 @@ Prices below are **indicative retail (mostly Wickes web, Nov 2026)** so the math
 - Big & Bulky Mon–Fri: **£35** if order ≤£750, **FREE** if **>£750** → this basket should be **free weekday HIAB-style delivery**.  
 - Or **free Click & Collect** from Cheltenham Wickes if you have a van.
 
-**Wickes path total materials + delivery: ≈ £1,000–£1,050**
+**Wickes path total materials + delivery: ≈ £1,025–£1,080**
 
 ---
 
@@ -122,14 +122,14 @@ Ask them to quote **ex VAT + VAT** and confirm **crane vs flatbed** for 10 board
 ## Suggested call script (Bence)
 
 > Hi — domestic drylining at **GL53 0DF**. Please quote delivery of:  
-> 25× 70mm C-stud 3.0m, 10× 72mm track 3.0m, 10× 12.5mm 2400×1200 tapered PB, 5× thin-coat angle bead 3m, joint compound + tape, drywall screws, 8× CLS ~38×89×2.4m (or softwood for a bed plinth), 3× 18mm + 1× 12mm 8×4 plywood, grab adhesive.  
+> 25× 70mm C-stud 3.0m, 10× 72mm track 3.0m, 10× 12.5mm 2400×1200 tapered PB, 5× thin-coat angle bead 3m, joint compound + tape, drywall screws, softwood for a **170mm** bed plinth (e.g. 8× 47×150×2.4m + packers — existing bed is **360mm**, target platform **530mm**), 3× 18mm + 1× 12mm 8×4 plywood, grab adhesive.  
 > Need crane/kerbside if possible. Trade/cash account OK. Order before noon for next-day if available.
 
 ---
 
 ## Sanity checks
 
-1. Confirm **existing bed height** before locking CLS/riser size (target platform top ≈ 530mm AFF).  
+1. ✅ Existing bed **360mm** → risers **170mm** → platform **530mm** AFF.  
 2. Prefer **tapered-edge** board if taping; square edge if skimming.  
 3. Don’t book labour until boards are on site.  
 4. Electronics stay a **second order** — keep dry.

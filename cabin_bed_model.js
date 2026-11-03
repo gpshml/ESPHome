@@ -13,9 +13,9 @@ export const DIM = {
   REAR: 210,
   HEAD_W: 326,
   SHELF: 1200,
-  PLINTH: 173,
-  FRAME_H: 357,
-  PLATFORM: 173 + 357, // 530
+  PLINTH: 170, // lift/riser under existing bed
+  FRAME_H: 360, // existing purchased bed height (measured)
+  PLATFORM: 170 + 360, // 530
   MATT_W: 1900,
   MATT_D: 900,
   MATT_H: 220,

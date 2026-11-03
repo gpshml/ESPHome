@@ -38,15 +38,17 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ## 3. Timber — lift only (bed already owned)
 
-Raise the **existing** bed so the mattress top sits at the modelled height (platform top **530mm** AFF = lift + existing bed frame height). Confirm the purchased bed’s own frame height on site, then cut the riser height to suit (modelled riser band ≈ **173mm** if the bed frame is ≈ **357mm**).
+Raise the **existing** bed (**360mm** measured frame height) on a **170mm** lift so platform top = **530mm** AFF (170 + 360).
 
 | Item | Size | Qty | Notes |
 |------|------|-----|-------|
-| Base plinth / risers | ~45 × **riser H** × ~1900mm | 3 | Longitudinal bearers under the existing bed; short screws + grab adhesive (cables under floor) |
-| Cross bearers | ~45 × **riser H** × ~900mm | 2–3 | Tie risers; stop racking |
-| Support legs / packs | ~20×20 × **riser H** (or packs) | 6 | Corners + mid-span; match riser height |
+| Base plinth / risers | ~45 × **170mm** × ~1900mm | 3 | Longitudinal bearers under the existing bed; short screws + grab adhesive (cables under floor) |
+| Cross bearers | ~45 × **170mm** × ~900mm | 2–3 | Tie risers; stop racking |
+| Support legs / packs | to finish at **170mm** | 6 | Corners + mid-span; pack 47×150 (~145–150mm) on edge up to 170mm if not ripping full-depth stock |
 | Shelf fascia (rear) | 20×40–60×1920mm | 1 | Optional decorative front edge of rear shelf (flush, not proud) |
 | Head fascia trim | 20×40–60×326mm | 1 | Optional finish on head wall |
+
+**Practical timber:** 47×150 C16 on edge + ~20–25mm packs to **170mm**, or have Bence rip softwood to 170mm deep. Avoid relying on thin CLS alone.
 
 **Not required (already owned):** bed frame rails, mattress, mattress base / slats, new bed carcass.
 
@@ -119,7 +121,7 @@ Route cables in stud cavities **before** boarding. Qualified electrician for mai
 | 70mm track | 2×2344, 2×1242, 2×2246, extras for opening & head |
 | 70mm stud | 10–12×2380, 8–10×1200, noggins ~12m |
 | 12.5mm PB | ~8 sheets |
-| Softwood (lift only) | 3×~1900 risers + 2–3 cross bearers + 6 packs @ measured riser height |
+| Softwood (lift only) | 3×~1900 + 2–3×~900 @ **170mm** deep (or 47×150 + packs) |
 | 18mm sheet | Drawer boxes (~2.5 sheets) |
 | 12mm sheet | Drawer bases (1 sheet) |
 
@@ -129,7 +131,7 @@ Route cables in stud cavities **before** boarding. Qualified electrician for mai
 
 - [ ] Cable-detect timber floor before any screws  
 - [ ] Screws into floor ≤25–30mm  
-- [ ] Riser height matched to **existing** bed so platform top ≈ 530mm AFF  
+- [ ] Risers finished at **170mm** under **360mm** bed → platform top **530mm** AFF  
 - [ ] Fire-safe finishes in enclosed sleeping space  
 - [ ] Mains work by qualified electrician  
 - [ ] Opening edges finished (no raw plasterboard)  

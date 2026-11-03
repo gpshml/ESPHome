@@ -165,8 +165,8 @@ Static views captured from the interactive Three.js source model
 <tr><td><strong>Overall Depth</strong></td><td><span class="highlight">1242mm</span></td><td>Requires 237mm wall extension at front</td></tr>
 <tr><td><strong>Overall Height</strong></td><td>2380mm</td><td>Full height to ceiling</td></tr>
 <tr><td><strong>Access Opening</strong></td><td>1300mm × 1440mm</td><td>640–2080mm height</td></tr>
-<tr><td><strong>Mattress / bed</strong></td><td>1900 × 900 × 220mm</td><td><span class="highlight">Already purchased</span> — 10mm clearance in bay</td></tr>
-<tr><td><strong>Platform Height</strong></td><td>530mm</td><td>Lift/plinth under existing bed (buy risers only)</td></tr>
+<tr><td><strong>Mattress / bed</strong></td><td>1900 × 900 × 220mm</td><td><span class="highlight">Already purchased</span> — frame height <strong>360mm</strong></td></tr>
+<tr><td><strong>Lift / platform</strong></td><td>170mm + 360mm = <strong>530mm</strong></td><td>Buy <strong>170mm</strong> risers only</td></tr>
 <tr><td><strong>Shelf Level</strong></td><td>1200mm</td><td>Rear wall stops here</td></tr>
 <tr><td><strong>Rear Shelf</strong></td><td>1920 × 210mm</td><td>Stops before 326mm head wall</td></tr>
 <tr><td><strong>Head Wall</strong></td><td>326 × 1144mm</td><td>From back wall to front fascia</td></tr>

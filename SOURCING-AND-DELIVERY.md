@@ -86,7 +86,7 @@ If you are **outside** that radius, Bence is not the best primary option for hea
 | Packs / 20×20 legs | Easy |
 | Optional shelf/head trim | PSE softwood / MDF mouldings |
 
-Measure the **existing bed frame height** before ordering riser depth (target platform top ≈ **530mm** AFF).
+**Locked:** existing bed **360mm** → order **170mm** risers (platform top **530mm** AFF).
 
 ### C. Drawers → **sheet from merchant + runners online**
 
