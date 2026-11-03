@@ -3,6 +3,8 @@
 Researched for UK supply against `PARTS-LIST.md` (bed already owned; buy **lift + alcove + drawers + electronics**).  
 Prices are indicative web list prices (inc. or ex. VAT as noted) and will move; treat as order-of-magnitude.
 
+**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (Bence + Wickes paths, ~£1.0–1.5k materials all-in).
+
 ---
 
 ## Verdict (short)
