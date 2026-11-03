@@ -3,7 +3,7 @@
 Researched for UK supply against `PARTS-LIST.md` (bed already owned; buy **lift + alcove + drawers + electronics**).  
 Prices are indicative web list prices (inc. or ex. VAT as noted) and will move; treat as order-of-magnitude.
 
-**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (Bence + Wickes paths, ~£1.0–1.5k materials all-in).
+**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (Bence + Wickes paths, ~£0.85–1.3k materials all-in after correcting stud qty to **14×3m**, not 75m).
 
 ---
 
@@ -71,12 +71,12 @@ If you are **outside** that radius, Bence is not the best primary option for hea
 
 | Need (from list) | Availability | Notes |
 |------------------|--------------|-------|
-| 70mm C-stud + matching track | Excellent | Use **3.0m** lengths (ceiling 2380mm); cut down. Order ~**25–30 studs** + ~**6–8 tracks** + allow for noggins (or cut studs for noggins) |
-| 12.5mm PB × ~8 | Excellent | Prefer **tapered edge** for taped joints |
+| 70mm C-stud + matching track | Excellent | Use **3.0m** lengths (ceiling 2380mm). Buy list: **14× stud + 5× track** (~42m + 15m) — see take-off in `PARTS-LIST.md` |
+| 12.5mm PB × 6–8 | Excellent | Prefer **tapered edge** for taped joints |
 | Corner bead ~12m, tape, joint compound | Excellent | Same drop |
 | Primer / emulsion | Excellent | Bence decorating centre or Wickes/Dulux |
 
-**Rough materials ballpark (ex labour):** stud+track+board+beads+compound often lands around **£350–£700** retail depending on supplier — enough to hit Bence’s £150 free-delivery bar and often specialist free-delivery minima.
+**Rough materials ballpark (ex labour):** corrected drylining kit often **£250–£450** retail for stud+track+board+beads+compound — still clears Bence’s £150 free-delivery bar.
 
 ### B. Timber lift (bed owned) → **same merchant drop**
 
