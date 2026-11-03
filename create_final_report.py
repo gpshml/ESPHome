@@ -126,7 +126,7 @@ Static views captured from the interactive Three.js source model
 <li>Head fascia 326 × 1144mm from the back wall to the front fascia (no void at the head/front corner)</li>
 <li>Bed centred in the 934mm bay: <span class="highlight">7mm frame / 17mm mattress tuck</span> equal front &amp; rear for covers</li>
 <li>Existing bed <strong>360mm</strong> + lift <strong>170mm</strong> → platform <strong>530mm</strong></li>
-<li>Rear/head shelves on <strong>existing walls</strong> (no stud uprights at shelf backs); metal stud mainly front + foot extension</li>
+<li>Rear/head shelves: backs on <strong>existing walls</strong>; <strong>fronts still plasterboard-faced</strong>; full-height stud mainly room front + foot extension</li>
 <li>Front opening as a picture-frame: full-width sill, separate jambs, full-width lintel</li>
 </ul>
 </li>

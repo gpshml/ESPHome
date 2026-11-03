@@ -40,8 +40,8 @@ Z: 0 → 2380mm   FLOOR → CEILING
 | Existing bed height | **360mm** | Measured — frame only (before lift) |
 | Lift / plinth | **170mm** | 530 − 360; buy risers/packs only |
 | Platform top | **530mm** | Top of existing bed after lift (AFF) |
-| Head wall / fascia | 326mm wide × 1144mm deep | Solid fascia from back to front; **carried on existing head wall** (no stud uprights at back of shelf) |
-| Rear shelf | 1920 × 210mm | On **existing back wall** via ledger/brackets; width stops before head (INTERNAL_W − HEAD_W); no rear stud wall |
+| Head wall / fascia | 326mm wide × 1144mm deep | Carried on **existing head wall** at the back; **PB-faced** on exposed/front faces |
+| Rear shelf | 1920 × 210mm | Ledger on **existing back wall**; **PB-faced front fascia**; width stops before head (INTERNAL_W − HEAD_W) |
 | Bed tuck clearance | 7mm frame / 17mm mattress each end | Equal front & rear inside the 934mm bay (covers tuck evenly) |
 | Access opening | 1300 × 1440mm | Bottom **640mm** (halfway up mattress); top **2080mm** (300mm below ceiling); start 300mm from left of **internal** space |
 | Front fascia thickness | 98mm | Opening surround depth |

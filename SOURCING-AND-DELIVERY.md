@@ -3,7 +3,7 @@
 Researched for UK supply against `PARTS-LIST.md` (bed already owned; buy **lift + alcove + drawers + electronics**).  
 Prices are indicative web list prices (inc. or ex. VAT as noted) and will move; treat as order-of-magnitude.
 
-**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (~£750–£1,150 materials). Metal stud is **front + foot extension only** (**8×3m stud / 3× track**); rear/head shelves fix to existing walls — see zone breakdown in `PARTS-LIST.md`.
+**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (~£800–£1,200 materials). Rear/head shelves: **backs on existing walls**, **fronts still PB-faced**. Stud buy **10×3m / 4× track** — see `PARTS-LIST.md`.
 
 ---
 
