@@ -131,18 +131,18 @@ const DIM = {
 };
 
 const COL = {
-  existing: 0xe67e22,
-  footExt: 0xf1c40f,
-  stud: 0x95a5a6,
-  track: 0x7f8c8d,
-  pb: 0xecf0f1,
-  ledger: 0xc4a574,
-  deck: 0xd4b896,
-  riser: 0xb8956a,
-  bed: 0x8B4513,
-  matt: 0x2ecc71,
+  existing: 0x8c6b47,
+  footExt: 0x6b783f, // autumnal olive (painted)
+  stud: 0x9ea39a, // galvanised
+  track: 0x8c9189,
+  pb: 0x6b783f, // painted plasterboard — autumnal olive
+  ledger: 0x9e7347, // timber
+  deck: 0xb89461,
+  riser: 0x9e7347,
+  bed: 0x664222,
+  matt: 0xc7bda6,
   ghost: 0xbdc3c7,
-  drawer: 0x5d6d7e,
+  drawer: 0x73614d,
   open: 0xff2222,
 };
 
@@ -194,16 +194,18 @@ function buildCabinBed(THREE) {
   box(root, FOOT, -20, 0, INTERNAL_W, 20, H, COL.ghost, 0.18); // back wall
   box(headGroup, W, 0, 0, 20, FRONT_Y, H, COL.ghost, 0.18); // head wall
 
-  // —— Foot extension (+237mm): 2 studs, tracks, PB ——
+  // —— Foot extension (+237mm): 2 studs flush to outer face, PB on stud faces + front end ——
   {
     const y0 = D - EXT;
-    box(footGroup, (FOOT - STUD_W) / 2, y0 + 50, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
-    box(footGroup, (FOOT - STUD_W) / 2, y0 + EXT - 90, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
-    box(footGroup, (FOOT - 72) / 2, y0, 0, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(footGroup, (FOOT - 72) / 2, y0, H - TRACK_LEG, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(footGroup, -PB, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
-    box(footGroup, FOOT, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
-    box(footGroup, 0, y0, 0, FOOT, EXT, H, COL.footExt, 0.12);
+    const studX = 0; // flush with outer face; outer PB sits on studs
+    box(footGroup, studX, y0 + 50, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    box(footGroup, studX, y0 + EXT - STUD_FL - 50, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    box(footGroup, studX + (STUD_W - 72) / 2, y0, 0, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(footGroup, studX + (STUD_W - 72) / 2, y0, H - TRACK_LEG, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(footGroup, -PB, y0, 0, PB, EXT, H, COL.pb, 0.95, 2); // outer, flush to studs
+    box(footGroup, STUD_W, y0, 0, PB, EXT, H, COL.pb, 0.95, 2); // inner, flush to stud web
+    box(footGroup, 0, D - PB, 0, STUD_W, PB, H, COL.pb, 0.95, 2); // front end flush
+    box(footGroup, 0, y0, 0, FOOT, EXT, H, COL.footExt, 0.08);
   }
 
   // —— Rear shelf: ledger on back wall, deck, front fascia studs + PB ——
@@ -274,11 +276,13 @@ function buildCabinBed(THREE) {
       box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     }
 
-    const pbY = y + FOOT - PB;
-    box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, FOOT, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, FOOT, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.92, 2);
+    // Room face + alcove face (rear of front wall)
+    for (const pbY of [y + FOOT - PB, y]) {
+      box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.92, 2);
+      box(g, FOOT, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
+      box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
+      box(g, FOOT, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.92, 2);
+    }
 
     const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;
     const oz0 = ACCESS_BOT * S, oz1 = ACCESS_TOP * S;

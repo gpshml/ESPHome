@@ -22,16 +22,20 @@ C-stud / U-track use real-ish hollow profiles (`STUD_W` 70, flange 45, track web
 
 ## Review in Blender (no STEP importer needed)
 
-Blender does not open STEP natively. Use the STL mesh:
+Blender does not open STEP natively. Prefer the **coloured OBJ**:
 
-1. Download `cadquery/out/cabin_bed_assembly.stl`
-2. Blender → **File → Import → STL**
+1. Download `cadquery/out/cabin_bed_assembly.obj` **and** `cabin_bed_assembly.mtl` (same folder)
+2. Blender → **File → Import → Wavefront (.obj)**
+   - Transform: **Forward = Y Forward**, **Up = Z Up** (matches this model)
 3. Scene units are **millimetres**. Either:
-   - **Scene Properties → Units → Unit Scale 0.001** (and Length = Millimetres), or
-   - Scale the imported object by **0.001** if you keep Blender’s default metres
-4. Press **Home** / **Frame All** — envelope is ~2.3 m × 1.2 m × 2.4 m
+   - **Scene Properties → Units → Unit Scale 0.001** (Length = Millimetres), or
+   - Scale by **0.001** if you keep Blender’s default metres
+4. **View → Viewpoint → Front** — you should be looking into the alcove from the room
+5. **Marker-FOOT** (olive block) must be on the **left**; **Marker-HEAD** on the **right**. If FOOT is on the right, you are viewing from the back wall — flip to Front / View opposite.
 
-For editable solids / named STEP parts, FreeCAD is the usual free download; Blender is enough for a visual check.
+Materials: painted PB = autumnal olive; studs/track = galvanised; decks/ledgers/lift = timber.
+
+`cabin_bed_assembly.stl` is an uncoloured fallback mesh.
 
 ## Coords
 
