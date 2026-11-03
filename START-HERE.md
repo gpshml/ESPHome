@@ -187,7 +187,7 @@ See `UPDATED-SPECIFICATIONS.md` - "Complete Lighting Shopping List"
 - **Floor fixings**: **Max 25-30mm screws** (cables underneath)
 
 ### What Stayed Same:
-- Overall bed: 2246 × 1222 × 2380mm
+- Alcove clear width **2246mm FIXED**; overall with foot wall 2344 × depth 1242 × 2380mm (depth grew via foot extension; width tolerances shrink head shelf)
 - Mattress: 1900 × 900 × 220mm
 - Platform height: 530mm
 - Access opening: 1300 × 580mm

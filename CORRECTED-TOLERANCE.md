@@ -1,5 +1,7 @@
 # ✅ TOLERANCE CORRECTION - October 21, 2026
 
+> **Still current:** alcove clear width **2246mm is FIXED**; width tolerances shrink **HEAD_W**; depth may grow (foot extension). Canonical statement: `LOCKED-IN-SPEC.md` § Width is fixed.
+
 ## 🔄 Previous Implementation Was WRONG - Now CORRECTED
 
 ### What Was Wrong

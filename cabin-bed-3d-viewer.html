@@ -99,30 +99,32 @@
  * Narrow access pier (~300mm) at the FOOT (left); wider pier at the HEAD.
  * Origin = back-left-floor (rear ∩ foot wall ∩ floor).
  *
+ * Width: INTERNAL_W = 2246 FIXED. Depth may grow (foot extension).
+ * HEAD_W is residual after mattress + 2×TOL — never grow INTERNAL_W for clearances.
  * Do NOT invert head/foot for a mirrored 3D viewer — fix the view, not the room.
  */
 
 const DIM = {
   FOOT: 98,
-  INTERNAL_W: 2246,
-  W: 2246 + 98, // 2344
-  D: 1242,
-  EXT: 237,
+  INTERNAL_W: 2246, // FIXED alcove clear width (original plan)
+  get W() { return this.INTERNAL_W + this.FOOT; }, // 2344
+  D: 1242, // depth into room (includes foot-wall extension)
+  EXT: 237, // foot wall extension at FRONT — depth growth only
   H: 2380,
   REAR: 210,
-  HEAD_W: 326,
   SHELF: 1200,
   PLINTH: 170,
   FRAME_H: 360,
-  PLATFORM: 170 + 360, // 530
+  get PLATFORM() { return this.PLINTH + this.FRAME_H; }, // 530
   MATT_W: 1900,
   MATT_D: 900,
   MATT_H: 220,
-  TOL: 10,
-  FRAME_D: 900 + 20, // 920
+  TOL: 10, // each end; absorbed by HEAD_W, not by growing INTERNAL_W
+  get FRAME_D() { return this.MATT_D + 2 * this.TOL; }, // 920
+  /** Bed-face → head wall; residual of fixed INTERNAL_W */
+  get HEAD_W() { return this.INTERNAL_W - this.MATT_W - 2 * this.TOL; }, // 326
   ACCESS_W: 1300,
   FOOT_PIER: 300,
-  // Opening set out from foot: narrow pier at left
   get ACCESS_X() { return this.FOOT + this.FOOT_PIER; }, // 398
   ACCESS_BOT: 640,
   ACCESS_TOP: 2080,
@@ -140,6 +142,7 @@ const DIM = {
   get FRAME_TUCK() { return (this.BED_BAY - this.FRAME_D) / 2; },
   get ledger_z() { return this.SHELF - this.DECK_T - this.LEDGER_H; },
   get fascia_h() { return this.SHELF - this.DECK_T; },
+  get head_bed_face_x() { return this.W - this.HEAD_W; },
   S: 0.001,
 };
 
@@ -260,27 +263,28 @@ function buildCabinBed(THREE) {
     box(g, sx + shelfW / 2 - 150, 0, 935, 300, 40, 80, COL.ledger, 1, 1);
   }
 
-  // —— Head shelf/fascia RIGHT ——
+  // —— Head shelf/fascia RIGHT — envelope inside fixed HEAD_W (no bay theft) ——
   {
     const g = headGroup;
-    const hx = W - HEAD_W;
+    const hx = DIM.head_bed_face_x; // finished bed face; HEAD_W = hx → W
+    const studX = hx + PB;
     box(g, W - LEDGER, 0, ledgerZ, LEDGER, FRONT_Y, DIM.LEDGER_H, COL.ledger, 1, 1);
     box(g, hx, 0, SHELF - deckT, HEAD_W, FRONT_Y, deckT, COL.deck, 1, 2);
     const ys = [REAR + 40, FRONT_Y / 2 - STUD_W / 2, FRONT_Y - STUD_W - 40];
     for (const y of ys) {
-      box(g, hx, y, 0, STUD_FL, STUD_W, fasciaH, COL.stud, 1, 1, 0.55);
+      box(g, studX, y, 0, STUD_FL, STUD_W, fasciaH, COL.stud, 1, 1, 0.55);
     }
     for (let i = 0; i < ys.length - 1; i++) {
       const y0 = ys[i] + STUD_W;
       const span = ys[i + 1] - y0;
       if (span > 20) {
         for (const z of [400, 800]) {
-          box(g, hx, y0, z - 20, STUD_FL, span, 40, COL.noggin, 1, 1, 0.55);
+          box(g, studX, y0, z - 20, STUD_FL, span, 40, COL.noggin, 1, 1, 0.55);
         }
       }
     }
-    // Bed face — exposed bay only (not hidden back to rear wall)
-    box(g, hx - PB, REAR, 0, PB, FRONT_Y - REAR, fasciaH, COL.pb, 0.98, 2);
+    // Bed face PB inside HEAD_W; exposed bay only
+    box(g, hx, REAR, 0, PB, FRONT_Y - REAR, fasciaH, COL.pb, 0.98, 2);
     box(g, hx, FRONT_Y, 0, HEAD_W, PB, fasciaH, COL.pb, 0.98, 2);
   }
 

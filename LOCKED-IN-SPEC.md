@@ -34,20 +34,44 @@ Z: 0 → 2380mm   FLOOR → CEILING
 - Blender OBJ/STL are exported **Y-up** (metres) so the model stands upright with default import settings.
 - `Marker-FOOT` / `Marker-HEAD` are **review-only** cubes (not build parts).
 
+## Width is fixed — depth may grow
+
+**Alcove clear width `INTERNAL_W = 2246mm` is fixed** (original plan). It does **not** expand for bedding tolerances, build clearance, or PB thickness.
+
+| Axis | Rule |
+|------|------|
+| **Width (X)** | **Fixed at 2246mm** clear (foot-wall inner face → existing head wall). External envelope is 2246 + 98 foot wall = **2344mm**. |
+| **Depth (Y)** | **May grow into the room** — mainly by the **+237mm foot-wall extension** at the front (overall depth **1242mm**). |
+
+**Width budget (must always sum to 2246):**
+
+```
+INTERNAL_W = MATT_W + 2×TOL + HEAD_W
+    2246   =  1900  +  20   +  326
+```
+
+- Mattress bay (incl. 10mm tolerance each end) takes **1920mm**.
+- Whatever remains is the **head shelf / fascia depth from bed face → head wall** = **`HEAD_W`**.
+- If tolerances (or finishes) need more width, **`HEAD_W` shrinks** — never grow `INTERNAL_W`.
+- Head PB and studs sit **inside** that 326mm (finished bed face at `W − HEAD_W`); they must not steal bay width.
+
+See also `CORRECTED-TOLERANCE.md` (historic correction when width was wrongly grown to 2266).
+
 ## Dimensions that are locked
 
 | Item | Value | Notes |
 |------|-------|-------|
-| Internal width | 2246mm | Does **not** include foot wall |
-| Foot wall thickness | 98mm | 70mm stud + plasterboard |
+| Internal width | **2246mm** | **FIXED** — clear alcove; does **not** include foot wall |
+| Foot wall thickness | 98mm | 70mm stud + plasterboard (outside the 2246) |
 | Total external width | 2344mm | 2246 + 98 |
-| Overall depth | 1242mm | Target alcove depth |
-| Foot wall extension | **237mm at FRONT** | Into the room; flush with existing wall + front fascia end |
+| Overall depth | 1242mm | Expanded into the room (foot extension) |
+| Foot wall extension | **237mm at FRONT** | Depth growth into the room; flush with existing wall + front fascia end |
 | Overall height | 2380mm | Full height |
 | Shelf top | 1200mm | Rear wall stops here |
 | Mattress / bed | 1900 × 900 × 220mm | Already purchased |
+| Side tolerance | 10mm each end | Absorbed by reducing head shelf, not by widening alcove |
 | Lift / platform | 170mm → platform **530mm** AFF | Bed frame 360mm owned |
-| Head wall / fascia | 326mm × 1144mm deep | On the **right** |
+| Head wall / fascia | **326mm** × 1144mm deep | Residual: `2246 − 1900 − 20`; on the **right** |
 | Rear shelf | 1920 × 210mm | INTERNAL_W − HEAD_W; stops before head |
 | Access opening | 1300 × 1440mm | 640–2080 AFF; starts **300mm from left of internal (foot side)** → ACCESS_X = 398 |
 | Front fascia | 98mm thick | Both faces + opening reveals boarded |
@@ -75,6 +99,7 @@ Z: 0 → 2380mm   FLOOR → CEILING
 8. Do **not** leave wall ledgers below the shelf decks (gap).
 9. Do **not** run head bed-face PB through to the rear wall (hidden behind rear shelf).
 10. Do **not** treat a mirrored 3D preview as authority over `top_plan_FINAL.png`.
+11. Do **not** expand alcove clear width past **2246mm** — grow depth (foot extension) or shrink **HEAD_W** instead.
 
 ## Source of truth & files
 

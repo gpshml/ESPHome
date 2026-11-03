@@ -35,10 +35,11 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ---
 
-### B. Head shelf / fascia — 326mm wide × ~1144mm deep (to front) — **RIGHT**
+### B. Head shelf / fascia — 326mm (bed→wall) × ~1144mm deep (to front) — **RIGHT**
 
+**Width residual:** `HEAD_W = INTERNAL_W(2246) − MATT(1900) − 2×TOL(20) = 326`. Alcove clear width stays 2246; more clearance shrinks this shelf, never widens the alcove.  
 **Back / against room head wall:** carried on **existing head wall** (no stud row against that wall).  
-**Exposed faces:** plasterboard on bed face (from rear-shelf front forward) and front return only.
+**Exposed faces:** plasterboard on bed face (from rear-shelf front forward) and front return only — PB stays **inside** the 326mm.
 
 | Part | Qty / size | Role |
 |------|------------|------|

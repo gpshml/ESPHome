@@ -10,10 +10,11 @@ Build order for the real alcove. Use this to check the 3D assembly: every solid 
 
 ## 0. Set-out
 
-1. Confirm alcove: **2344 × 1242 × 2380** mm.
+1. Confirm alcove clear width **2246 mm FIXED** (original plan — does not expand). External with foot wall = **2344**; depth **1242** (grown into the room by the foot extension); height **2380**.
 2. Mark **foot** (existing 98 mm wall, **left**) and **head** (existing side wall, **right**).
-3. Snap chalk lines for front wall alcove face (**Y = 1144**), shelf top (**Z = 1200**), access opening (**1300 × 1440**, sill 640 / lintel 2080).
-4. Opening set-out from the **foot**: leave a **300 mm** pier next to the foot wall (left), then 1300 mm clear opening, remainder (~646 mm) at the head (right).
+3. Width budget: mattress 1900 + 10 mm tolerance each end + **head shelf residual** → `HEAD_W = 2246 − 1900 − 20 = 326`. More width tolerance ⇒ thinner head shelf — never wider alcove.
+4. Snap chalk lines for front wall alcove face (**Y = 1144**), shelf top (**Z = 1200**), access opening (**1300 × 1440**, sill 640 / lintel 2080).
+5. Opening set-out from the **foot**: leave a **300 mm** pier next to the foot wall (left), then 1300 mm clear opening, remainder (~646 mm) at the head (right).
 
 ---
 
@@ -53,9 +54,9 @@ Shelves are **wall-supported** — no stud row along the back of either shelf.
 
 ---
 
-## 4. Head fascia / shelf (RIGHT, 326 mm)
+## 4. Head fascia / shelf (RIGHT, 326 mm residual)
 
-Carried on the existing head wall. This is a solid return, not a deep “pillow shelf”.
+Carried on the existing head wall. Depth from bed face to wall is whatever remains of the fixed 2246 after mattress + side tolerances — not a deep “pillow shelf”.
 
 1. Stand **2–3** fascia uprights at the **bed-facing** line only (inside the 326 mm), starting forward of the rear shelf line — **not** a stud row against the head wall.
 2. Seat the head deck on the head ledger + fascia; top at **1200 AFF**.

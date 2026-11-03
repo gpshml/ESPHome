@@ -227,9 +227,13 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
 
 
 def build_head_shelf(assy: cq.Assembly) -> None:
-    """Head fascia on RIGHT (W-HEAD_W..W). Studs inside shelf behind bed-face PB."""
+    """Head fascia on RIGHT. Envelope W-HEAD_W..W is fixed residual of INTERNAL_W.
+
+    Finished bed face at head_bed_face_x; PB + studs sit inside HEAD_W toward the wall
+    (do not steal bay width from the fixed 2246 clear).
+    """
     D = DIM
-    hx = D.W - D.HEAD_W
+    hx = D.head_bed_face_x  # finished bed face; HEAD_W runs hx → W
     add_box(
         assy,
         "Head-Ledger",
@@ -242,12 +246,14 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         COL["timber"],
     )
     add_box(assy, "Head-Deck", hx, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
+    # Studs behind bed-face PB (inside the 326mm envelope)
+    stud_x = hx + D.PB
     ys = [D.REAR + 40, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
     for i, y in enumerate(ys, start=1):
         add_vstud(
             assy,
             f"Head-Fascia-Stud-{i}",
-            hx,  # bed face; flange_sign=+1 into shelf (+X toward head wall)
+            stud_x,
             y,
             0,
             D.fascia_h,
@@ -264,7 +270,7 @@ def build_head_shelf(assy: cq.Assembly) -> None:
             add_box(
                 assy,
                 f"Head-Fascia-Noggin-{i + 1}-{j}",
-                hx,
+                stud_x,
                 y0,
                 z - 20,
                 D.STUD_FL,
@@ -272,11 +278,11 @@ def build_head_shelf(assy: cq.Assembly) -> None:
                 40,
                 COL["noggin"],
             )
-    # Bed-face PB: exposed bay only — not a hidden sheet to the rear wall
+    # Bed-face PB inside HEAD_W; exposed bay only (Y=REAR..FRONT_Y)
     add_box(
         assy,
         "Head-PB-BedFace",
-        hx - D.PB,
+        hx,
         D.REAR,
         0,
         D.PB,
@@ -685,6 +691,14 @@ def main() -> int:
     for n in names:
         print(f"  - {n}")
 
+    # Width budget: INTERNAL_W fixed; HEAD_W is residual after mattress + 2×TOL
+    assert abs(DIM.INTERNAL_W - 2246.0) < 0.1, DIM.INTERNAL_W
+    assert abs(DIM.HEAD_W - (DIM.INTERNAL_W - DIM.MATT_W - 2 * DIM.TOL)) < 0.1, DIM.HEAD_W
+    print(
+        f"Width budget: INTERNAL_W={DIM.INTERNAL_W:.0f} = "
+        f"MATT {DIM.MATT_W:.0f} + 2×TOL {2 * DIM.TOL:.0f} + HEAD_W {DIM.HEAD_W:.0f}"
+    )
+
     left_pier = DIM.ACCESS_X - DIM.FOOT  # foot side
     right_pier = DIM.W - (DIM.ACCESS_X + DIM.ACCESS_W)  # head side
     assert left_pier < right_pier, "narrow pier must be at foot (left)"
@@ -709,8 +723,12 @@ def main() -> int:
             assert abs(bb.zmax - (DIM.SHELF - DIM.DECK_T)) < 0.1, (name, bb.zmax)
         if name == "Head-PB-BedFace":
             assert bb.ymin >= DIM.REAR - 0.1, (name, bb.ymin)
-            hx = DIM.W - DIM.HEAD_W
-            assert bb.xmax <= hx + 0.1, name
+            hx = DIM.head_bed_face_x
+            assert abs(bb.xmin - hx) < 0.1, (name, bb.xmin)
+            assert bb.xmax <= hx + DIM.PB + 0.1, name  # inside HEAD_W, not into bay
+        if name.startswith("Head-Fascia-Stud"):
+            assert bb.xmin >= DIM.head_bed_face_x + DIM.PB - 0.1, name
+            assert bb.xmax <= DIM.W + 0.1, name
 
     if not args.no_export:
         args.out.parent.mkdir(parents=True, exist_ok=True)
