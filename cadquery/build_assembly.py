@@ -400,6 +400,29 @@ def build_assembly() -> cq.Assembly:
     return assy
 
 
+def assembly_compound(assy: cq.Assembly) -> cq.Compound:
+    shapes = []
+    for name, obj in assy.traverse():
+        if name == "CabinBed-GL53" or obj.obj is None:
+            continue
+        s = obj.obj
+        shapes.append(s.val() if hasattr(s, "val") else s)
+    return cq.Compound.makeCompound(shapes)
+
+
+def export_stl(assy: cq.Assembly, path: Path, tolerance: float = 0.5) -> None:
+    """Mesh the assembly for Blender / mesh viewers (mm)."""
+    comp = assembly_compound(assy)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    cq.exporters.export(
+        cq.Workplane("XY").newObject([comp]),
+        str(path),
+        exportType="STL",
+        tolerance=tolerance,
+        angularTolerance=tolerance,
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -408,14 +431,19 @@ def main() -> int:
         default=Path(__file__).resolve().parent / "out" / "cabin_bed_assembly.step",
         help="Output STEP path",
     )
-    parser.add_argument("--no-export", action="store_true", help="Build only; skip STEP write")
+    parser.add_argument(
+        "--stl",
+        type=Path,
+        default=Path(__file__).resolve().parent / "out" / "cabin_bed_assembly.stl",
+        help="Also write STL for Blender (mm). Pass empty string to skip.",
+    )
+    parser.add_argument("--no-export", action="store_true", help="Build only; skip STEP/STL write")
     args = parser.parse_args()
 
     print(f"DIM envelope: {DIM.W:.0f} × {DIM.D:.0f} × {DIM.H:.0f} mm")
     print(f"FRONT_Y={DIM.FRONT_Y:.0f}  shelf_w={DIM.shelf_w:.0f}  PLATFORM={DIM.PLATFORM:.0f}")
     print("Building assembly…")
     assy = build_assembly()
-    children = list(assy.children) if hasattr(assy, "children") else []
     # CadQuery Assembly iterates named objects via traverse
     names = [name for name, _obj in assy.traverse()]
     print(f"Parts: {len(names)}")
@@ -427,8 +455,11 @@ def main() -> int:
         print(f"Exporting STEP → {args.out}")
         # Assembly.export avoids deprecated Assembly.save
         assy.export(str(args.out))
-        size = args.out.stat().st_size
-        print(f"Wrote {args.out} ({size:,} bytes)")
+        print(f"Wrote {args.out} ({args.out.stat().st_size:,} bytes)")
+        if args.stl and str(args.stl):
+            print(f"Exporting STL → {args.stl}")
+            export_stl(assy, args.stl)
+            print(f"Wrote {args.stl} ({args.stl.stat().st_size:,} bytes)")
     return 0
 
 
