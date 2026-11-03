@@ -5,6 +5,8 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 **Bed status:** the bed (frame + mattress) is **already purchased**. Buy only what is needed to **raise** it (plinth / risers / legs), plus the alcove structure, drawers, and finishes below. Do **not** order a new bed frame or mattress support rails.
 
+**Buying / delivery:** see [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) (Bence vs Wickes/TP vs trade drylining + electronics parcels).
+
 ---
 
 ## 1. Metal stud framing (70mm C-stud system)
