@@ -154,7 +154,7 @@ Static views captured from the interactive Three.js source model
 
 <div class="drawing">
 <h2>4. Side Elevation (from Foot End)</h2>
-<p>Front/void on left, rear/shelf on right. Rear wall stops at 1200mm shelf level.</p>
+<p>From foot end looking toward head: rear/shelf on <strong>left</strong>, front wall on <strong>right</strong>. Rear structure stops at 1200mm.</p>
 <img src="data:image/png;base64,{side}" alt="Side Elevation">
 </div>
 

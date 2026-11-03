@@ -255,11 +255,11 @@
         ortho.updateMatrixWorld(true);
       },
       side: () => {
-        // From foot looking toward head — mirrored so rear wall is on the RIGHT
-        // (matches architectural convention; without mirror this reads as a head-end view)
+        // From foot looking toward head: front wall on the RIGHT, rear shelf on the LEFT
+        // (previous mirrored view read as a head-end perspective)
         footGroup.visible = false;
         frontGroup.visible = true;
-        useOrtho(D * S, H * S, true);
+        useOrtho(D * S, H * S, false);
         ortho.position.set(DIM.FOOT * S + 0.05, H * S * 0.5, D * S * 0.5);
         ortho.up.set(0, 1, 0);
         ortho.lookAt(W * S * 0.5, H * S * 0.5, D * S * 0.5);
@@ -273,7 +273,7 @@
       "3d": "3D (foot left · head right · front toward viewer)",
       front: "Front elevation (foot left · head right)",
       top: "Top plan (back at top · foot left · front at bottom)",
-      side: "Side elevation (from foot · front left · rear right)",
+      side: "Side elevation (from foot · rear left · front right)",
     };
 
     function setView(name) {

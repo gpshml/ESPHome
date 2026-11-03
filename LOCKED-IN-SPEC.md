@@ -23,6 +23,7 @@ Z: 0 → 2380mm   FLOOR → CEILING
 - 3D viewport must start at **0,0,0** (no negative axis padding / void behind walls).
 - Looking **into** the alcove: front toward viewer, back in the far corner.
 - On screen: **foot LEFT (orange/yellow), head RIGHT** — same as top plan.
+- Side elevation is **from the foot**: rear shelf LEFT, front wall RIGHT.
 
 ## Dimensions that are locked
 
