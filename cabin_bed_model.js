@@ -76,11 +76,9 @@ export function buildCabinBed(THREE) {
   // Rear shelf / wall
   box(root, FOOT, 0, 0, INTERNAL_W, REAR, SHELF, 0xd4b896, 0.85);
 
-  // Head wall to front plane
-  box(root, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
-
-  // No full-depth above-shelf volume (it intersected the front fascia).
-  // Ceiling-height front fascia is drawn separately below.
+  // Head wall along bed only (stops before front fascia — no shelf-height box into the front)
+  const headDepth = REAR + FRAME_D; // 1130mm; FRONT_Y is 1144mm
+  box(root, W - HEAD_W, 0, 0, HEAD_W, headDepth, SHELF, 0xbdc3c7, 0.8);
 
   // Bed (behind front wall)
   const mx = FOOT + TOL;
