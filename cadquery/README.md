@@ -27,7 +27,7 @@ GitHub renders the mesh in the browser when you open the file:
 - Coloured: [`cabin_bed_assembly.obj`](out/cabin_bed_assembly.obj) (keep [`.mtl`](out/cabin_bed_assembly.mtl) alongside in the same folder)
 - Fallback: [`cabin_bed_assembly.stl`](out/cabin_bed_assembly.stl)
 
-STEP does not preview on GitHub — use FreeCAD / CAD for that. Orbit in the GitHub 3D view; **Marker-FOOT** should end up on the left and **Marker-HEAD** on the right when looking in from the room.
+STEP does not preview on GitHub — use FreeCAD / CAD for that. Orbit in the GitHub 3D view; **Marker-HEAD** should end up on the **left** and **Marker-FOOT** on the **right** when looking in from the room.
 
 ## Review in Blender (optional)
 
@@ -40,10 +40,10 @@ Blender does not open STEP natively. Prefer the **coloured OBJ**:
    - **Scene Properties → Units → Unit Scale 0.001** (Length = Millimetres), or
    - Scale by **0.001** if you keep Blender’s default metres
 4. **View → Viewpoint → Front** — you should be looking into the alcove from the room
-5. **Marker-FOOT** (olive block) must be on the **left**; **Marker-HEAD** on the **right**. If FOOT is on the right, you are viewing from the back wall — flip to Front / View opposite.
+5. **Marker-HEAD** must be on the **left**; **Marker-FOOT** on the **right**. If that looks reversed, you are viewing from the back wall — use Front / View opposite.
 
 Materials: painted PB = autumnal olive; studs/track = galvanised; decks/ledgers/lift = timber.
 
 ## Coords
 
-Origin back-left-floor; X foot→head, Y back→front, Z up (mm).
+Origin back-left-floor; X **head→foot**, Y back→front, Z up (mm). HEAD left, FOOT right.

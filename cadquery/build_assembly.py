@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 """Build cabin-bed STEP assembly from COMPONENT-3D.md / DIM.
 
-Usage:
-  python3 cadquery/build_assembly.py
-  python3 cadquery/build_assembly.py --out cadquery/out/cabin_bed_assembly.step
-
-Named parts match PARTS-LIST.md zones (front fascia, foot ext, rear/head shelves, lift, bed).
-
-Coords (LOCKED-IN-SPEC): origin back-left-floor; X foot→head; Y back→front; Z up.
-Foot = LEFT (low X); head = RIGHT (high X).
+Orientation: looking into the alcove, HEAD left, FOOT right (user-corrected Nov 2026).
+Includes horizontal noggins for full-height plasterboard support.
 """
 
 from __future__ import annotations
@@ -19,12 +13,14 @@ from pathlib import Path
 
 import cadquery as cq
 
-# Allow `python3 cadquery/build_assembly.py` from repo root
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from dim import DIM  # noqa: E402
 from materials import COL  # noqa: E402
 from profiles import board, c_stud, place_min, u_track  # noqa: E402
+
+# Extra material key for noggins (galvanised-ish)
+COL["noggin"] = cq.Color(0.50, 0.53, 0.50)
 
 
 def add_box(
@@ -51,29 +47,31 @@ def add_vstud(
     length: float,
     *,
     web_along_x: bool = True,
+    flange_sign: int = 1,
     color: cq.Color | None = None,
 ) -> None:
-    """Vertical C-stud with min-corner at (x, y, z).
+    """Vertical C-stud with min-corner logic.
 
-    web_along_x=True  (front / foot / rear fascia): web = STUD_W in X, flange = STUD_FL in +Y
-    web_along_x=False (head fascia): web = STUD_W in Y, flange = STUD_FL in +X (into head shelf)
+    web_along_x=True: web in X, flange in +Y (front / foot / rear).
+    web_along_x=False: web in Y, flange in ±X (head). flange_sign=+1 → +X; -1 → −X.
     """
     D = DIM
     stud = c_stud(length, web=D.STUD_W, flange=D.STUD_FL, t=D.GAUGE)
     if web_along_x:
-        # Local envelope: x∈[-STUD_W/2,STUD_W/2], y∈[0,STUD_FL] → shift to min (x,y,z)
         solid = stud.translate((x + D.STUD_W / 2, y, z))
-    else:
-        # +90° about Z: flange runs −X from origin; shift by STUD_FL so flange fills +X from x
-        # Resulting envelope: x∈[x, x+STUD_FL], y∈[y, y+STUD_W]
+    elif flange_sign >= 0:
         solid = stud.rotate((0, 0, 0), (0, 0, 1), 90).translate(
             (x + D.STUD_FL, y + D.STUD_W / 2, z)
+        )
+    else:
+        # Flanges in −X from bed face: after +90 envelope x∈[-FL,0]; place so xmax=x
+        solid = stud.rotate((0, 0, 0), (0, 0, 1), 90).translate(
+            (x, y + D.STUD_W / 2, z)
         )
     assy.add(solid, name=name, color=color)
 
 
 def _flip_track_legs_down(tr: cq.Workplane) -> cq.Workplane:
-    """Mirror floor U-track so base is at z=TRACK_LEG and legs point down to z=0."""
     D = DIM
     return tr.mirror(mirrorPlane="XY").translate((0, 0, D.TRACK_LEG))
 
@@ -89,7 +87,6 @@ def add_track_x(
     invert_legs: bool = False,
     color: cq.Color | None = None,
 ) -> None:
-    """U-track running along X; web centred on y_center."""
     D = DIM
     tr = u_track(length, web=D.TRACK_WEB, leg=D.TRACK_LEG, t=D.GAUGE)
     if invert_legs:
@@ -111,7 +108,6 @@ def add_track_y(
     invert_legs: bool = False,
     color: cq.Color | None = None,
 ) -> None:
-    """U-track running along Y (foot extension floor/ceiling)."""
     D = DIM
     tr = u_track(length, web=D.TRACK_WEB, leg=D.TRACK_LEG, t=D.GAUGE)
     tr = tr.rotate((0, 0, 0), (0, 0, 1), 90)
@@ -123,12 +119,31 @@ def add_track_y(
     assy.add(solid, name=name, color=color)
 
 
+def add_noggin_x(
+    assy: cq.Assembly,
+    name: str,
+    x0: float,
+    x1: float,
+    y: float,
+    z_mid: float,
+    *,
+    height: float | None = None,
+    color: cq.Color | None = None,
+) -> None:
+    """Horizontal noggin spanning X between stud faces (PB support)."""
+    D = DIM
+    span = x1 - x0
+    if span < 20:
+        return
+    h = D.NOGGIN_H if height is None else height
+    add_box(assy, name, x0, y, z_mid - h / 2, span, D.STUD_FL, h, color or COL["noggin"])
+
+
 def build_foot_extension(assy: cq.Assembly) -> None:
-    """Foot return +237 mm into the room. PB flush on stud faces (both sides + front end)."""
+    """Foot return on the RIGHT (+237 mm). Studs flush to outer face x=W."""
     D = DIM
     y0 = D.D - D.EXT
-    # 70 mm studs flush to outer face (x=0); outer PB sits on that face
-    stud_x = 0.0
+    stud_x = D.W - D.STUD_W
     add_vstud(assy, "FootExt-Stud-Rear", stud_x, y0 + 50, 0, D.H, color=COL["stud"])
     add_vstud(
         assy,
@@ -139,7 +154,6 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         D.H,
         color=COL["stud"],
     )
-    # Track centred on stud web
     xc = stud_x + D.STUD_W / 2
     add_track_y(assy, "FootExt-Track-Floor", xc, y0, 0, D.EXT, color=COL["track"])
     add_track_y(
@@ -152,12 +166,28 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         invert_legs=True,
         color=COL["track"],
     )
-    # PB flush with studs: outer on x=0 face, inner on stud inner face (x=STUD_W)
-    add_box(assy, "FootExt-PB-Outer", -D.PB, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
+    # Noggins between uprights (along Y)
+    y_a = y0 + 50 + D.STUD_FL
+    y_b = y0 + D.EXT - D.STUD_FL - 50
+    y_nog = min(y_a, y_b)
+    nog_d = abs(y_b - y_a)
+    for i, z in enumerate(D.NOGGIN_ZS, start=1):
+        add_box(
+            assy,
+            f"FootExt-Noggin-{i}",
+            stud_x,
+            y_nog,
+            z - D.NOGGIN_H / 2,
+            D.STUD_W,
+            nog_d,
+            D.NOGGIN_H,
+            COL["noggin"],
+        )
+    add_box(assy, "FootExt-PB-Outer", D.W, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
     add_box(
         assy,
         "FootExt-PB-Inner",
-        D.STUD_W,
+        stud_x - D.PB,
         y0,
         0,
         D.PB,
@@ -165,11 +195,10 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         D.H,
         COL["painted"],
     )
-    # Front end of extension — PB flush with stud framing at room face
     add_box(
         assy,
         "FootExt-PB-Front",
-        0,
+        stud_x,
         D.D - D.PB,
         0,
         D.STUD_W,
@@ -181,11 +210,12 @@ def build_foot_extension(assy: cq.Assembly) -> None:
 
 def build_rear_shelf(assy: cq.Assembly) -> None:
     D = DIM
+    sx = D.HEAD_W
     sw = D.shelf_w
     add_box(
         assy,
         "Rear-Ledger",
-        D.FOOT,
+        sx,
         0,
         D.SHELF - 80,
         sw,
@@ -193,27 +223,37 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
         D.LEDGER_H,
         COL["timber"],
     )
-    add_box(assy, "Rear-Deck", D.FOOT, 0, D.SHELF - D.DECK_T, sw, D.REAR, D.DECK_T, COL["deck"])
-    # Fascia studs behind PB (inside the 210 mm shelf)
+    add_box(assy, "Rear-Deck", sx, 0, D.SHELF - D.DECK_T, sw, D.REAR, D.DECK_T, COL["deck"])
     fascia_y = D.REAR - D.STUD_FL
-    xs = [D.FOOT + 30, D.FOOT + sw / 2 - D.STUD_W / 2, D.FOOT + sw - D.STUD_W - 30]
+    xs = [sx + 30, sx + sw / 2 - D.STUD_W / 2, sx + sw - D.STUD_W - 30]
     for i, x in enumerate(xs, start=1):
         add_vstud(assy, f"Rear-Fascia-Stud-{i}", x, fascia_y, 0, D.SHELF, color=COL["stud"])
+    for i in range(len(xs) - 1):
+        for j, z in enumerate((400.0, 800.0), start=1):
+            add_noggin_x(
+                assy,
+                f"Rear-Fascia-Noggin-{i + 1}-{j}",
+                xs[i] + D.STUD_W,
+                xs[i + 1],
+                fascia_y,
+                z,
+                height=40.0,
+            )
     add_track_x(
         assy,
         "Rear-Fascia-Track",
-        D.FOOT,
+        sx,
         fascia_y + D.STUD_FL / 2,
         D.SHELF,
         sw,
         invert_legs=True,
         color=COL["track"],
     )
-    add_box(assy, "Rear-Fascia-PB", D.FOOT, D.REAR, 0, sw, D.PB, D.SHELF, COL["painted"])
+    add_box(assy, "Rear-Fascia-PB", sx, D.REAR, 0, sw, D.PB, D.SHELF, COL["painted"])
     add_box(
         assy,
         "Rear-Tablet-Block",
-        D.FOOT + sw / 2 - 150,
+        sx + sw / 2 - 150,
         0,
         935,
         300,
@@ -224,13 +264,12 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
 
 
 def build_head_shelf(assy: cq.Assembly) -> None:
-    """Head fascia at RIGHT (high X). Studs inside shelf volume, behind bed-face PB."""
+    """Head fascia on LEFT (0..HEAD_W). Studs inside shelf, flanges toward −X from bed face."""
     D = DIM
-    hx = D.W - D.HEAD_W
     add_box(
         assy,
         "Head-Ledger",
-        D.W - D.LEDGER,
+        0,
         0,
         D.SHELF - 80,
         D.LEDGER,
@@ -238,40 +277,52 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         D.LEDGER_H,
         COL["timber"],
     )
-    add_box(assy, "Head-Deck", hx, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
-    # Uprights at bed face, flanges INTO the head shelf (+X) — not into the bed bay
+    add_box(assy, "Head-Deck", 0, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
+    stud_x = D.HEAD_W - D.STUD_FL  # flanges fill [HEAD_W-STUD_FL, HEAD_W]
     ys = [D.REAR + 40, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
     for i, y in enumerate(ys, start=1):
         add_vstud(
             assy,
             f"Head-Fascia-Stud-{i}",
-            hx,
+            D.HEAD_W,  # bed face; flange_sign=-1 places into shelf
             y,
             0,
             D.SHELF,
             web_along_x=False,
+            flange_sign=-1,
             color=COL["stud"],
         )
-    # PB on exposed faces: bed-facing (covers studs) + room-front return
-    add_box(assy, "Head-PB-BedFace", hx - D.PB, 0, 0, D.PB, D.FRONT_Y, D.SHELF, COL["painted"])
-    add_box(assy, "Head-PB-FrontFace", hx, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.SHELF, COL["painted"])
+    for i in range(len(ys) - 1):
+        y0 = ys[i] + D.STUD_W
+        span = ys[i + 1] - y0
+        if span < 20:
+            continue
+        for j, z in enumerate((400.0, 800.0), start=1):
+            add_box(
+                assy,
+                f"Head-Fascia-Noggin-{i + 1}-{j}",
+                stud_x,
+                y0,
+                z - 20,
+                D.STUD_FL,
+                span,
+                40,
+                COL["noggin"],
+            )
+    add_box(assy, "Head-PB-BedFace", D.HEAD_W, 0, 0, D.PB, D.FRONT_Y, D.SHELF, COL["painted"])
+    add_box(assy, "Head-PB-FrontFace", 0, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.SHELF, COL["painted"])
 
 
-def _front_pb_picture_frame(
-    assy: cq.Assembly,
-    prefix: str,
-    pb_y: float,
-) -> None:
-    """Picture-frame PB around the access opening at a given Y (room face or alcove face)."""
+def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None:
     D = DIM
-    left_w = D.ACCESS_X - D.FOOT
+    left_w = D.ACCESS_X - D.HEAD_W
     right_x = D.ACCESS_X + D.ACCESS_W
-    right_w = D.W - right_x
-    add_box(assy, f"{prefix}-Below", D.FOOT, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
+    right_w = D.FOOT_X0 - right_x
+    add_box(assy, f"{prefix}-Below", D.HEAD_W, pb_y, 0, D.INTERNAL_W, D.PB, D.ACCESS_BOT, COL["painted"])
     add_box(
         assy,
         f"{prefix}-LeftPier",
-        D.FOOT,
+        D.HEAD_W,
         pb_y,
         D.ACCESS_BOT,
         left_w,
@@ -293,7 +344,7 @@ def _front_pb_picture_frame(
     add_box(
         assy,
         f"{prefix}-Above",
-        D.FOOT,
+        D.HEAD_W,
         pb_y,
         D.ACCESS_TOP,
         D.INTERNAL_W,
@@ -311,11 +362,11 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     y_track_c = ty + D.TRACK_WEB / 2
     right_x = D.ACCESS_X + D.ACCESS_W
 
-    add_track_x(assy, "Front-Track-Floor", D.FOOT, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
+    add_track_x(assy, "Front-Track-Floor", D.HEAD_W, y_track_c, 0, D.INTERNAL_W, color=COL["track"])
     add_track_x(
         assy,
         "Front-Track-Ceiling",
-        D.FOOT,
+        D.HEAD_W,
         y_track_c,
         D.H,
         D.INTERNAL_W,
@@ -325,7 +376,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Sill",
-        D.FOOT,
+        D.HEAD_W,
         y_track_c,
         D.ACCESS_BOT - D.TRACK_LEG,
         D.INTERNAL_W,
@@ -334,26 +385,35 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     add_track_x(
         assy,
         "Front-Track-Lintel",
-        D.FOOT,
+        D.HEAD_W,
         y_track_c,
         D.ACCESS_TOP,
         D.INTERNAL_W,
         color=COL["track"],
     )
 
-    for i, x in enumerate([D.FOOT + 25, D.ACCESS_X - D.STUD_W - 25], start=1):
+    left_studs = [D.HEAD_W + 25, D.ACCESS_X - D.STUD_W - 25]
+    right_studs = [right_x + 25, D.FOOT_X0 - D.STUD_W - 25]
+    for i, x in enumerate(left_studs, start=1):
         add_vstud(assy, f"Front-Jamb-L{i}", x, sy, 0, D.H, color=COL["stud"])
-    for i, x in enumerate([right_x + 25, D.W - D.STUD_W - 25], start=1):
+    for i, x in enumerate(right_studs, start=1):
         add_vstud(assy, f"Front-Jamb-R{i}", x, sy, 0, D.H, color=COL["stud"])
 
-    # Room face (front) + alcove face (rear of front wall) — both picture-framed
+    # Full-height + band noggins between pier studs
+    for label, pair in (("L", left_studs), ("R", right_studs)):
+        x0, x1 = pair[0] + D.STUD_W, pair[1]
+        for i, z in enumerate(D.NOGGIN_ZS, start=1):
+            add_noggin_x(assy, f"Front-Noggin-{label}-{i}", x0, x1, sy, z)
+        for i, z in enumerate((320.0, 2230.0), start=1):
+            add_noggin_x(assy, f"Front-Noggin-{label}-Band-{i}", x0, x1, sy, z, height=40.0)
+
     _front_pb_picture_frame(assy, "Front-PB-Room", y + D.FOOT - D.PB)
     _front_pb_picture_frame(assy, "Front-PB-Alcove", y)
 
 
 def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
     D = DIM
-    mx = D.FOOT + D.TOL
+    mx = D.HEAD_W + D.TOL  # pillow end toward head (left)
     fy = D.REAR + D.FRAME_TUCK
     my = fy + D.TOL
     rw = 45.0
@@ -385,17 +445,7 @@ def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
     add_box(assy, "Bed-Frame", mx, fy, D.PLINTH, D.MATT_W, D.FRAME_D, D.FRAME_H, COL["bed"])
     add_box(assy, "Mattress", mx, my, D.PLATFORM, D.MATT_W, D.MATT_D, D.MATT_H, COL["matt"])
     dw = (D.MATT_W - 50) / 2
-    add_box(
-        assy,
-        "Drawer-1",
-        mx + 15,
-        fy + 50,
-        25,
-        dw,
-        D.FRAME_D - 100,
-        D.PLINTH - 45,
-        COL["drawer"],
-    )
+    add_box(assy, "Drawer-1", mx + 15, fy + 50, 25, dw, D.FRAME_D - 100, D.PLINTH - 45, COL["drawer"])
     add_box(
         assy,
         "Drawer-2",
@@ -411,16 +461,13 @@ def build_bed_lift_and_bed(assy: cq.Assembly) -> None:
 
 def build_existing_ghost(assy: cq.Assembly) -> None:
     D = DIM
-    add_box(assy, "Existing-FootWall", 0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
+    add_box(assy, "Existing-FootWall", D.FOOT_X0, 0, 0, D.FOOT, D.D - D.EXT, D.H, COL["existing"])
 
 
 def build_orientation_markers(assy: cq.Assembly) -> None:
-    """Small blocks so Blender view orientation is obvious: FOOT=left, HEAD=right."""
     D = DIM
-    # Foot marker — low X, front corner
-    add_box(assy, "Marker-FOOT", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
-    # Head marker — high X, front corner
-    add_box(assy, "Marker-HEAD", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
+    add_box(assy, "Marker-HEAD", -40, D.D - 60, D.H - 80, 40, 60, 80, COL["bed"])
+    add_box(assy, "Marker-FOOT", D.W, D.D - 60, D.H - 80, 40, 60, 80, COL["painted"])
 
 
 def build_assembly() -> cq.Assembly:
@@ -455,7 +502,6 @@ def iter_parts(assy: cq.Assembly):
 
 
 def export_stl(assy: cq.Assembly, path: Path, tolerance: float = 0.5) -> None:
-    """Mesh the assembly for Blender / mesh viewers (mm)."""
     comp = assembly_compound(assy)
     path.parent.mkdir(parents=True, exist_ok=True)
     cq.exporters.export(
@@ -468,7 +514,6 @@ def export_stl(assy: cq.Assembly, path: Path, tolerance: float = 0.5) -> None:
 
 
 def _mesh_shape(shape, tolerance: float = 0.5):
-    """Return list of triangles as ((x,y,z),)*3 in mm."""
     from OCP.BRep import BRep_Tool
     from OCP.BRepMesh import BRepMesh_IncrementalMesh
     from OCP.TopAbs import TopAbs_FACE, TopAbs_FORWARD
@@ -502,20 +547,18 @@ def _mesh_shape(shape, tolerance: float = 0.5):
 
 
 def export_obj_mtl(assy: cq.Assembly, obj_path: Path, tolerance: float = 0.5) -> None:
-    """Wavefront OBJ + MTL with material colours for Blender."""
     obj_path.parent.mkdir(parents=True, exist_ok=True)
     mtl_path = obj_path.with_suffix(".mtl")
-
-    # Group parts by material name derived from assembly colour
     mat_entries: dict[str, tuple[float, float, float]] = {}
     objects: list[tuple[str, str, list]] = []
 
     def mat_key(color: cq.Color | None, name: str) -> str:
         if color is None:
             return "Default"
-        # Prefer semantic names from part prefix
         lower = name.lower()
-        if "marker-foot" in lower or "pb" in lower or "painted" in lower:
+        if "noggin" in lower:
+            key = "GalvanisedNoggin"
+        elif "marker-foot" in lower or "pb" in lower or "painted" in lower:
             key = "PaintedOlive"
         elif "stud" in lower or "jamb" in lower:
             key = "GalvanisedStud"
@@ -548,30 +591,20 @@ def export_obj_mtl(assy: cq.Assembly, obj_path: Path, tolerance: float = 0.5) ->
     with mtl_path.open("w", encoding="utf-8") as mf:
         mf.write("# Cabin bed materials\n")
         for key, (r, g, b) in sorted(mat_entries.items()):
-            mf.write(f"newmtl {key}\n")
-            mf.write(f"Kd {r:.4f} {g:.4f} {b:.4f}\n")
-            mf.write("Ka 0.05 0.05 0.05\n")
-            mf.write("Ks 0.08 0.08 0.08\n")
-            mf.write("Ns 20\n")
-            mf.write("d 1.0\n\n")
+            mf.write(f"newmtl {key}\nKd {r:.4f} {g:.4f} {b:.4f}\n")
+            mf.write("Ka 0.05 0.05 0.05\nKs 0.08 0.08 0.08\nNs 20\nd 1.0\n\n")
 
     with obj_path.open("w", encoding="utf-8") as of:
-        of.write("# Cabin bed assembly (mm) — FOOT at low X, HEAD at high X\n")
+        of.write("# Cabin bed (mm) — HEAD left (low X), FOOT right (high X)\n")
         of.write(f"mtllib {mtl_path.name}\n")
         v_index = 1
         for name, key, tris in objects:
-            of.write(f"o {name}\n")
-            of.write(f"usemtl {key}\n")
+            of.write(f"o {name}\nusemtl {key}\n")
             for tri in tris:
                 for pt in tri:
                     of.write(f"v {pt[0]:.4f} {pt[1]:.4f} {pt[2]:.4f}\n")
                 of.write(f"f {v_index} {v_index + 1} {v_index + 2}\n")
                 v_index += 3
-
-
-def export_colored_stl_zip_style(assy: cq.Assembly, path: Path, tolerance: float = 0.5) -> None:
-    """Binary STL of whole assembly (no colour) — kept for simple import."""
-    export_stl(assy, path, tolerance=tolerance)
 
 
 def main() -> int:
@@ -584,8 +617,8 @@ def main() -> int:
     args = parser.parse_args()
 
     print(f"DIM envelope: {DIM.W:.0f} × {DIM.D:.0f} × {DIM.H:.0f} mm")
-    print(f"FRONT_Y={DIM.FRONT_Y:.0f}  shelf_w={DIM.shelf_w:.0f}  PLATFORM={DIM.PLATFORM:.0f}")
-    print("Orientation: FOOT=left (X=0), HEAD=right (X=W)")
+    print(f"Orientation: HEAD left (X=0), FOOT right (X={DIM.FOOT_X0:.0f}..{DIM.W:.0f})")
+    print(f"ACCESS_X={DIM.ACCESS_X:.0f}  shelf_w={DIM.shelf_w:.0f}  PLATFORM={DIM.PLATFORM:.0f}")
     print("Building assembly…")
     assy = build_assembly()
     names = [name for name, _obj in assy.traverse()]
@@ -593,15 +626,18 @@ def main() -> int:
     for n in names:
         print(f"  - {n}")
 
-    # Sanity: head studs must sit inside head shelf (x >= hx)
-    hx = DIM.W - DIM.HEAD_W
+    # Sanity checks
     for name, shape, _ in iter_parts(assy):
-        if not name.startswith("Head-Fascia-Stud"):
-            continue
         bb = shape.BoundingBox()
-        assert bb.xmin >= hx - 0.1, f"{name} protrudes into bed bay: xmin={bb.xmin} hx={hx}"
-        assert bb.xmax <= hx + DIM.STUD_FL + 0.1, f"{name} oversize: xmax={bb.xmax}"
-        print(f"OK {name} X[{bb.xmin:.1f},{bb.xmax:.1f}] (into head shelf)")
+        if name.startswith("FootExt-Stud"):
+            assert bb.xmax <= DIM.W + 0.1 and bb.xmin >= DIM.W - DIM.STUD_W - 0.1, name
+        if name.startswith("Head-Fascia-Stud"):
+            assert bb.xmax <= DIM.HEAD_W + 0.1, f"{name} leaks past bed face"
+            assert bb.xmin >= DIM.HEAD_W - DIM.STUD_FL - 0.1, name
+        if name.startswith("Marker-HEAD"):
+            assert bb.xmax <= 0.1, name
+        if name.startswith("Marker-FOOT"):
+            assert bb.xmin >= DIM.W - 0.1, name
 
     if not args.no_export:
         args.out.parent.mkdir(parents=True, exist_ok=True)
@@ -609,11 +645,9 @@ def main() -> int:
         assy.export(str(args.out))
         print(f"Wrote {args.out} ({args.out.stat().st_size:,} bytes)")
         if args.stl and str(args.stl):
-            print(f"Exporting STL → {args.stl}")
             export_stl(assy, args.stl)
             print(f"Wrote {args.stl} ({args.stl.stat().st_size:,} bytes)")
         if args.obj and str(args.obj):
-            print(f"Exporting OBJ+MTL → {args.obj}")
             export_obj_mtl(assy, args.obj)
             print(f"Wrote {args.obj} + {args.obj.with_suffix('.mtl').name}")
     return 0

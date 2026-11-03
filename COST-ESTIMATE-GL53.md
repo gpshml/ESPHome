@@ -10,9 +10,9 @@
 
 | Stock | Qty | Where |
 |-------|-----|--------|
-| 70mm C-stud × 3.0m | **10** (30m) | Room front jambs ×4, foot ext ×2, rear/head **shelf front** uprights from 2 lengths, spare ×2 |
+| 70mm C-stud × 3.0m | **13** (39m) | Front jambs ×4, foot ext ×2, shelf front uprights ~2, **noggins ~3**, spare ×1 |
 | 72mm U-track × 3.0m | **4** (12m) | Front F/C/sill/lintel, foot ext, shelf fascia rails |
-| 12.5mm PB | **8** | Front + foot + **rear shelf front** + **head fascia faces** + spare |
+| 12.5mm PB | **8** | Front **both faces** + foot + **rear shelf front** + **head fascia faces** + spare |
 
 ---
 
@@ -20,7 +20,7 @@
 
 | Item | Unit | Qty | Line |
 |------|------|-----|------|
-| C-stud 3.0m | £11.85 | 10 | **£119** |
+| C-stud 3.0m | £11.85 | 13 | **£154** |
 | U-track 3.0m | £10.60 | 4 | **£42** |
 | PB 12.5mm | £13.40 | 8 | **£107** |
 | Beads + compound + tape + screws | — | — | **£85** |
@@ -28,10 +28,10 @@
 | Shelf ledgers | ~£6 | 2 | **£12** |
 | Ply 18mm ×2 + 12mm ×1 | — | — | **£104** |
 | Adhesive / detector / foam / paint / curtain / handles | — | — | **£120** |
-| **Merchant subtotal** | | | **≈ £639** |
+| **Merchant subtotal** | | | **≈ £674** |
 
-**Wickes path ≈ £640–£680** (delivery/collect).  
-**Bence path ≈ £500–£600** + free local delivery.
+**Wickes path ≈ £675–£720** (delivery/collect).  
+**Bence path ≈ £530–£630** + free local delivery.
 
 ---
 
@@ -49,14 +49,15 @@
 
 | Path | Heavy | Parcels | **All-in** |
 |------|-------|---------|------------|
-| **Bence + online** | £500–£600 | £270–£440 | **≈ £800–£1,050** |
-| Wickes + online | £640–£680 | £270–£440 | **≈ £900–£1,120** |
-| +10% contingency | | | **Budget ~£900–£1,200** |
+| **Bence + online** | £530–£630 | £270–£440 | **≈ £830–£1,080** |
+| Wickes + online | £675–£720 | £270–£440 | **≈ £950–£1,160** |
+| +10% contingency | | | **Budget ~£920–£1,250** |
 
 ---
 
 ## Bence script
 
 > **GL53 0DF #22.** Shelves hang off existing back/head walls; **PB still faces the front of those shelves.**  
-> 10× 70mm C-stud 3.0m, 4× 72mm track 3.0m, 8× 12.5mm 2400×1200 TE PB, beads, compound, tape, screws.  
-> 5× 47×150×2.4m for **170mm** lift (360mm bed → 530mm platform), 2× ledger lengths, 2× 18mm + 1× 12mm 8×4 ply, grab adhesive. Crane if needed.
+> 13× 70mm C-stud 3.0m (incl. **noggins** for full-height PB), 4× 72mm track 3.0m, 8× 12.5mm 2400×1200 TE PB, beads, compound, tape, screws.  
+> 5× 47×150×2.4m for **170mm** lift (360mm bed → 530mm platform), 2× ledger lengths, 2× 18mm + 1× 12mm 8×4 ply, grab adhesive. Crane if needed.  
+> Orientation: **head left, foot right** when looking into the alcove.

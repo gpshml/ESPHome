@@ -34,7 +34,7 @@ python3 cadquery/build_assembly.py
 
 ## Source of truth
 
-Same as `LOCKED-IN-SPEC.md`: origin back-left-floor; X foot→head, Y back→front, Z up.
+Same as `LOCKED-IN-SPEC.md`: origin back-left-floor; X **head→foot**, Y back→front, Z up.
 
 ```bash
 # After editing cabin_bed_model.js:
@@ -49,15 +49,14 @@ python3 create_final_report.py
 Copy this into another agent or CAD assistant:
 
 > **Project:** UK metal-stud + plasterboard alcove cabin/daybed, Cheltenham GL53.  
-> **Alcove:** 2344 × 1242 × 2380 mm (W×D×H). Origin = back-left-floor. X foot→head, Y back→front, Z up.  
-> **Foot (left):** existing 98 mm wall + 237 mm front extension (full height).  
-> **Head (right):** 326 mm fascia to FRONT_Y; ledgers on existing head wall; PB on exposed faces.  
-> **Rear:** 210 mm shelf, top 1200 mm; ledger on existing back wall; PB front fascia; shelf width = INTERNAL_W − HEAD_W (stops before head).  
-> **Front:** 98 mm fascia; access 1300 × 1440 @ X=398, Z=640–2080.  
-> **Bed:** owned; frame 360 mm; lift-only 170 mm → platform 530; mattress 1900×900 (+10 mm clearance); equal front/rear tuck in bay.  
-> **Shelves:** wall-supported (not freestanding stud cages); still PB-face shelf fronts.  
-> **Stud buy (lean):** ~10× 3 m C-stud + 4× track — see `PARTS-LIST.md` / `COST-ESTIMATE-GL53.md`.  
-> **Ask:** parametric model with real 70 mm C-stud / track profiles, named parts matching the BOQ, and STEP or IFC export. Do not invent dimensions — use `LOCKED-IN-SPEC.md` and `cabin_bed_model.js` `DIM`.
+> **Alcove:** 2344 × 1242 × 2380 mm (W×D×H). Origin = back-left-floor. X **head→foot**, Y back→front, Z up.  
+> **Head (left):** 326 mm fascia; ledgers on existing head wall; PB on exposed faces; studs inside shelf.  
+> **Foot (right):** existing 98 mm wall + 237 mm front extension (full height); PB flush to studs.  
+> **Rear:** 210 mm shelf, top 1200 mm; ledger on existing back wall; PB front fascia; shelf width = INTERNAL_W − HEAD_W (stops before foot).  
+> **Front:** 98 mm fascia both faces; access 1300 × 1440 @ X=626, Z=640–2080; **noggins** between pier studs at 600/1200/1800 (+ band noggins).  
+> **Bed:** owned; frame 360 mm; lift-only 170 mm → platform 530; mattress 1900×900 (+10 mm); pillow toward head (left).  
+> **Stud buy:** **13×** 3 m C-stud (incl. noggins) + 4× track — see `PARTS-LIST.md` / `PARTS-PURCHASE-CROSSREF.md`.  
+> **Ask:** parametric model with real 70 mm C-stud / track / noggin profiles, named parts matching the BOQ, STEP export. Do not invent dimensions — use `LOCKED-IN-SPEC.md` and `DIM`.
 
 ## Recommendation — which AI / tool for CAD-grade work
 

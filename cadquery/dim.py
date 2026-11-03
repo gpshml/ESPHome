@@ -1,9 +1,9 @@
 """Locked cabin-bed dimensions — mirror of cabin_bed_model.js `DIM`.
 
-Do not invent values. Source of truth: LOCKED-IN-SPEC.md + cabin_bed_model.js.
-Coordinate system (mm):
-  Origin = back-left-floor (rear wall ∩ foot wall ∩ floor)
-  X: foot → head
+Orientation (user-corrected Nov 2026): looking into the alcove from the room,
+HEAD is LEFT, FOOT is RIGHT.
+  Origin = back-left-floor (rear wall ∩ head wall ∩ floor)
+  X: head → foot
   Y: back → front (into room)
   Z: floor → ceiling
 """
@@ -38,10 +38,11 @@ class Dim:
     TRACK_LEG: float = 25.0
     PB: float = 12.5
     LEDGER: float = 70.0
-    # Metal gauge (mm) — real UK stud ~0.5–0.7; slightly thickened for robust STEP
     GAUGE: float = 0.7
     DECK_T: float = 18.0
     LEDGER_H: float = 45.0
+    NOGGIN_H: float = 40.0
+    NOGGIN_ZS: tuple[float, ...] = (600.0, 1200.0, 1800.0)
 
     @property
     def W(self) -> float:
@@ -57,7 +58,7 @@ class Dim:
 
     @property
     def ACCESS_X(self) -> float:
-        return 300.0 + self.FOOT  # 398
+        return self.HEAD_W + 300.0  # 626 — 300mm from left of internal
 
     @property
     def FRONT_Y(self) -> float:
@@ -74,6 +75,14 @@ class Dim:
     @property
     def shelf_w(self) -> float:
         return self.INTERNAL_W - self.HEAD_W  # 1920
+
+    @property
+    def FOOT_X0(self) -> float:
+        return self.W - self.FOOT  # 2246
+
+    @property
+    def INTERNAL_X0(self) -> float:
+        return self.HEAD_W  # 326
 
 
 DIM = Dim()

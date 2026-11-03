@@ -5,9 +5,11 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 **Bed status:** already purchased. Buy **lift + new front/foot framing + shelf boards + drawers + fit-out** only.
 
-**Construction rule:** **existing back and head walls carry the shelves** — no uprights/noggins along the *back* of those shelves. The **front of each shelf is still plasterboard-faced** (light frame at the fascia line only). Full-height metal stud remains mainly **room front fascia** + **foot-wall extension**.
+**Orientation:** looking into the alcove — **HEAD left, FOOT right** (`LOCKED-IN-SPEC.md`).
 
-**Buying / delivery:** [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) · priced BOQ [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md).
+**Construction rule:** **existing back and head walls carry the shelves** — no uprights along the *back* of those shelves. The **front of each shelf is still plasterboard-faced** (light frame at the fascia line only). Full-height metal stud remains mainly **room front fascia** + **foot-wall extension**, with **horizontal noggins** between studs wherever full-height PB is fixed.
+
+**Buying / delivery:** [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) · priced BOQ [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) · cross-check [`PARTS-PURCHASE-CROSSREF.md`](PARTS-PURCHASE-CROSSREF.md).
 
 ---
 
@@ -55,26 +57,28 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ### C. Front fascia — access opening (main metal-stud job)
 
-Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), starting 300mm from left of internal width.
+Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), starting **300mm from left of internal** (head / left side).
 
 | Part | Qty / size | Role |
 |------|------------|------|
 | Floor U-track | 1 run × **2246mm** | Base of front wall |
 | Ceiling U-track | 1 run × **2246mm** | Head of front wall |
-| C-stud jambs (left pier ~300mm) | **2** × 2380mm | Full-height left of opening |
-| C-stud jambs (right pier ~646mm) | **2** × 2380mm | Full-height right of opening |
+| C-stud jambs (left pier ~300mm, head side) | **2** × 2380mm | Full-height left of opening |
+| C-stud jambs (right pier ~646mm, foot side) | **2** × 2380mm | Full-height right of opening |
 | Sill rail | 1× ~2246mm (track or stud on side) | At **640mm** AFF (bottom of opening) |
 | Lintel rail | 1× ~2246mm | At **2080mm** AFF (top of opening) |
-| Optional cripples | 2–4 short | Only if boarding needs extra fixings under sill / over lintel — cut from offcuts |
-| Plasterboard | ~3–4 sheets worth | Room-front face (± inner face if exposed) |
+| **Noggins (required)** | see cut list below | Horizontal cross-members between pier studs for full-height PB |
+| Plasterboard | ~3–4 sheets worth | **Room face + alcove face** of front wall |
 | Corner / stop bead | ~6–8m | Opening reveals + external corners |
 | Curtain track | ≥1300mm | In reveal or face-fix |
+
+**Noggins — front piers (required, not optional):** between each pair of jamb studs at **600 / 1200 / 1800mm AFF**, plus mid-band noggins in the boarded zones **below the sill (~320)** and **above the lintel (~2230)**. Wide right pier (~550mm stud clear span) is the critical bay; left pier still needs the same heights.
 
 **This is where almost all the C-stud and track is used.**
 
 ---
 
-### D. Foot wall extension — +237mm into the room (full height)
+### D. Foot wall extension — +237mm into the room (full height) — **RIGHT** side
 
 Existing foot wall stays; only the **front 237mm** is new studwork tied in.
 
@@ -82,7 +86,8 @@ Existing foot wall stays; only the **front 237mm** is new studwork tied in.
 |------|------------|------|
 | Floor + ceiling track | 2× ~237–300mm | Short runs for the extension |
 | C-stud uprights | **2** × 2380mm | New return |
-| Plasterboard | ~0.5–1 sheet | Both faces of extension / make-good |
+| **Noggins** | **3** × ~100–150mm | Between uprights at 600 / 1200 / 1800 AFF — full-height PB both faces |
+| Plasterboard | ~0.5–1 sheet | Both faces + front end, flush to studs |
 | Join work | — | Strip ~200mm existing PB before tying in |
 
 ---
@@ -126,13 +131,18 @@ Existing foot wall stays; only the **front 237mm** is new studwork tied in.
 
 | Item | Buy | Metres | Used on |
 |------|-----|--------|---------|
-| 70mm C-stud × 3.0m | **10** | **30m** | Room front: 4 jambs; Foot ext: 2; **Shelf front fascias:** ~5× 1200mm from 2 lengths; +2 spare/cripples |
+| 70mm C-stud × 3.0m | **13** | **39m** | Room front jambs ×4; Foot ext ×2; shelf front uprights (~2 lengths); **noggins ~3 lengths**; +1 spare |
 | 72mm U-track × 3.0m | **4** | **12m** | Front floor/ceiling/sill/lintel + short foot-ext + shelf fascia head rails |
 
-Rough cut — **stud:** 4× front jambs @ 2380; 2× foot @ 2380; 2× lengths → rear fascia uprights (3×1200) + head fascia uprights (2–3×1200); 2× spare/cripples.  
+Rough cut — **stud uprights:** 4× front jambs @ 2380; 2× foot @ 2380; 2× lengths → rear fascia (3×1200) + head fascia (2–3×1200).  
+Rough cut — **noggins (~8–9m from 3× 3.0m):**  
+- Front left pier: 5× ~180–250mm (600/1200/1800 + 320 + 2230)  
+- Front right pier: 5× ~500–550mm (same heights — critical for PB)  
+- Foot extension: 3× ~100–150mm (600/1200/1800)  
+- Shelf fascia light noggins: offcuts from above  
 Rough cut — **track:** front F/C/sill/lintel, foot ext, rear + head fascia head rails.
 
-*(Shelf fascia uprights may be timber instead of C-stud if preferred; PB facing quantity stays either way.)*
+*(Shelf fascia uprights may be timber instead of C-stud if preferred; PB facing quantity stays either way. Noggins on full-height boarded walls should stay metal to match the stud line.)*
 
 ---
 
@@ -164,9 +174,9 @@ Shelf **decks** remain ply/MDF; shelf **fronts** are PB-faced.
 
 | Material | Buy |
 |----------|-----|
-| 70mm C-stud 3.0m | **10** (30m) |
+| 70mm C-stud 3.0m | **13** (39m) — includes noggins |
 | 72mm U-track 3.0m | **4** (12m) |
-| 12.5mm PB | **7–8** sheets (incl. shelf **front** fascias) |
+| 12.5mm PB | **7–8** sheets (front **both faces**, foot ext, shelf **front** fascias) |
 | Softwood lift | **5×** 47×150×2.4m + packs → 170mm |
 | Softwood ledgers | ~1× 2.4m + offcuts |
 | 18mm sheet | **2** (drawers; shelf decks from offcuts if possible) |
