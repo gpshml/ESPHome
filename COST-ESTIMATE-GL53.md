@@ -1,135 +1,103 @@
 # Cost estimate — GL53 0DF (#22)
 
 **Site:** GL53 0DF (south Cheltenham / Leckhampton side)  
-**Delivery:** Inside **George Bence** Cheltenham crane radius (~2–4 miles from Fairview Road HQ). Also fine for **Wickes** / **Travis Perkins** Cheltenham.  
-**Scope:** Materials only from `PARTS-LIST.md` (bed already owned). **No labour, paint litres beyond a small allowance, electrician, or contingency for design changes.**
+**Delivery:** Inside **George Bence** Cheltenham crane radius. Also fine for Wickes / Travis Perkins.  
+**Scope:** Materials only (`PARTS-LIST.md`; bed owned). No labour / electrician / curtain fabric.
 
-Prices below are **indicative retail (mostly Wickes web, Nov 2026)** so the maths is transparent. Bence will usually come in **lower on drylining/timber** on a counter quote — call them for a firm figure.
-
----
-
-## Do you need GrokBot?
-
-**No — not for a planning estimate.** This file is enough to budget and to hand Bence / Wickes a shopping list.
-
-**Yes — useful later** if you want a live basket built in their UI, stock checked at Cheltenham branches, or a scripted price scrape the day you order (web prices move).
-
-**Best next human step:** email/phone **Bence Cheltenham `01242 237241`** with this BOQ and ask for delivery to **GL53 0DF #22** (crane if needed).
+Prices are **indicative Wickes web retail (Nov 2026)**. Bence counter quote should undercut drylining.
 
 ---
 
-## Quantities used (buy list)
+## Stud quantity correction
 
-| Code | Item | Qty | Why |
-|------|------|-----|-----|
-| S70 | 70mm C-stud × 3.0m | **25** | ~12 full-height + cuts for shelf/head studs + noggins + spare |
-| T72 | 72mm U-track × 3.0m | **10** | Floor + head tracks, opening, waste (~7.2m floor alone → 3 lengths; double where walls hit ceiling) |
-| PB | 12.5mm PB 2400×1200 tapered | **10** | Spec ~8 + 2 spare |
-| AB | Thin-coat angle bead 3.0m | **5** | ~12–15m external corners / reveals |
-| JC | Ready-mix joint compound 10kg | **2** | Tape + finish |
-| JT | Joint tape | **1** roll | |
-| DWS | Drywall screws to metal (1000) | **1** box | ~10/m² × ~25m² boarded |
-| RISER | Softwood for **170mm** lift (e.g. 47×150×2.4m + packs) | **8** | Bed is **360mm**; 170 + 360 = **530mm** platform |
-| PLY18 | 18mm plywood 1220×2440 | **3** | Drawer boxes (~2.5 sheets) |
-| PLY12 | 12mm plywood 1220×2440 | **1** | Drawer bases |
-| GA | Grab adhesive | **3** tubes | Floor / plinth |
-| DET | Cable detector | **1** | Mandatory before floor fixings |
-| RUN | 900mm 100kg drawer runners | **2** pairs | One pair per drawer |
-| HND | Drawer handles | **2** | |
-| CTR | Curtain track ≥1300mm | **1** | |
-| ESP | ESP32 + 7" touch HMI | **1** | |
-| LED | WS2812B/SK6812 ~5m + 5V 10A PSU | **1** set | |
-| LIT | Reading light + starfield allowance | **1** | Budget line |
-| SPK | Compact speaker | **1** | |
-| MISC | Paint/primer small, foam, short screws, beads extras | **1** | Allowance |
+Earlier draft used **25× 3.0m C-stud (= 75m)** — that was wrong for this alcove (over-counted full-height walls and double-counted).
+
+**Revised take-off** (see `PARTS-LIST.md` §1):
+
+| Stock | Qty | Metres | Role |
+|-------|-----|--------|------|
+| 70mm C-stud × 3.0m | **14** | **42m** | 6× full-height (foot ext + front jambs) + cuts for rear/head @ 1200 + noggins/spare |
+| 72mm U-track × 3.0m | **5** | **15m** | ~10–12m of track actually needed |
 
 ---
 
-## Priced basket A — Wickes-style retail (transparent web prices)
+## Buy list
 
-| Item | Unit (inc VAT, web) | Qty | Line |
-|------|---------------------|-----|------|
-| Knauf 70mm C-stud 3.0m | £11.85 | 25 | **£296** |
-| Knauf 72mm U-track 3.0m | £10.60 | 10 | **£106** |
-| Knauf 12.5mm TE PB 2400×1200 | £13.40 | 10 | **£134** |
-| Thin-coat angle bead 3.0m | ~£3.00 | 5 | **£15** |
-| Joint compound 10kg | £30.00 | 2 | **£60** |
-| Joint tape | ~£8 | 1 | **£8** |
-| Drywall screws 1000 | ~£15 | 1 | **£15** |
-| 47×150×2.4m (or equiv.) + packs to 170mm | ~£8–£12 | 8 | **£80** |
-| Plywood 18mm 8×4 | £37.50 | 3 | **£113** |
-| Plywood 12mm 8×4 | £29.00 | 1 | **£29** |
-| Grab adhesive | ~£6 | 3 | **£18** |
-| Cable detector | ~£25 | 1 | **£25** |
-| Short screws / foam / sealant | — | — | **£25** |
-| Primer + emulsion (small alcove) | — | — | **£60** |
-| Curtain track | ~£25 | 1 | **£25** |
-| Drawer handles | ~£8 | 2 | **£16** |
-| **Merchant subtotal** | | | **≈ £1,025** |
+| Code | Item | Qty |
+|------|------|-----|
+| S70 | 70mm C-stud × 3.0m | **14** |
+| T72 | 72mm U-track × 3.0m | **5** |
+| PB | 12.5mm TE PB 2400×1200 | **8** |
+| AB | Thin-coat angle bead 3.0m | **4** |
+| JC | Ready-mix joint compound 10kg | **2** |
+| JT | Joint tape | **1** |
+| DWS | Drywall screws (1000) | **1** |
+| RISER | 47×150×2.4m + packs to **170mm** | **5** |
+| PLY18 | 18mm plywood 8×4 | **2** |
+| PLY12 | 12mm plywood 8×4 | **1** |
+| GA | Grab adhesive | **3** |
+| DET | Cable detector | **1** |
+| RUN | 900mm 100kg runners | **2** pairs |
+| HND / CTR | Handles ×2, curtain track | **1** set |
+| ELEC | ESP32 7", LED~5m, 5V10A, light, speaker, starfield budget | **1** |
+
+---
+
+## Priced basket A — Wickes-style retail
+
+| Item | Unit | Qty | Line |
+|------|------|-----|------|
+| Knauf 70mm C-stud 3.0m | £11.85 | 14 | **£166** |
+| Knauf 72mm U-track 3.0m | £10.60 | 5 | **£53** |
+| Knauf 12.5mm TE PB | £13.40 | 8 | **£107** |
+| Angle bead 3.0m | ~£3 | 4 | **£12** |
+| Joint compound 10kg | £30 | 2 | **£60** |
+| Tape + drywall screws | — | — | **£23** |
+| 47×150×2.4m + packs (170mm lift) | ~£10 | 5 | **£50** |
+| Plywood 18mm | £37.50 | 2 | **£75** |
+| Plywood 12mm | £29 | 1 | **£29** |
+| Grab adhesive ×3 | ~£6 | 3 | **£18** |
+| Cable detector + short screws/foam | — | — | **£40** |
+| Primer/emulsion allowance | — | — | **£50** |
+| Curtain track + handles | — | — | **£40** |
+| **Merchant subtotal** | | | **≈ £723** |
 
 ### Delivery (Wickes → GL53)
-- GL53 is **not** on Wickes exclusion list.  
-- Order ≈ £1k materials; weight ≈ PB 240kg + metal ~60kg + sheet/timber ~100kg ≈ **~400kg** → may flag **Big & Bulky**.  
-- Big & Bulky Mon–Fri: **£35** if order ≤£750, **FREE** if **>£750** → this basket should be **free weekday HIAB-style delivery**.  
-- Or **free Click & Collect** from Cheltenham Wickes if you have a van.
+- Weekday Big & Bulky: **£35** if order ≤£750, **free** if >£750.  
+- This basket is **just under** £750 → either add a little (extra board/paint) for free bulky, **Click & Collect**, or use **Bence** (free over £150).
 
-**Wickes path total materials + delivery: ≈ £1,025–£1,080**
+**Wickes path: ≈ £723 + £0–£35 delivery ≈ £725–£760**
 
 ---
 
-## Priced basket B — Bence (recommended for #22)
+## Priced basket B — Bence (recommended)
 
-Same physical list. Bence does not publish a full DIY web price list; as a local trade merchant expect roughly:
-
-| Scenario | Materials | Delivery to GL53 0DF | Total |
-|----------|-----------|----------------------|-------|
-| **Likely trade/counter** (~15–25% under Wickes on stud/board/timber) | **£750–£900** | **Free** if >£150 before noon (account) | **≈ £750–£900** |
-| If priced close to retail | £950–£1,050 | Free (same rule) | **≈ £950–£1,050** |
-
-**Why Bence first for this postcode:** crane fleet, drylining specialism, one drop to the door, no £35 bulky fee anxiety, and you’re almost next door.
-
-Ask them to quote **ex VAT + VAT** and confirm **crane vs flatbed** for 10 boards up a drive at #22.
+Same list. Expect roughly **£550–£700** materials + **free** local delivery (order >£150 before noon).
 
 ---
 
-## Separate online parcels (not from Bence/Wickes heavy drop)
+## Online parcels
 
-| Item | Typical UK web | Notes |
-|------|----------------|-------|
-| 900mm 100kg runners × 2 pairs | **£70–£90** | e.g. GTV H53 class — not light kitchen runners |
-| ESP32-S3 7" touch board | **£45** | Amazon / Waveshare-class, in stock |
-| WS2812B/SK6812 ~5m | **£35–£70** | Amazon or The Pi Hut |
-| 5V 10A PSU | **£12–£20** | |
-| Reading light 4000K | **£25–£40** | |
-| Starfield kit (budget) | **£40–£80** | Or skip / phase 2 |
-| Compact speaker | **£25–£50** | |
-| **Electronics + runners subtotal** | | **≈ £250–£400** |
+| Item | Typical |
+|------|---------|
+| 900mm 100kg runners ×2 pairs | £70–£90 |
+| ESP32 7" + LED 5m + 5V 10A + light + speaker + starfield budget | £200–£350 |
+| **Parcels subtotal** | **≈ £270–£440** |
 
 ---
 
 ## Grand totals (materials only)
 
-| Path | Heavy goods | Parcels | **All-in materials** |
-|------|-------------|---------|----------------------|
-| **Bence + online (best for GL53)** | £750–£900 | £250–£400 | **≈ £1,000–£1,300** |
-| **Wickes + online** | £1,000–£1,050 | £250–£400 | **≈ £1,250–£1,450** |
-| Contingency (+10–15%) | | | **Budget £1,200–£1,600** |
-
-**Not included:** labour, electrician for mains to PSU, curtain fabric, premium paint brands, waste skip, tools (tin snips, driver, etc.).
+| Path | Heavy | Parcels | **All-in** |
+|------|-------|---------|------------|
+| **Bence + online** | £550–£700 | £270–£440 | **≈ £850–£1,150** |
+| Wickes + online | £725–£760 | £270–£440 | **≈ £1,000–£1,200** |
+| With ~10% contingency | | | **Budget ~£1,000–£1,300** |
 
 ---
 
-## Suggested call script (Bence)
+## Bence call script (updated quantities)
 
-> Hi — domestic drylining at **GL53 0DF**. Please quote delivery of:  
-> 25× 70mm C-stud 3.0m, 10× 72mm track 3.0m, 10× 12.5mm 2400×1200 tapered PB, 5× thin-coat angle bead 3m, joint compound + tape, drywall screws, softwood for a **170mm** bed plinth (e.g. 8× 47×150×2.4m + packers — existing bed is **360mm**, target platform **530mm**), 3× 18mm + 1× 12mm 8×4 plywood, grab adhesive.  
-> Need crane/kerbside if possible. Trade/cash account OK. Order before noon for next-day if available.
-
----
-
-## Sanity checks
-
-1. ✅ Existing bed **360mm** → risers **170mm** → platform **530mm** AFF.  
-2. Prefer **tapered-edge** board if taping; square edge if skimming.  
-3. Don’t book labour until boards are on site.  
-4. Electronics stay a **second order** — keep dry.
+> Hi — drylining at **GL53 0DF #22**. Please quote delivery of:  
+> **14×** 70mm C-stud 3.0m, **5×** 72mm track 3.0m, **8×** 12.5mm 2400×1200 tapered PB, 4× thin-coat angle bead 3m, joint compound + tape, drywall screws, **5×** 47×150×2.4m (or rip to **170mm** plinth — bed is 360mm, platform 530mm), **2×** 18mm + **1×** 12mm 8×4 plywood, grab adhesive.  
+> Crane/kerbside if needed. Before noon for next-day if available.

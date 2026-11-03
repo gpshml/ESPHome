@@ -11,15 +11,27 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 ## 1. Metal stud framing (70mm C-stud system)
 
-| Item | Spec | Qty / length | Notes |
-|------|------|--------------|-------|
-| Floor track | 70mm | ~7.2m total | Perimeter: foot wall 1242, rear 1920 (stops at head), head 1144 (back→front fascia), front 2246 |
-| Head / ceiling track | 70mm | ~7.2m total | Match floor where walls go to full height |
-| Vertical studs (full height) | 70mm × 2380mm | 10–12 | Foot wall, front jambs, head end above shelf as needed; @ ~400mm centres |
-| Vertical studs (to shelf) | 70mm × 1200mm | 6–8 | Rear wall only (stops at shelf); width to head fascia |
-| Vertical studs (head fascia) | 70mm × 1200mm | 3–4 | Head wall 326mm wide × 1144mm deep (back wall to front fascia) |
-| Noggins / horizontals | 70mm | ~12m | At 530mm (platform), ~975mm (tablet), 1200mm (shelf), 640 & 2080 (opening) |
-| Foot wall extension framing | 70mm | +237mm depth | Extend existing foot wall **into the room** |
+Small alcove — do **not** buy a house-worth of stud. Take-off below is for **new** framing only (foot wall mostly exists; only +237mm extension is new).
+
+### Piece take-off (@ ~400–600mm centres)
+
+| Location | Pieces | Cut length | Notes |
+|----------|--------|------------|-------|
+| Foot extension (new only) | 2 | 2380mm | Return into room |
+| Front jambs (L + R of opening) | 4 | 2380mm | 1–2 left (300mm pier), 2 right (646mm pier) |
+| Opening cripples (sill/lintel) | 4 | ~640 / ~300mm | Cut from offcuts or 1× 3.0m |
+| Rear shelf wall | 5 | 1200mm | 1920mm wide → studs at ends + ~400–480mm |
+| Head fascia box | 4 | 1200mm | 326 × 1144 plan |
+| Noggins / rails | — | **~6–8m** | Platform 530, tablet ~975, opening 640 & 2080, shelf line — **not** 12m+ |
+
+### Buy list (3.0m stock — ceiling is 2380mm so 2.4m is too short for full-height)
+
+| Item | Buy qty | Total metres | Notes |
+|------|---------|--------------|-------|
+| 70mm C-stud × 3.0m | **14** | **42m** | 6 full-height + 5 lengths → ten 1200mm cuts (rear/head) + 2 for noggins/cripples/spare |
+| 72mm U-track × 3.0m | **5** | **15m** | ~10–12m needed (front F+C, rear F+shelf head, head wall floor, foot ext); 5×3m with waste |
+
+**Was wrong before:** 25×3m stud (75m) and 10× track — that treated every wall as full new partitions both faces. Corrected above.
 
 **Plasterboard join tip:** strip ~200mm of existing plasterboard back from the foot-wall end before tying new studs in.
 
@@ -29,7 +41,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 
 | Item | Spec | Qty | Notes |
 |------|------|-----|-------|
-| Plasterboard | 12.5mm | ~8 sheets (2400×1200) | Walls both faces where exposed; allow waste |
+| Plasterboard | 12.5mm | **6–8** sheets (2400×1200) | Visible faces ≈ 10–16m² depending on one/both sides; 8 includes spare |
 | Tape & joint compound | — | 1 set | All seams |
 | Corner beads | metal/PVC | ~12m | External corners, opening reveals |
 | Primer + emulsion | — | as required | Inside alcove + fascia |
@@ -121,8 +133,10 @@ Route cables in stud cavities **before** boarding. Qualified electrician for mai
 | 70mm track | 2×2344, 2×1242, 2×2246, extras for opening & head |
 | 70mm stud | 10–12×2380, 8–10×1200, noggins ~12m |
 | 12.5mm PB | ~8 sheets |
-| Softwood (lift only) | 3×~1900 + 2–3×~900 @ **170mm** deep (or 47×150 + packs) |
-| 18mm sheet | Drawer boxes (~2.5 sheets) |
+| Softwood (lift only) | ~5× 47×150×2.4m + packs → **170mm** (3×1900 + 2–3×900 bearers) |
+| 70mm C-stud | **14× 3.0m** (42m) — not 75m |
+| 72mm track | **5× 3.0m** (15m) |
+| 18mm sheet | Drawer boxes (**2** sheets) |
 | 12mm sheet | Drawer bases (1 sheet) |
 
 ---
