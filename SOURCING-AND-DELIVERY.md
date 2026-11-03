@@ -71,8 +71,8 @@ If you are **outside** that radius, Bence is not the best primary option for hea
 
 | Need (from list) | Availability | Notes |
 |------------------|--------------|-------|
-| 70mm C-stud + matching track | Excellent | **8× stud + 3× track** (front jambs, opening rails, foot +237mm only) |
-| 12.5mm PB × 5–6 | Excellent | Prefer **tapered edge**; shelves use ply on wall ledgers |
+| 70mm C-stud + matching track | Excellent | **10× stud + 4× track** (room front, foot +237mm, shelf **front** fascia frames) |
+| 12.5mm PB × 7–8 | Excellent | Prefer **tapered edge**; includes **front facings** of rear/head shelves |
 | Corner bead ~12m, tape, joint compound | Excellent | Same drop |
 | Primer / emulsion | Excellent | Bence decorating centre or Wickes/Dulux |
 
