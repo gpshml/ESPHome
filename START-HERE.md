@@ -1,5 +1,8 @@
 # 🚀 START HERE - Cabin Bed Project
 
+> **Current source of truth (use these first):**  
+> [`LOCKED-IN-SPEC.md`](LOCKED-IN-SPEC.md) · [`PARTS-LIST.md`](PARTS-LIST.md) · [`COMPONENT-3D.md`](COMPONENT-3D.md) · interactive [`cabin-bed-3d-viewer.html`](cabin-bed-3d-viewer.html) · report [`cabin-bed-FINAL.html`](cabin-bed-FINAL.html)
+
 ## ✅ Updated with Your Clarifications!
 
 All 5 questions have been answered and the plans are now complete:

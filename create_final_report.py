@@ -106,18 +106,18 @@ hr{{border:none;border-top:1px solid #ddd;margin:24px 0}}
 
 <h1>Cabin Bed — Final Technical Drawings</h1>
 <p style="text-align:center;font-size:17px;color:#666;margin-bottom:16px">
-Static views captured from the interactive Three.js source model
+Static views from the <strong>component assembly</strong> Three.js model (studs · track · ledgers · PB · lift · bed)
 </p>
 <p style="text-align:center;margin-bottom:30px">
 <a href="cabin-bed-3d-viewer.html"
    style="display:inline-block;background:#2980b9;color:white;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">
-   Open interactive 3D (rotate / zoom)
+   Open interactive component 3D
 </a>
-<br><span style="font-size:13px;color:#666">Serve locally on port 8877 · left-drag rotate · scroll zoom · right-drag pan</span>
+<br><span style="font-size:13px;color:#666">Port 8877 · rotate / zoom · Toggle front · see <code>COMPONENT-3D.md</code> for CAD/BIM limits</span>
 </p>
 
 <div class="fixes">
-<h3>Final corrections (volume model)</h3>
+<h3>Final corrections (component assembly)</h3>
 <ul>
 <li><strong>Coordinate system:</strong> Origin at <span class="highlight">back-left-floor</span>. X foot→head, Y back→front, Z up.</li>
 <li><strong>Non-overlapping volumes:</strong>
@@ -209,7 +209,7 @@ Static views captured from the interactive Three.js source model
 
 <footer style="margin-top:50px;padding:25px;text-align:center;color:#666;border-top:3px solid #ddd">
 <p><strong>Cabin Bed — Final Technical Drawings</strong></p>
-<p>Source: <code>cabin-bed-3d-viewer.html</code> / <code>cabin_bed_model.js</code> · Non-overlapping volumes · Parts from <code>PARTS-LIST.md</code></p>
+<p>Source: <code>cabin-bed-3d-viewer.html</code> / <code>cabin_bed_model.js</code> · Component assembly · <code>COMPONENT-3D.md</code> · Parts from <code>PARTS-LIST.md</code></p>
 </footer>
 
 </body></html>"""

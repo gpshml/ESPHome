@@ -61,11 +61,14 @@ Z: 0 → 2380mm   FLOOR → CEILING
 
 ## Source of truth & files
 
-**Master model:** `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` (interactive Three.js)
+**Master model:** `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` (component assembly — studs, track, ledgers, PB, lift, bed)
+
+Fidelity limits and CAD/BIM handoff: see **`COMPONENT-3D.md`**.
 
 Static views are **captured from that model** (not drawn separately):
 
 ```bash
+node sync_viewer.mjs          # inject model into viewer HTML
 python3 -m http.server 8877   # in repo root
 node capture_static_views.mjs # writes *_FINAL.png from Front / Top / Side / 3D presets
 python3 create_final_report.py
@@ -73,8 +76,10 @@ python3 create_final_report.py
 
 | File | Role |
 |------|------|
-| `cabin_bed_model.js` | Geometry (mm) |
+| `cabin_bed_model.js` | Component geometry (mm) |
 | `cabin-bed-3d-viewer.html` | Interactive viewer + view presets |
+| `sync_viewer.mjs` | Rebuild viewer from model |
 | `capture_static_views.mjs` | Headless Chrome capture |
+| `COMPONENT-3D.md` | Fidelity note + CAD AI brief |
 | `cabin-bed-FINAL.html` | Static report with embedded PNGs |
 | `3d_view_FINAL.png` etc. | Captured from the Three.js model |

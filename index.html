@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cabin Bed — Interactive 3D</title>
+  <title>Cabin Bed — Component 3D</title>
   <style>
     html, body { margin: 0; height: 100%; background: #f4f5f7; color: #1a1d23; font-family: system-ui, sans-serif; overflow: hidden; }
     #ui {
@@ -20,6 +20,12 @@
     }
     button.secondary { background: #5a6270; }
     button.active { outline: 2px solid #1a1d23; outline-offset: 1px; }
+    #legend {
+      position: absolute; z-index: 10; bottom: 14px; right: 14px;
+      background: rgba(255,255,255,.94); padding: 10px 12px; border-radius: 8px;
+      font-size: 11px; line-height: 1.55; box-shadow: 0 1px 3px rgba(0,0,0,.12); max-width: 220px;
+    }
+    #legend b { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle; }
     #canvas-wrap { width: 100%; height: 100%; }
     canvas { display: block; }
     #view-label {
@@ -33,7 +39,6 @@
       padding: 20px; font-size: 14px; line-height: 1.5;
     }
   </style>
-  <!-- CDN import map: works with htmlpreview / single-file open (needs network) -->
   <script type="importmap">
   {
     "imports": {
@@ -45,16 +50,26 @@
 </head>
 <body>
   <div id="ui">
-    <h1>Cabin bed — 3D source model</h1>
-    <span class="hint">Left-drag: rotate · Scroll: zoom · Right-drag: pan</span>
+    <h1>Cabin bed — component assembly</h1>
+    <span class="hint">Studs · track · ledgers · PB · lift · bed · Left-drag rotate</span>
     <button type="button" class="secondary" data-view="3d">3D</button>
     <button type="button" class="secondary" data-view="front">Front</button>
     <button type="button" class="secondary" data-view="top">Top</button>
     <button type="button" class="secondary" data-view="side">Side (foot)</button>
     <button type="button" id="reset">Reset</button>
-    <button type="button" class="secondary" id="toggleFront">Toggle front wall</button>
+    <button type="button" class="secondary" id="toggleFront">Toggle front</button>
   </div>
   <div id="view-label">View: 3D</div>
+  <div id="legend">
+    <div><b style="background:#95a5a6"></b>C-stud / track</div>
+    <div><b style="background:#ecf0f1;border:1px solid #bbb"></b>Plasterboard face</div>
+    <div><b style="background:#c4a574"></b>Wall ledger</div>
+    <div><b style="background:#d4b896"></b>Shelf deck</div>
+    <div><b style="background:#b8956a"></b>170mm lift</div>
+    <div><b style="background:#8B4513"></b>Existing bed</div>
+    <div><b style="background:#2ecc71"></b>Mattress</div>
+    <div><b style="background:#e67e22"></b>Existing foot (ghost)</div>
+  </div>
   <div id="err"></div>
   <div id="canvas-wrap"></div>
 
@@ -63,7 +78,7 @@
     function showError(msg) {
       errEl.style.display = "block";
       errEl.innerHTML = "<strong>Could not load 3D viewer</strong><br>" + msg +
-        "<br><br>Needs network access for Three.js (unpkg). Or serve the repo locally:<br><code>python3 -m http.server 8765</code>";
+        "<br><br>Needs network for Three.js, or: <code>python3 -m http.server 8877</code>";
       console.error(msg);
     }
 
@@ -76,100 +91,221 @@
       throw e;
     }
 
-    // —— Geometry (inline so this file is self-contained) ——
-    const DIM = {
-      FOOT: 98, INTERNAL_W: 2246, W: 2344, D: 1242, EXT: 237, H: 2380,
-      REAR: 210, HEAD_W: 326, SHELF: 1200,
-      PLINTH: 170, FRAME_H: 360, PLATFORM: 530,
-      MATT_W: 1900, MATT_D: 900, MATT_H: 220, TOL: 10, FRAME_D: 920,
-      ACCESS_W: 1300, ACCESS_X: 398, ACCESS_BOT: 640, ACCESS_TOP: 2080,
-      get FRONT_Y() { return this.D - this.FOOT; },
-      S: 0.001,
-    };
+/**
+ * Cabin bed — component assembly model (mm).
+ * Parts: studs, track, ledgers, PB faces, shelf decks, lift, bed, drawers.
+ * Not BIM/CAD profile-accurate; stud flanges slightly exaggerated for readability.
+ */
 
-    function buildCabinBed() {
-      const {
-        FOOT, INTERNAL_W, W, D, EXT, H, REAR, HEAD_W, SHELF,
-        PLINTH, FRAME_H, PLATFORM, MATT_W, MATT_D, MATT_H, TOL, FRAME_D,
-        ACCESS_W, ACCESS_X, ACCESS_BOT, ACCESS_TOP, S,
-      } = DIM;
-      const FRONT_Y = DIM.FRONT_Y;
-      const root = new THREE.Group();
-      const frontGroup = new THREE.Group();
-      const footGroup = new THREE.Group();
-      const headGroup = new THREE.Group();
-      root.add(frontGroup);
-      root.add(footGroup);
-      root.add(headGroup);
+const DIM = {
+  FOOT: 98,
+  INTERNAL_W: 2246,
+  W: 2246 + 98, // 2344
+  D: 1242,
+  EXT: 237,
+  H: 2380,
+  REAR: 210,
+  HEAD_W: 326,
+  SHELF: 1200,
+  PLINTH: 170,
+  FRAME_H: 360,
+  PLATFORM: 170 + 360, // 530
+  MATT_W: 1900,
+  MATT_D: 900,
+  MATT_H: 220,
+  TOL: 10,
+  FRAME_D: 900 + 20, // 920
+  ACCESS_W: 1300,
+  ACCESS_X: 300 + 98, // 398
+  ACCESS_BOT: 640,
+  ACCESS_TOP: 2080,
+  STUD_W: 70,
+  STUD_FL: 45,
+  TRACK_LEG: 25,
+  PB: 12.5,
+  LEDGER: 70,
+  get FRONT_Y() { return this.D - this.FOOT; },
+  get BED_BAY() { return this.FRONT_Y - this.REAR; },
+  get FRAME_TUCK() { return (this.BED_BAY - this.FRAME_D) / 2; },
+  S: 0.001,
+};
 
-      function box(parent, x, y, z, w, d, h, color, opacity = 1, renderOrder = 0) {
-        const geo = new THREE.BoxGeometry(w * S, h * S, d * S);
-        const mat = new THREE.MeshStandardMaterial({
-          color, transparent: opacity < 1, opacity,
-          depthWrite: opacity >= 0.9, metalness: 0.05, roughness: 0.75,
-        });
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.set((x + w / 2) * S, (z + h / 2) * S, (y + d / 2) * S);
-        mesh.renderOrder = renderOrder;
-        mesh.add(new THREE.LineSegments(
-          new THREE.EdgesGeometry(geo),
-          new THREE.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.4 })
-        ));
-        parent.add(mesh);
-        return mesh;
-      }
+const COL = {
+  existing: 0xe67e22,
+  footExt: 0xf1c40f,
+  stud: 0x95a5a6,
+  track: 0x7f8c8d,
+  pb: 0xecf0f1,
+  ledger: 0xc4a574,
+  deck: 0xd4b896,
+  riser: 0xb8956a,
+  bed: 0x8B4513,
+  matt: 0x2ecc71,
+  ghost: 0xbdc3c7,
+  drawer: 0x5d6d7e,
+  open: 0xff2222,
+};
 
-      // Foot wall: existing length against the back, 237mm extension at the FRONT into the room
-      box(footGroup, 0, 0, 0, FOOT, D - EXT, H, 0xe67e22, 0.92);
-      box(footGroup, 0, D - EXT, 0, FOOT, EXT, H, 0xf1c40f, 0.95);
+/**
+ * Build component assembly.
+ * Model X→Three X, depth Y→Three Z, height Z→Three Y.
+ */
+function buildCabinBed(THREE) {
+  const {
+    FOOT, INTERNAL_W, W, D, EXT, H, REAR, HEAD_W, SHELF,
+    PLINTH, FRAME_H, PLATFORM, MATT_W, MATT_D, MATT_H, TOL, FRAME_D,
+    ACCESS_W, ACCESS_X, ACCESS_BOT, ACCESS_TOP,
+    STUD_W, STUD_FL, TRACK_LEG, PB, LEDGER, S,
+  } = DIM;
+  const FRONT_Y = DIM.FRONT_Y;
+  const shelfW = INTERNAL_W - HEAD_W;
+  const frameTuck = DIM.FRAME_TUCK;
 
-      // Rear shelf — stops before head wall (no shared volume at back-right)
-      const shelfW = INTERNAL_W - HEAD_W;
-      box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
+  const root = new THREE.Group();
+  const frontGroup = new THREE.Group();
+  const footGroup = new THREE.Group();
+  const headGroup = new THREE.Group();
+  const rearGroup = new THREE.Group();
+  root.add(frontGroup, footGroup, headGroup, rearGroup);
 
-      // Head fascia — full depth from back wall to front fascia (no void at head/front corner)
-      box(headGroup, W - HEAD_W, 0, 0, HEAD_W, FRONT_Y, SHELF, 0xbdc3c7, 0.8);
+  function box(parent, x, y, z, w, d, h, color, opacity = 1, renderOrder = 0, metalness = 0.05) {
+    const geo = new THREE.BoxGeometry(w * S, h * S, d * S);
+    const mat = new THREE.MeshStandardMaterial({
+      color,
+      transparent: opacity < 1,
+      opacity,
+      depthWrite: opacity >= 0.85,
+      metalness,
+      roughness: metalness > 0.3 ? 0.35 : 0.75,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set((x + w / 2) * S, (z + h / 2) * S, (y + d / 2) * S);
+    mesh.renderOrder = renderOrder;
+    mesh.add(new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo),
+      new THREE.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.35 })
+    ));
+    parent.add(mesh);
+    return mesh;
+  }
 
-      // Bed — centred in bay so tuck gap is equal front & rear (covers fall evenly)
-      const bedBay = FRONT_Y - REAR;                 // 934
-      const frameTuck = (bedBay - FRAME_D) / 2;      // 7mm each end
-      const mx = FOOT + TOL;
-      const fy = REAR + frameTuck;
-      const my = fy + TOL;
-      box(root, mx, fy, 0, MATT_W, FRAME_D, PLINTH, 0xc4a574, 0.95);
-      box(root, mx, fy, PLINTH, MATT_W, FRAME_D, FRAME_H, 0x8B4513, 0.95);
-      box(root, mx, my, PLATFORM, MATT_W, MATT_D, MATT_H, 0x2ecc71, 0.98);
+  // —— Existing structure (ghost) ——
+  box(footGroup, 0, 0, 0, FOOT, D - EXT, H, COL.existing, 0.35);
+  box(root, FOOT, -20, 0, INTERNAL_W, 20, H, COL.ghost, 0.18); // back wall
+  box(headGroup, W, 0, 0, 20, FRONT_Y, H, COL.ghost, 0.18); // head wall
 
-      // Front fascia as non-overlapping picture-frame (sill / jambs / lintel)
-      const leftW = ACCESS_X - FOOT;
-      const rightX = ACCESS_X + ACCESS_W;
-      const rightW = W - rightX;
-      const openH = ACCESS_TOP - ACCESS_BOT;
-      box(frontGroup, FOOT, FRONT_Y, 0, INTERNAL_W, FOOT, ACCESS_BOT, 0x3498db, 0.88, 2);
-      box(frontGroup, FOOT, FRONT_Y, ACCESS_BOT, leftW, FOOT, openH, 0x2980b9, 0.92, 2);
-      box(frontGroup, rightX, FRONT_Y, ACCESS_BOT, rightW, FOOT, openH, 0x2980b9, 0.92, 2);
-      box(frontGroup, FOOT, FRONT_Y, ACCESS_TOP, INTERNAL_W, FOOT, H - ACCESS_TOP, 0x3498db, 0.88, 2);
+  // —— Foot extension (+237mm): 2 studs, tracks, PB ——
+  {
+    const y0 = D - EXT;
+    box(footGroup, (FOOT - STUD_W) / 2, y0 + 50, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    box(footGroup, (FOOT - STUD_W) / 2, y0 + EXT - 90, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    box(footGroup, (FOOT - 72) / 2, y0, 0, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(footGroup, (FOOT - 72) / 2, y0, H - TRACK_LEG, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(footGroup, -PB, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
+    box(footGroup, FOOT, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
+    box(footGroup, 0, y0, 0, FOOT, EXT, H, COL.footExt, 0.12);
+  }
 
-      const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;
-      const oz0 = ACCESS_BOT * S, oz1 = ACCESS_TOP * S;
-      const oy = (FRONT_Y + FOOT * 0.5) * S;
-      const openLine = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(ox0, oz0, oy),
-          new THREE.Vector3(ox1, oz0, oy),
-          new THREE.Vector3(ox1, oz1, oy),
-          new THREE.Vector3(ox0, oz1, oy),
-          new THREE.Vector3(ox0, oz0, oy),
-        ]),
-        new THREE.LineBasicMaterial({ color: 0xff2222 })
-      );
-      openLine.renderOrder = 3;
-      root.add(openLine);
-      return { root, frontGroup, footGroup, headGroup };
+  // —— Rear shelf: ledger on back wall, deck, front fascia studs + PB ——
+  {
+    const g = rearGroup;
+    box(g, FOOT, 0, SHELF - 80, shelfW, LEDGER, 45, COL.ledger, 1, 1);
+    box(g, FOOT, 0, SHELF - 18, shelfW, REAR, 18, COL.deck, 1, 2);
+    const fasciaY = REAR - STUD_FL;
+    for (const x of [FOOT + 30, FOOT + shelfW / 2 - STUD_W / 2, FOOT + shelfW - STUD_W - 30]) {
+      box(g, x, fasciaY, 0, STUD_W, STUD_FL, SHELF, COL.stud, 1, 1, 0.55);
+    }
+    box(g, FOOT, fasciaY, SHELF - TRACK_LEG, shelfW, STUD_FL, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, FOOT, REAR, 0, shelfW, PB, SHELF, COL.pb, 0.92, 2);
+    box(g, FOOT + shelfW / 2 - 150, 0, 935, 300, 40, 80, COL.ledger, 1, 1); // tablet block ~975
+  }
+
+  // —— Head shelf/fascia: on existing head wall; PB on exposed faces ——
+  {
+    const g = headGroup;
+    const hx = W - HEAD_W;
+    box(g, W - LEDGER, 0, SHELF - 80, LEDGER, FRONT_Y, 45, COL.ledger, 1, 1);
+    box(g, hx, 0, SHELF - 18, HEAD_W, FRONT_Y, 18, COL.deck, 1, 2);
+    box(g, hx, REAR + 40, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
+    box(g, hx, FRONT_Y / 2 - STUD_W / 2, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
+    box(g, hx, FRONT_Y - STUD_W - 40, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
+    box(g, hx - PB, 0, 0, PB, FRONT_Y, SHELF, COL.pb, 0.92, 2); // toward bed
+    box(g, hx, FRONT_Y, 0, HEAD_W, PB, SHELF, COL.pb, 0.92, 2); // toward room front
+  }
+
+  // —— Bed lift + bed + mattress + drawer ghosts ——
+  {
+    const mx = FOOT + TOL;
+    const fy = REAR + frameTuck;
+    const my = fy + TOL;
+    const rw = 45;
+    const gap = (MATT_W - 3 * rw) / 2;
+    for (let i = 0; i < 3; i++) {
+      box(root, mx + i * (rw + gap), fy, 0, rw, FRAME_D, PLINTH, COL.riser, 1, 1);
+    }
+    box(root, mx, fy + 80, 0, MATT_W, 45, PLINTH, COL.riser, 1, 1);
+    box(root, mx, fy + FRAME_D - 125, 0, MATT_W, 45, PLINTH, COL.riser, 1, 1);
+    box(root, mx, fy, PLINTH, MATT_W, FRAME_D, FRAME_H, COL.bed, 0.95, 1);
+    box(root, mx, my, PLATFORM, MATT_W, MATT_D, MATT_H, COL.matt, 0.98, 2);
+    const dw = (MATT_W - 50) / 2;
+    box(root, mx + 15, fy + 50, 25, dw, FRAME_D - 100, PLINTH - 45, COL.drawer, 0.4, 1);
+    box(root, mx + dw + 35, fy + 50, 25, dw, FRAME_D - 100, PLINTH - 45, COL.drawer, 0.4, 1);
+  }
+
+  // —— Front fascia: tracks, 4 jamb studs, sill/lintel, PB ——
+  {
+    const g = frontGroup;
+    const leftW = ACCESS_X - FOOT;
+    const rightX = ACCESS_X + ACCESS_W;
+    const rightW = W - rightX;
+    const y = FRONT_Y;
+    const ty = y + (FOOT - 72) / 2;
+    const sy = y + (FOOT - STUD_FL) / 2;
+
+    box(g, FOOT, ty, 0, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, FOOT, ty, H - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, FOOT, ty, ACCESS_BOT - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+    box(g, FOOT, ty, ACCESS_TOP, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
+
+    for (const x of [FOOT + 25, ACCESS_X - STUD_W - 25]) {
+      box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    }
+    for (const x of [rightX + 25, W - STUD_W - 25]) {
+      box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    }
+
+    const pbY = y + FOOT - PB;
+    box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.92, 2);
+    box(g, FOOT, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
+    box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
+    box(g, FOOT, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.92, 2);
+
+    const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;
+    const oz0 = ACCESS_BOT * S, oz1 = ACCESS_TOP * S;
+    const oy = (y + FOOT * 0.5) * S;
+    const openLine = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(ox0, oz0, oy),
+        new THREE.Vector3(ox1, oz0, oy),
+        new THREE.Vector3(ox1, oz1, oy),
+        new THREE.Vector3(ox0, oz1, oy),
+        new THREE.Vector3(ox0, oz0, oy),
+      ]),
+      new THREE.LineBasicMaterial({ color: COL.open })
+    );
+    openLine.renderOrder = 4;
+    root.add(openLine);
+  }
+
+  return { root, frontGroup, footGroup, headGroup, rearGroup, DIM, COL };
+}
+
+
+    function buildCabinBedLocal() {
+      return buildCabinBed(THREE);
     }
 
     const S = DIM.S, W = DIM.W, D = DIM.D, H = DIM.H;
-
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf4f5f7);
 
@@ -188,14 +324,14 @@
     controls.minDistance = 0.5;
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const dir = new THREE.DirectionalLight(0xffffff, 0.75);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
     dir.position.set(-2, 4, 3);
     scene.add(dir);
     const fill = new THREE.DirectionalLight(0xffffff, 0.35);
     fill.position.set(2, 2, -1);
     scene.add(fill);
 
-    const { root, frontGroup, footGroup, headGroup } = buildCabinBed();
+    const { root, frontGroup, footGroup, headGroup } = buildCabinBedLocal();
     scene.add(root);
 
     const ground = new THREE.Mesh(
@@ -260,8 +396,6 @@
         ortho.updateMatrixWorld(true);
       },
       side: () => {
-        // Section through the bed bay (hide foot + head end walls) from the foot:
-        // rear shelf LEFT, front wall RIGHT — equal tuck gaps visible both sides of bed
         footGroup.visible = false;
         headGroup.visible = false;
         frontGroup.visible = true;
@@ -276,10 +410,10 @@
     let currentView = "3d";
     const label = document.getElementById("view-label");
     const viewNames = {
-      "3d": "3D (foot left · head right · front toward viewer)",
-      front: "Front elevation (foot left · head right)",
-      top: "Top plan (back at top · foot left · front at bottom)",
-      side: "Side elevation (from foot · rear left · front right)",
+      "3d": "3D assembly — components",
+      front: "Front elevation",
+      top: "Top plan",
+      side: "Side section (from foot)",
     };
 
     function setView(name) {
