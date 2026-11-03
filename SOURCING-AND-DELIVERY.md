@@ -71,8 +71,8 @@ If you are **outside** that radius, Bence is not the best primary option for hea
 
 | Need (from list) | Availability | Notes |
 |------------------|--------------|-------|
-| 70mm C-stud + matching track | Excellent | Use **3.0m** lengths (ceiling 2380mm). Buy list: **14× stud + 5× track** (~42m + 15m) — see take-off in `PARTS-LIST.md` |
-| 12.5mm PB × 6–8 | Excellent | Prefer **tapered edge** for taped joints |
+| 70mm C-stud + matching track | Excellent | **8× stud + 3× track** (front jambs, opening rails, foot +237mm only) |
+| 12.5mm PB × 5–6 | Excellent | Prefer **tapered edge**; shelves use ply on wall ledgers |
 | Corner bead ~12m, tape, joint compound | Excellent | Same drop |
 | Primer / emulsion | Excellent | Bence decorating centre or Wickes/Dulux |
 
