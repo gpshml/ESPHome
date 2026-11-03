@@ -117,24 +117,32 @@
         return mesh;
       }
 
+      // Foot wall (existing + front extension) — no overlap with each other
       box(footGroup, 0, 0, 0, FOOT, D - EXT, H, 0xe67e22, 0.92);
       box(footGroup, 0, D - EXT, 0, FOOT, EXT, H, 0xf1c40f, 0.95);
-      box(root, FOOT, 0, 0, INTERNAL_W, REAR, SHELF, 0xd4b896, 0.85);
-      // Head wall only along the bed (to frame front) — not through to front fascia
-      const headDepth = REAR + FRAME_D; // 1130mm; front wall inner face is 1144mm
+
+      // Rear shelf — stops before head wall (no shared volume at back-right)
+      const shelfW = INTERNAL_W - HEAD_W;
+      box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
+
+      // Head fascia — from back wall along bed depth; stops short of front (FRONT_Y = 1144)
+      const headDepth = REAR + FRAME_D; // 1130mm
       box(root, W - HEAD_W, 0, 0, HEAD_W, headDepth, SHELF, 0xbdc3c7, 0.8);
 
+      // Bed stack — behind front wall; frame Y = REAR → REAR+FRAME_D
       const mx = FOOT + TOL, fy = REAR, my = REAR + TOL;
       box(root, mx, fy, 0, MATT_W, FRAME_D, PLINTH, 0xc4a574, 0.95);
       box(root, mx, fy, PLINTH, MATT_W, FRAME_D, FRAME_H, 0x8B4513, 0.95);
       box(root, mx, my, PLATFORM, MATT_W, MATT_D, MATT_H, 0x2ecc71, 0.98);
 
+      // Front fascia as non-overlapping picture-frame (sill / jambs / lintel)
       const leftW = ACCESS_X - FOOT;
       const rightX = ACCESS_X + ACCESS_W;
       const rightW = W - rightX;
-      box(frontGroup, FOOT, FRONT_Y, 0, leftW, FOOT, ACCESS_TOP, 0x2980b9, 0.92, 2);
-      box(frontGroup, rightX, FRONT_Y, 0, rightW, FOOT, ACCESS_TOP, 0x2980b9, 0.92, 2);
+      const openH = ACCESS_TOP - ACCESS_BOT;
       box(frontGroup, FOOT, FRONT_Y, 0, INTERNAL_W, FOOT, ACCESS_BOT, 0x3498db, 0.88, 2);
+      box(frontGroup, FOOT, FRONT_Y, ACCESS_BOT, leftW, FOOT, openH, 0x2980b9, 0.92, 2);
+      box(frontGroup, rightX, FRONT_Y, ACCESS_BOT, rightW, FOOT, openH, 0x2980b9, 0.92, 2);
       box(frontGroup, FOOT, FRONT_Y, ACCESS_TOP, INTERNAL_W, FOOT, H - ACCESS_TOP, 0x3498db, 0.88, 2);
 
       const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;

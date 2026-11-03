@@ -32,6 +32,7 @@ export const DIM = {
 /**
  * Build the cabin bed scene graph.
  * Coordinate map: model X→Three X, model depth Y→Three Z, model height Z→Three Y.
+ * Volumes are non-overlapping (rear shelf stops before head; front is a picture-frame).
  */
 export function buildCabinBed(THREE) {
   const {
@@ -69,18 +70,19 @@ export function buildCabinBed(THREE) {
     return mesh;
   }
 
-  // Foot wall + front extension (full height) — in footGroup so side section can hide it
+  // Foot wall + front extension
   box(footGroup, 0, 0, 0, FOOT, D - EXT, H, 0xe67e22, 0.92);
   box(footGroup, 0, D - EXT, 0, FOOT, EXT, H, 0xf1c40f, 0.95);
 
-  // Rear shelf / wall
-  box(root, FOOT, 0, 0, INTERNAL_W, REAR, SHELF, 0xd4b896, 0.85);
+  // Rear shelf — stops before head wall (no shared volume at back-right)
+  const shelfW = INTERNAL_W - HEAD_W;
+  box(root, FOOT, 0, 0, shelfW, REAR, SHELF, 0xd4b896, 0.85);
 
-  // Head wall along bed only (stops before front fascia — no shelf-height box into the front)
-  const headDepth = REAR + FRAME_D; // 1130mm; FRONT_Y is 1144mm
+  // Head fascia — from back wall along bed depth; stops short of front (FRONT_Y = 1144)
+  const headDepth = REAR + FRAME_D; // 1130mm
   box(root, W - HEAD_W, 0, 0, HEAD_W, headDepth, SHELF, 0xbdc3c7, 0.8);
 
-  // Bed (behind front wall)
+  // Bed — behind front wall; frame Y = REAR → REAR+FRAME_D
   const mx = FOOT + TOL;
   const fy = REAR;
   const my = REAR + TOL;
@@ -88,13 +90,14 @@ export function buildCabinBed(THREE) {
   box(root, mx, fy, PLINTH, MATT_W, FRAME_D, FRAME_H, 0x8B4513, 0.95);
   box(root, mx, my, PLATFORM, MATT_W, MATT_D, MATT_H, 0x2ecc71, 0.98);
 
-  // Front fascia (after bed in tree; higher renderOrder)
+  // Front fascia — non-overlapping picture frame (sill / jambs / lintel)
   const leftW = ACCESS_X - FOOT;
   const rightX = ACCESS_X + ACCESS_W;
   const rightW = W - rightX;
-  box(frontGroup, FOOT, FRONT_Y, 0, leftW, FOOT, ACCESS_TOP, 0x2980b9, 0.92, 2);
-  box(frontGroup, rightX, FRONT_Y, 0, rightW, FOOT, ACCESS_TOP, 0x2980b9, 0.92, 2);
+  const openH = ACCESS_TOP - ACCESS_BOT;
   box(frontGroup, FOOT, FRONT_Y, 0, INTERNAL_W, FOOT, ACCESS_BOT, 0x3498db, 0.88, 2);
+  box(frontGroup, FOOT, FRONT_Y, ACCESS_BOT, leftW, FOOT, openH, 0x2980b9, 0.92, 2);
+  box(frontGroup, rightX, FRONT_Y, ACCESS_BOT, rightW, FOOT, openH, 0x2980b9, 0.92, 2);
   box(frontGroup, FOOT, FRONT_Y, ACCESS_TOP, INTERNAL_W, FOOT, H - ACCESS_TOP, 0x3498db, 0.88, 2);
 
   // Access opening outline
