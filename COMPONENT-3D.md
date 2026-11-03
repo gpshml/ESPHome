@@ -8,6 +8,7 @@
 |-------------|--------|
 | Interactive component assembly (studs, track, ledgers, PB, decks, lift, bed, drawers) | `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` |
 | Static captures from that model | `3d_view_FINAL.png`, `front_elevation_FINAL.png`, `top_plan_FINAL.png`, `side_elevation_FINAL.png` |
+| CadQuery STEP assembly (named parts, C-stud / U-track profiles) | `cadquery/` → `cadquery/out/cabin_bed_assembly.step` |
 | Serve locally | `python3 -m http.server 8877` → open `/cabin-bed-3d-viewer.html` |
 
 Open the viewer, use **3D / Front / Top / Side**, and **Toggle front** to inspect framing behind the fascia.
@@ -16,14 +17,18 @@ Open the viewer, use **3D / Front / Top / Side**, and **Toggle front** to inspec
 
 **It is:** a millimetre-accurate *assembly* of the locked volumes — each major buy/build part as a coloured box so you can see how studs, track, PB faces, wall-supported shelves, the 170 mm lift, and the owned bed sit together.
 
-**It is not:**
+**Three.js is not:**
 
 - True C-stud / U-track *profile* geometry (flanges are thickened for readability)
 - Screw schedules, bog/jointing, or curtain track detail
-- Exportable BIM (IFC / Revit) or fabrication CAD (STEP / SolidWorks)
 - Structural analysis or cut-list nesting for CNC
 
-For build-day orientation and checking overlaps / clearances, the Three.js assembly is enough. For shop drawings with real metal profiles or IFC handover, use a CAD/BIM tool (see below).
+**CadQuery STEP (`cadquery/out/cabin_bed_assembly.step`) is:** a parametric assembly with hollow 70 mm C-stud / 72 mm U-track profiles and named parts aligned to `PARTS-LIST.md`. Still not IFC/Revit BIM, screw schedules, or CNC nesting.
+
+```bash
+pip install -r cadquery/requirements.txt
+python3 cadquery/build_assembly.py
+```
 
 ## Source of truth
 

@@ -76,10 +76,17 @@ python3 create_final_report.py
 
 | File | Role |
 |------|------|
-| `cabin_bed_model.js` | Component geometry (mm) |
+| `cabin_bed_model.js` | Component geometry (mm) — `DIM` SoT |
 | `cabin-bed-3d-viewer.html` | Interactive viewer + view presets |
 | `sync_viewer.mjs` | Rebuild viewer from model |
 | `capture_static_views.mjs` | Headless Chrome capture |
 | `COMPONENT-3D.md` | Fidelity note + CAD AI brief |
+| `cadquery/` | CadQuery parametric STEP exporter |
+| `cadquery/out/cabin_bed_assembly.step` | Named-part STEP for fabricators |
 | `cabin-bed-FINAL.html` | Static report with embedded PNGs |
 | `3d_view_FINAL.png` etc. | Captured from the Three.js model |
+
+```bash
+pip install -r cadquery/requirements.txt
+python3 cadquery/build_assembly.py   # writes cadquery/out/cabin_bed_assembly.step
+```
