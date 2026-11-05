@@ -49,8 +49,9 @@ Shelves are **wall-supported** — no stud row along the back of either shelf.
 1. Stand **3×** light uprights (stud or timber) at the **front** of the 210 mm shelf only — not against the back wall.
 2. Fit light noggins / head rail so the front can take PB.
 3. Drop the **1920 × 210 × 18** deck onto the rear ledger + fascia head; top at **1200 AFF**.
-4. Board the **front face only** with 12.5 mm PB (alcove-facing). No PB trapped behind the shelf against the back wall.
-5. Fix tablet mount block on the back wall under the shelf (~975 AFF) — packer for the 7″ ESP32 touchscreen.
+4. Board the **front face only** with 12.5 mm PB (alcove-facing), **flush with the deck front edge** — not proud into the bay and not set back/recessed.
+5. Router-ease the shelf nosing (deck front / PB junction) so it is comfortable to lean against.
+6. Fix tablet mount block on the back wall under the shelf (~975 AFF) — packer for the 7″ ESP32 touchscreen.
 
 ---
 

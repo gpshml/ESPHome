@@ -166,7 +166,8 @@ export function buildCabinBed(THREE) {
       nogginsBetween(g, uprightXs[i] + STUD_W, uprightXs[i + 1], fasciaY, [400, 800], 40);
     }
     box(g, sx, fasciaY, fasciaH - TRACK_LEG, shelfW, STUD_FL, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(g, sx, REAR, 0, shelfW, PB, fasciaH, COL.pb, 0.98, 2);
+    // PB flush with deck front (Y=REAR) — not proud; router-ease nosing for lean
+    box(g, sx, REAR - PB, 0, shelfW, PB, fasciaH, COL.pb, 0.98, 2);
     box(g, sx + shelfW / 2 - 150, 0, 935, 300, 40, 80, COL.ledger, 1, 1);
   }
 
@@ -192,7 +193,8 @@ export function buildCabinBed(THREE) {
     }
     // Bed face PB inside HEAD_W; exposed bay only
     box(g, hx, REAR, 0, PB, FRONT_Y - REAR, fasciaH, COL.pb, 0.98, 2);
-    box(g, hx, FRONT_Y, 0, HEAD_W, PB, fasciaH, COL.pb, 0.98, 2);
+    // Front return flush with deck front (not proud into front wall)
+    box(g, hx, FRONT_Y - PB, 0, HEAD_W, PB, fasciaH, COL.pb, 0.98, 2);
   }
 
   // —— Bed (pillow toward HEAD / right) ——

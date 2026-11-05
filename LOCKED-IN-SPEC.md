@@ -30,6 +30,7 @@ Z: 0 → 2380mm   FLOOR → CEILING
 
 - Foot extension: same X footprint as existing foot wall (**0..98**); front face at **Y=D** flush with the front wall’s room face; inner face at **X=FOOT** flush with the left end of the front fascia.
 - Shelf **ledgers** sit so their **top meets the deck underside** (no floating gap).
+- Rear (and head-front) fascia PB is **flush with the shelf deck front** — not proud into the bay, not recessed. Router-ease the nosing for a smooth lean.
 - Head bed-face PB covers the **exposed bed bay only** (from rear-shelf front forward) — not a hidden sheet back to the rear wall.
 - Blender OBJ/STL are exported **Y-up** (metres) so the model stands upright with default import settings.
 - `Marker-FOOT` / `Marker-HEAD` are **review-only** cubes (not build parts).

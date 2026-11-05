@@ -222,7 +222,9 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
         invert_legs=True,
         color=COL["track"],
     )
-    add_box(assy, "Rear-Fascia-PB", sx, D.REAR, 0, sw, D.PB, D.fascia_h, COL["painted"])
+    # PB flush with deck front (Y=REAR) — not proud into the bay, not set back.
+    # Nosing can be router-eased for a smooth lean; no recess required.
+    add_box(assy, "Rear-Fascia-PB", sx, D.REAR - D.PB, 0, sw, D.PB, D.fascia_h, COL["painted"])
     add_box(assy, "Rear-Tablet-Block", sx + sw / 2 - 150, 0, 935, 300, 40, 80, COL["timber"])
 
 
@@ -290,7 +292,18 @@ def build_head_shelf(assy: cq.Assembly) -> None:
         D.fascia_h,
         COL["painted"],
     )
-    add_box(assy, "Head-PB-FrontFace", hx, D.FRONT_Y, 0, D.HEAD_W, D.PB, D.fascia_h, COL["painted"])
+    # Front return flush with head-deck front (Y=FRONT_Y), PB inside the shelf envelope
+    add_box(
+        assy,
+        "Head-PB-FrontFace",
+        hx,
+        D.FRONT_Y - D.PB,
+        0,
+        D.HEAD_W,
+        D.PB,
+        D.fascia_h,
+        COL["painted"],
+    )
 
 
 def _front_pb_picture_frame(assy: cq.Assembly, prefix: str, pb_y: float) -> None:
@@ -729,6 +742,12 @@ def main() -> int:
         if name.startswith("Head-Fascia-Stud"):
             assert bb.xmin >= DIM.head_bed_face_x + DIM.PB - 0.1, name
             assert bb.xmax <= DIM.W + 0.1, name
+        if name == "Rear-Fascia-PB":
+            # Outer face flush with deck front at Y=REAR (not proud)
+            assert abs(bb.ymax - DIM.REAR) < 0.1, (name, bb.ymax)
+            assert abs(bb.ymin - (DIM.REAR - DIM.PB)) < 0.1, (name, bb.ymin)
+        if name == "Head-PB-FrontFace":
+            assert abs(bb.ymax - DIM.FRONT_Y) < 0.1, (name, bb.ymax)
 
     if not args.no_export:
         args.out.parent.mkdir(parents=True, exist_ok=True)

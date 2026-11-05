@@ -27,8 +27,9 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H**.
 | Shelf board | 18mm ply/MDF **1920 × 210** | Shelf deck |
 | Front fascia uprights | **3** × 1200mm (stud or timber) | At the **front** of the 210mm shelf only — carry PB |
 | Front fascia head rail | 1× ~1920mm | Top of fascia / shelf nosing line |
-| **12.5mm PB facing** | ~**1920 × 1200** (≈1 sheet) | **Front face of rear shelf fascia** |
-| Corner bead | ~1.2m verticals + shelf nose as needed | Fascia edges |
+| **12.5mm PB facing** | ~**1920 × 1200** (≈1 sheet) | **Front face of rear shelf fascia — flush with deck front** (not proud, not recessed) |
+| Shelf nosing | router eased / rounded | Smooth lean under shelf; no recess step |
+| Corner bead | ~1.2m verticals as needed | Fascia side edges (nosing is routed, not beaded proud) |
 | Tablet mount block | 1× ~300–400mm | On **existing back wall** at ~975mm AFF (under shelf) |
 
 **No uprights along the back of the shelf. PB front facing remains.**
