@@ -1,15 +1,23 @@
 # Cabin Bed — Locked-In Spec (do not invent)
 
-Last updated from user confirmation through 22 Oct 2026.
+Last updated **3 Nov 2026** — orientation restored to match locked drawings (`top_plan_FINAL.png` / front aspect). See `BUILD-SEQUENCE.md`.
 
-## Orientation (matches top plan — single source of truth)
+## Orientation (single source of truth)
 
 | Direction | What it is |
 |-----------|------------|
-| **LEFT** | **FOOT** — existing wall + orange/yellow full-height foot wall (98mm) + 237mm extension at the **front** into the room |
-| **RIGHT** | **HEAD** — 326mm solid fascia / head wall (not a shelf sticking out into the pillow area) |
+| **LEFT** | **FOOT** — existing wall + full-height foot wall (98mm) + **237mm extension at the front** into the room |
+| **RIGHT** | **HEAD** — 326mm solid fascia / head wall (carried on existing head wall; PB on **exposed** faces only) |
 | **BACK / REAR** | Rear wall + **210mm rear shelf**, wall structure stops at **1200mm** shelf top |
 | **FRONT** | Into the room — access opening with curtains, front fascia **98mm** thick |
+
+Looking into the alcove from the front: **foot LEFT, head RIGHT**. Access opening starts **300mm from the left of internal** → **narrow pier at the foot**, wider pier at the head.
+
+### Root cause of the head/foot flip (do not repeat)
+
+In Nov 2026 3D review, Blender / GitHub axis conventions made the mesh *look* mirrored relative to the locked plan. Feedback such as “foot where head should be” was wrongly treated as a **room layout** correction and the model/docs were flipped to HEAD-left.
+
+**That was incorrect.** The room and the locked image never changed: looking in from the front, foot is left and head is right. Viewer/export confusion must be fixed in **how the mesh is viewed** (markers, camera, Y-up bake), never by inverting the SoT away from `top_plan_FINAL.png`.
 
 ## Coordinate system (3D master → all 2D slices)
 
@@ -20,66 +28,88 @@ Y: 0 → 1242mm   BACK → FRONT (into room)
 Z: 0 → 2380mm   FLOOR → CEILING
 ```
 
-- 3D viewport must start at **0,0,0** (no negative axis padding / void behind walls).
-- Looking **into** the alcove: front toward viewer, back in the far corner.
-- On screen: **foot LEFT (orange/yellow), head RIGHT** — same as top plan.
-- Side elevation is **from the foot**: rear shelf LEFT, front wall RIGHT.
+- Foot extension: same X footprint as existing foot wall (**0..98**); front face at **Y=D** flush with the front wall’s room face; inner face at **X=FOOT** flush with the left end of the front fascia.
+- Shelf **ledgers** sit so their **top meets the deck underside** (no floating gap).
+- Rear (and head-front) fascia PB is **flush with the shelf deck front** — not proud into the bay, not recessed. Router-ease the nosing for a smooth lean.
+- Head bed-face PB covers the **exposed bed bay only** (from rear-shelf front forward) — not a hidden sheet back to the rear wall.
+- Blender OBJ/STL are exported **Y-up** (metres) so the model stands upright with default import settings.
+- `Marker-FOOT` / `Marker-HEAD` are **review-only** cubes (not build parts).
+
+## Width is fixed — depth may grow
+
+**Alcove clear width `INTERNAL_W = 2246mm` is fixed** (original plan). It does **not** expand for bedding tolerances, build clearance, or PB thickness.
+
+| Axis | Rule |
+|------|------|
+| **Width (X)** | **Fixed at 2246mm** clear (foot-wall inner face → existing head wall). External envelope is 2246 + 98 foot wall = **2344mm**. |
+| **Depth (Y)** | **May grow into the room** — mainly by the **+237mm foot-wall extension** at the front (overall depth **1242mm**). |
+
+**Width budget (must always sum to 2246):**
+
+```
+INTERNAL_W = MATT_W + 2×TOL + HEAD_W
+    2246   =  1900  +  20   +  326
+```
+
+- Mattress bay (incl. 10mm tolerance each end) takes **1920mm**.
+- Whatever remains is the **head shelf / fascia depth from bed face → head wall** = **`HEAD_W`**.
+- If tolerances (or finishes) need more width, **`HEAD_W` shrinks** — never grow `INTERNAL_W`.
+- Head PB and studs sit **inside** that 326mm (finished bed face at `W − HEAD_W`); they must not steal bay width.
+
+See also `CORRECTED-TOLERANCE.md` (historic correction when width was wrongly grown to 2266).
 
 ## Dimensions that are locked
 
 | Item | Value | Notes |
 |------|-------|-------|
-| Internal width | 2246mm | Does **not** include foot wall |
-| Foot wall thickness | 98mm | 70mm stud + plasterboard |
+| Internal width | **2246mm** | **FIXED** — clear alcove; does **not** include foot wall |
+| Foot wall thickness | 98mm | 70mm stud + plasterboard (outside the 2246) |
 | Total external width | 2344mm | 2246 + 98 |
-| Overall depth | 1242mm | Target alcove depth |
-| Foot wall extension | **237mm at FRONT** | Extends wall **into the room**, not at the rear; not a cut-in under the bed |
+| Overall depth | 1242mm | Expanded into the room (foot extension) |
+| Foot wall extension | **237mm at FRONT** | Depth growth into the room; flush with existing wall + front fascia end |
 | Overall height | 2380mm | Full height |
-| Shelf top | 1200mm | Rear wall stops here; front/side walls continue |
-| Mattress / bed | 1900 × 900 × 220mm | **Already purchased** — model clearance 10mm → bay 1920 × 920 |
-| Existing bed height | **360mm** | Measured — frame only (before lift) |
-| Lift / plinth | **170mm** | 530 − 360; buy risers/packs only |
-| Platform top | **530mm** | Top of existing bed after lift (AFF) |
-| Head wall / fascia | 326mm wide × 1144mm deep | Carried on **existing head wall** at the back; **PB-faced** on exposed/front faces |
-| Rear shelf | 1920 × 210mm | Ledger on **existing back wall**; **PB-faced front fascia**; width stops before head (INTERNAL_W − HEAD_W) |
-| Bed tuck clearance | 7mm frame / 17mm mattress each end | Equal front & rear inside the 934mm bay (covers tuck evenly) |
-| Access opening | 1300 × 1440mm | Bottom **640mm** (halfway up mattress); top **2080mm** (300mm below ceiling); start 300mm from left of **internal** space |
-| Front fascia thickness | 98mm | Opening surround depth |
-| Foot wall height | **Full 2380mm** | It is a wall, not a shelf |
-| Drawers ×2 | ~880 × 900 × 500mm | Full void under platform |
+| Shelf top | 1200mm | Rear wall stops here |
+| Mattress / bed | 1900 × 900 × 220mm | Already purchased |
+| Side tolerance | 10mm each end | Absorbed by reducing head shelf, not by widening alcove |
+| Lift / platform | 170mm → platform **530mm** AFF | Bed frame 360mm owned |
+| Head wall / fascia | **326mm** × 1144mm deep | Residual: `2246 − 1900 − 20`; on the **right** |
+| Rear shelf | 1920 × 210mm | INTERNAL_W − HEAD_W; stops before head |
+| Access opening | 1300 × 1440mm | 640–2080 AFF; starts **300mm from left of internal (foot side)** → ACCESS_X = 398 |
+| Front fascia | 98mm thick | Both faces + opening reveals boarded |
+| Noggins | Required | Full-height PB support — see `PARTS-LIST.md` |
+
+## Opening reveal facings (inside the access opening)
+
+| Item | Spec |
+|------|------|
+| Material | **12.5mm tapered-edge plasterboard** (same as other boarded faces) |
+| Where | Left & right jamb reveals, sill top, lintel soffit — wrapping the 98mm wall thickness |
+| Fixing | **Drywall screws** into C-stud jambs, noggins, and sill/lintel track (typically ~300mm centres) |
+| Edges | **Metal stop bead / corner bead** on external corners of the opening, then tape + joint compound |
+| Finish | Primer + emulsion (autumnal olive on visible faces) |
 
 ## What is NOT true (past mistakes — do not reintroduce)
 
-1. Do **not** put a 200mm “cut-in” block under the foot of the bed.
-2. Do **not** shove the bed flush to the rear only — keep **equal** front/rear tuck clearance for covers (centred in the bay).
-3. Do **not** measure access opening from below the shelf only — use full 2380mm height.
-4. Do **not** put the 237mm extension at the **rear** of the foot wall — it is at the **front**.
-5. Do **not** leave empty space behind the model (−200 limits) — butt to 0.
-6. Do **not** swap foot/head relative to the top plan.
-7. Do **not** stop the foot wall at 1200mm — full height.
-8. Do **not** make the front opening surround as deep as the 237mm extension — it is **98mm**.
+1. Do **not** put a 200mm “cut-in” under the foot of the bed.
+2. Do **not** omit equal front/rear bed tuck.
+3. Do **not** put the 237mm extension at the **rear** of the foot wall.
+4. Do **not** swap foot/head vs the locked front aspect (foot stays **left**).
+5. Do **not** stop the foot wall at 1200mm.
+6. Do **not** omit noggins on full-height boarded stud walls.
+7. Do **not** leave the foot extension proud of / short of the existing wall or front fascia room face.
+8. Do **not** leave wall ledgers below the shelf decks (gap).
+9. Do **not** run head bed-face PB through to the rear wall (hidden behind rear shelf).
+10. Do **not** treat a mirrored 3D preview as authority over `top_plan_FINAL.png`.
+11. Do **not** expand alcove clear width past **2246mm** — grow depth (foot extension) or shrink **HEAD_W** instead.
 
 ## Source of truth & files
 
-**Master model:** `cabin_bed_model.js` + `cabin-bed-3d-viewer.html` (component assembly — studs, track, ledgers, PB, lift, bed)
-
-Fidelity limits and CAD/BIM handoff: see **`COMPONENT-3D.md`**.
-
-Static views are **captured from that model** (not drawn separately):
-
-```bash
-node sync_viewer.mjs          # inject model into viewer HTML
-python3 -m http.server 8877   # in repo root
-node capture_static_views.mjs # writes *_FINAL.png from Front / Top / Side / 3D presets
-python3 create_final_report.py
-```
-
 | File | Role |
 |------|------|
-| `cabin_bed_model.js` | Component geometry (mm) |
-| `cabin-bed-3d-viewer.html` | Interactive viewer + view presets |
-| `sync_viewer.mjs` | Rebuild viewer from model |
-| `capture_static_views.mjs` | Headless Chrome capture |
-| `COMPONENT-3D.md` | Fidelity note + CAD AI brief |
-| `cabin-bed-FINAL.html` | Static report with embedded PNGs |
-| `3d_view_FINAL.png` etc. | Captured from the Three.js model |
+| `top_plan_FINAL.png` / front aspect | Locked left/right (FOOT left, HEAD right) |
+| `BUILD-SEQUENCE.md` | Real-world build order + first-principles checks |
+| `cabin_bed_model.js` | Geometry + `DIM` |
+| `LOCKED-IN-SPEC.md` | This file |
+| `PARTS-LIST.md` / `PARTS-PURCHASE-CROSSREF.md` | BOM + purchase |
+| `cadquery/` | STEP (mm) + OBJ/STL (metres, Blender Y-up) |
+| `cadquery/RENDER.md` | Materials / render notes |

@@ -1,7 +1,9 @@
 # 🚀 START HERE - Cabin Bed Project
 
 > **Current source of truth (use these first):**  
-> [`LOCKED-IN-SPEC.md`](LOCKED-IN-SPEC.md) · [`PARTS-LIST.md`](PARTS-LIST.md) · [`COMPONENT-3D.md`](COMPONENT-3D.md) · interactive [`cabin-bed-3d-viewer.html`](cabin-bed-3d-viewer.html) · report [`cabin-bed-FINAL.html`](cabin-bed-FINAL.html)
+> [`LOCKED-IN-SPEC.md`](LOCKED-IN-SPEC.md) · [`BUILD-SEQUENCE.md`](BUILD-SEQUENCE.md) · [`PARTS-LIST.md`](PARTS-LIST.md) · [`PARTS-PURCHASE-CROSSREF.md`](PARTS-PURCHASE-CROSSREF.md) · [`COMPONENT-3D.md`](COMPONENT-3D.md) · interactive [`cabin-bed-3d-viewer.html`](cabin-bed-3d-viewer.html) · OBJ [`cadquery/out/cabin_bed_assembly.obj`](cadquery/out/cabin_bed_assembly.obj) · report [`cabin-bed-FINAL.html`](cabin-bed-FINAL.html)
+>
+> Looking into the alcove: **FOOT left, HEAD right** (locked image). Narrow pier at the **foot (left)**. Full-height PB needs **noggins** (buy **13×** C-stud).
 
 ## ✅ Updated with Your Clarifications!
 
@@ -185,7 +187,7 @@ See `UPDATED-SPECIFICATIONS.md` - "Complete Lighting Shopping List"
 - **Floor fixings**: **Max 25-30mm screws** (cables underneath)
 
 ### What Stayed Same:
-- Overall bed: 2246 × 1222 × 2380mm
+- Alcove clear width **2246mm FIXED**; overall with foot wall 2344 × depth 1242 × 2380mm (depth grew via foot extension; width tolerances shrink head shelf)
 - Mattress: 1900 × 900 × 220mm
 - Platform height: 530mm
 - Access opening: 1300 × 580mm
