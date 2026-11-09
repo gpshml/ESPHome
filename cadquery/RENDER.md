@@ -38,9 +38,9 @@ Inside the access opening (jambs, sill, lintel soffit):
 
 ## What to check visually
 
-- **FOOT left / HEAD right**; narrow pier at the **foot (left)** — match locked image  
-- Foot extension flush with existing wall (X) and front fascia room face (Y)  
-- Ledgers tight under shelf decks (no gap)  
-- Head bed-face PB only on the exposed bay (not through to the rear wall)  
+- Face the **front opening**: **FOOT left / HEAD right** (OBJ is X-mirrored for this); narrow pier at the foot  
+- Foot extension flush with existing wall and front fascia room face  
+- Ledgers tight under shelf decks (no gap); shelf fascia PB flush with deck front  
+- Head bed-face PB only on the exposed bay  
 - Alcove PB + reveals cover stud fronts  
-- Model stands **upright** in Blender (Y-up export); if left/right look swapped, fix the camera — do not flip the SoT  
+- Model upright (Y-up). STEP is not X-mirrored — only OBJ/STL.  

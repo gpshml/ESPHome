@@ -33,15 +33,16 @@ STEP does not preview on GitHub. **Marker-FOOT** left, **Marker-HEAD** right (re
 
 ## Review in Blender
 
-OBJ/STL are **metres** and **Y-up** (so the model stands upright with Blender defaults — not on its side).
+OBJ/STL are **metres**, **Y-up**, and **X-mirrored for front view** so that when you look at the front opening from the room, **FOOT is left / HEAD is right** (locked elevation). STEP stays in construction coordinates (foot at X=0).
 
 1. Download `cabin_bed_assembly.obj` **and** `.mtl` together  
 2. **File → Import → Wavefront (.obj)** — defaults OK; do **not** scale by 0.001  
 3. Clip End ≥ 100 m if anything still clips  
-4. Looking into the alcove: **FOOT left**, **HEAD right**; narrow pier at the foot (left) — must match `top_plan_FINAL.png`  
+4. Face the **front opening** — **Marker-FOOT** on the left, **Marker-HEAD** on the right; narrow pier at the foot  
 
 Opening reveals = 12.5mm PB, drywall screws to studs/track, stop bead. See [`RENDER.md`](RENDER.md) and [`../BUILD-SEQUENCE.md`](../BUILD-SEQUENCE.md).
 
 ## Coords
 
-CAD: origin back-left-floor; X foot→head, Y back→front, Z up (mm). OBJ export converts to Blender Y-up. If the preview looks mirrored, fix the camera/view — do **not** invert the room SoT.
+- **STEP / construction CAD:** origin back-left-floor; X foot→head (foot at 0), Y back→front, Z up (mm).  
+- **OBJ/STL viewers:** same model with X mirrored so a room-side front view matches the locked front aspect (otherwise +X maps to screen-left and the plan looks flipped). Do **not** flip the STEP/room SoT to chase a viewer.

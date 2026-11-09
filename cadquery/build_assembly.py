@@ -502,9 +502,18 @@ def iter_parts(assy: cq.Assembly):
         yield name, shape, obj.color
 
 
-def _to_blender_y_up(x: float, y: float, z: float) -> tuple[float, float, float]:
-    """CAD Z-up, Y-forward → Blender Y-up, −Z-forward: (x, y, z) → (x, z, −y)."""
-    return (x, z, -y)
+def _to_viewer_mesh(x: float, y: float, z: float, *, width: float) -> tuple[float, float, float]:
+    """CAD → viewer mesh (OBJ/STL only; STEP stays in construction coords).
+
+    1. Mirror X about the model width so that when you look at the **front opening
+       from the room**, FOOT is on the **left** and HEAD on the **right** (locked
+       front aspect). Construction CAD has foot at X=0; a room-side camera maps
+       +X to screen-left, which would otherwise show the plan mirrored.
+    2. Y-up bake: (x, y, z) → (…, z, −y) for Blender defaults.
+
+    Positions: (width − x, z, −y). Normals: pass width=0 → (−nx, nz, −ny).
+    """
+    return (width - x, z, -y)
 
 
 def export_stl(
@@ -514,14 +523,20 @@ def export_stl(
     *,
     unit_scale: float = 0.001,
 ) -> None:
-    """Export STL in metres, rotated upright for Blender default axes."""
+    """Export STL in metres: X-mirrored for front aspect + Y-up for Blender."""
     from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
-    from OCP.gp import gp_Trsf, gp_Ax1, gp_Pnt, gp_Dir
+    from OCP.gp import gp_Trsf, gp_Ax1, gp_Ax2, gp_Pnt, gp_Dir
 
     comp = assembly_compound(assy)
-    # Rotate −90° about X so Z-up becomes Y-up, then scale to metres
+    # Mirror X about x=W/2 so front-from-room matches locked elevation
+    tr_mirror = gp_Trsf()
+    tr_mirror.SetMirror(gp_Ax2(gp_Pnt(DIM.W / 2.0, 0, 0), gp_Dir(1, 0, 0)))
+    # Rotate −90° about X so Z-up becomes Y-up
+    tr_rot = gp_Trsf()
+    tr_rot.SetRotation(gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(1, 0, 0)), -3.141592653589793 / 2.0)
     tr = gp_Trsf()
-    tr.SetRotation(gp_Ax1(gp_Pnt(0, 0, 0), gp_Dir(1, 0, 0)), -3.141592653589793 / 2.0)
+    tr.Multiply(tr_rot)
+    tr.Multiply(tr_mirror)  # mirror first, then rotate
     rotated = cq.Shape.cast(BRepBuilderAPI_Transform(comp.wrapped, tr, True).Shape())
     if unit_scale != 1.0:
         rotated = rotated.scale(unit_scale)
@@ -655,26 +670,31 @@ def export_obj_mtl(
             mf.write("\n")
 
     unit_note = "metres" if abs(unit_scale - 0.001) < 1e-12 else f"mm×{unit_scale}"
+    width_m = DIM.W * unit_scale
     with obj_path.open("w", encoding="utf-8") as of:
-        of.write("# Cabin bed — FOOT left, HEAD right (locked front aspect)\n")
-        of.write(f"# Units: {unit_note}; axes: Blender Y-up (−Z forward) from CAD Z-up\n")
-        of.write("# Blender import: defaults OK (Y up). Do NOT scale again if metres.\n")
+        of.write("# Cabin bed — FOOT left, HEAD right when looking at the FRONT from the room\n")
+        of.write(f"# Units: {unit_note}; Y-up; X mirrored vs STEP so front aspect matches locked drawings\n")
+        of.write("# Blender: defaults OK (Y up). Look at the front opening — Marker-FOOT on the left.\n")
+        of.write("# STEP stays in construction coords (foot at X=0). Do NOT scale again if metres.\n")
         of.write(f"mtllib {mtl_path.name}\n")
         v_index = 1
         for name, key, tris in objects:
             of.write(f"o {name}\ng {name}\nusemtl {key}\ns off\n")
             for tri, normal in tris:
-                # Transform positions and normals into Blender Y-up
                 btri = [
-                    _to_blender_y_up(p[0] * unit_scale, p[1] * unit_scale, p[2] * unit_scale)
+                    _to_viewer_mesh(
+                        p[0] * unit_scale, p[1] * unit_scale, p[2] * unit_scale, width=width_m
+                    )
                     for p in tri
                 ]
-                bn = _to_blender_y_up(*normal)
-                # Renormalise (rotation only — length preserved, but be safe)
+                # width=0 → pure linear map for normals (−nx, nz, −ny)
+                bn = _to_viewer_mesh(normal[0], normal[1], normal[2], width=0.0)
                 import math
 
                 ln = math.sqrt(bn[0] ** 2 + bn[1] ** 2 + bn[2] ** 2) or 1.0
                 bn = (bn[0] / ln, bn[1] / ln, bn[2] / ln)
+                # Reflection reverses winding — emit triangle flipped for outward normals
+                btri = (btri[0], btri[2], btri[1])
                 for pt in btri:
                     of.write(f"v {pt[0]:.6f} {pt[1]:.6f} {pt[2]:.6f}\n")
                 for _ in range(3):

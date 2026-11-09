@@ -32,8 +32,9 @@ Z: 0 → 2380mm   FLOOR → CEILING
 - Shelf **ledgers** sit so their **top meets the deck underside** (no floating gap).
 - Rear (and head-front) fascia PB is **flush with the shelf deck front** — not proud into the bay, not recessed. Router-ease the nosing for a smooth lean.
 - Head bed-face PB covers the **exposed bed bay only** (from rear-shelf front forward) — not a hidden sheet back to the rear wall.
-- Blender OBJ/STL are exported **Y-up** (metres) so the model stands upright with default import settings.
+- Blender OBJ/STL are exported **Y-up** (metres) and **X-mirrored for front view** so looking at the front opening from the room shows **FOOT left / HEAD right**. STEP stays in construction coords (foot at X=0).
 - `Marker-FOOT` / `Marker-HEAD` are **review-only** cubes (not build parts).
+- If an OBJ ever looks mirrored again, fix the **viewer export** — do not invert the construction SoT.
 
 ## Width is fixed — depth may grow
 
