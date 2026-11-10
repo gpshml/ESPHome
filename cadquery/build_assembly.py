@@ -292,6 +292,17 @@ def build_head_shelf(assy: cq.Assembly) -> None:
                 40,
                 COL["noggin"],
             )
+    # Top rail over bay fascia (packs with rear 1920 on one 3.0m track stick)
+    add_track_y(
+        assy,
+        "Head-Fascia-Track",
+        stud_x + D.STUD_FL / 2,
+        D.REAR,
+        D.fascia_h,
+        D.BED_BAY,
+        invert_legs=True,
+        color=COL["track"],
+    )
     # Bed-face PB inside HEAD_W; exposed bay only (Y=REAR..FRONT_Y)
     add_box(
         assy,
@@ -780,6 +791,15 @@ def main() -> int:
             assert abs(bb.ymin - (DIM.REAR - DIM.PB)) < 0.1, (name, bb.ymin)
         if name == "Head-PB-FrontFace":
             assert abs(bb.ymax - DIM.FRONT_Y) < 0.1, (name, bb.ymax)
+
+    from bom import write_model_bom
+
+    bom_path = Path(__file__).resolve().parent.parent / "MODEL-BOM.md"
+    summary = write_model_bom(assy, bom_path)
+    print(
+        f"BOM buy: {summary['stud_buy']}× stud, {summary['track_buy']}× track, "
+        f"{summary['pb_buy']}× PB → {bom_path}"
+    )
 
     if not args.no_export:
         args.out.parent.mkdir(parents=True, exist_ok=True)

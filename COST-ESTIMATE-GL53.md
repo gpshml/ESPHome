@@ -2,19 +2,20 @@
 
 **Site:** GL53 0DF · Bence local · Wickes/TP OK.  
 **Scope:** Materials only. Bed owned.  
-**Shelves:** backs on **existing walls**; **fronts PB-faced**; **corner post at rear/head L** (wall-fixed). Zone detail: `PARTS-LIST.md`.
+**Shelves:** backs on **existing walls**; **fronts PB-faced**; **corner post at rear/head L** (wall-fixed).  
+**SoT quantities:** [`MODEL-BOM.md`](MODEL-BOM.md) ← CadQuery packing · zone detail [`PARTS-LIST.md`](PARTS-LIST.md).
 
 **Alcove clear width 2246mm FIXED** — head shelf depth is residual after mattress + tolerances.
 
 ---
 
-## Metal + board
+## Metal + board (from model packing)
 
 | Stock | Qty | Where |
 |-------|-----|--------|
-| 70mm C-stud × 3.0m | **13** (39m) | Front jambs ×4, foot ext ×2, shelf fascia + **corner post** ~3, **noggins ~3**, spare ×1 |
-| 72mm U-track × 3.0m | **4** (12m) | Front F/C/sill/lintel, foot ext, shelf fascia rails |
-| 12.5mm TE PB 2400×1200 | **8** | Front **both faces + reveals**, foot ext, rear fascia, head faces, spare |
+| 70mm C-stud × 3.0m | **13** (39m) | 13 uprights + 21 noggins pack into **11** sticks; **+2** spare/kerf |
+| 72mm U-track × 3.0m | **5** (15m) | 4× front @2246 + foot shorts + rear 1920 + head 934 → **5** sticks |
+| 12.5mm TE PB 2400×1200 | **8** | 18 modeled faces (~12.6 m²) + nesting waste |
 
 ---
 
@@ -23,17 +24,17 @@
 | Item | Unit | Qty | Line |
 |------|------|-----|------|
 | C-stud 3.0m | £11.85 | 13 | **£154** |
-| U-track 3.0m | £10.60 | 4 | **£42** |
+| U-track 3.0m | £10.60 | **5** | **£53** |
 | PB 12.5mm | £13.40 | 8 | **£107** |
 | Beads + compound + tape + screws | — | — | **£85** |
 | Lift timber → 170mm | ~£10 | 5 | **£50** |
 | Shelf ledgers | ~£6 | 2 | **£12** |
 | Ply 18mm ×2 + 12mm ×1 | — | — | **£104** |
 | Adhesive / detector / foam / paint / curtain / handles | — | — | **£120** |
-| **Merchant subtotal** | | | **≈ £674** |
+| **Merchant subtotal** | | | **≈ £685** |
 
-**Wickes path ≈ £675–£720** (delivery/collect).  
-**Bence path ≈ £530–£630** + free local delivery (trade pricing).
+**Wickes path ≈ £685–£730** (delivery/collect).  
+**Bence path ≈ £540–£640** + free local delivery (trade pricing).
 
 ---
 
@@ -51,9 +52,9 @@
 
 | Path | Heavy | Parcels | **All-in** |
 |------|-------|---------|------------|
-| **Bence + online** | £530–£630 | £270–£440 | **≈ £830–£1,080** |
-| Wickes + online | £675–£720 | £270–£440 | **≈ £950–£1,160** |
-| +10% contingency | | | **Budget ~£920–£1,250** |
+| **Bence + online** | £540–£640 | £270–£440 | **≈ £840–£1,080** |
+| Wickes + online | £685–£730 | £270–£440 | **≈ £960–£1,170** |
+| +10% contingency | | | **Budget ~£930–£1,250** |
 
 ---
 
@@ -61,10 +62,11 @@
 
 > **GL53 0DF #22 — cabin / daybed alcove materials.**  
 > Clear alcove width **2246mm** fixed; depth grown with **+237mm** foot-wall return at the front. Looking in: **foot left, head right**.  
+> Quantities matched to the CadQuery 3D model cut list.  
 >  
 > Please quote / deliver:  
-> - **13×** 70mm C-stud × 3.0m (front jambs, foot return, shelf fascia uprights, **1 corner post at rear/head junction**, noggins for full-height PB, spare)  
-> - **4×** 72mm U-track × 3.0m (front floor/ceiling/sill/lintel, foot return shorts, shelf fascia head rails)  
+> - **13×** 70mm C-stud × 3.0m (4 front jambs, 2 foot return, 3 rear fascia, 3 head fascia, **1 corner post at rear/head junction**, plus noggins for full-height PB, spare)  
+> - **5×** 72mm U-track × 3.0m (front floor/ceiling/sill/lintel @ ~2246 each, foot return shorts, rear fascia rail 1920, head fascia rail ~934)  
 > - **8×** 12.5mm TE plasterboard 2400×1200  
 > - Corner/stop bead ~12m, joint compound, tape, drywall screws  
 > - **5×** 47×150×2.4m softwood for **170mm** lift (owned 360mm bed → 530mm platform)  

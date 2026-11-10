@@ -193,6 +193,8 @@ export function buildCabinBed(THREE) {
         }
       }
     }
+    // Top rail over bay fascia (matches CadQuery Head-Fascia-Track)
+    box(g, studX, REAR, fasciaH - TRACK_LEG, STUD_FL, FRONT_Y - REAR, TRACK_LEG, COL.track, 1, 1, 0.55);
     // Bed face PB inside HEAD_W; exposed bay only
     box(g, hx, REAR, 0, PB, FRONT_Y - REAR, fasciaH, COL.pb, 0.98, 2);
     // Front return flush with deck front (not proud into front wall)
