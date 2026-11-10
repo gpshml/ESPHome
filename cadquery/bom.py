@@ -216,8 +216,19 @@ def write_model_bom(assy, path: Path) -> dict:
     lines.append("")
     lines.append("## Ledgers + decks")
     lines.append("")
+    lines.append(
+        "**Ledgers = softwood** ~45×70 PSE/CLS (not sheet). "
+        "**Decks = 18mm plywood** cut from the drawer sheets."
+    )
+    lines.append("")
     for r in sorted(summary["ledgers"] + summary["decks"], key=lambda r: r.name):
-        lines.append(f"- `{r.name}`: {r.dx:.0f} × {r.dy:.0f} × {r.dz:.0f}")
+        kind = "softwood ledger" if "Ledger" in r.name else "18mm ply deck"
+        lines.append(f"- `{r.name}` ({kind}): {r.dx:.0f} × {r.dy:.0f} × {r.dz:.0f}")
+    lines.append("")
+    lines.append(
+        "**Sheet buy:** 2× 18mm plywood 8×4 (drawer boxes + both decks) · "
+        "1× 12mm plywood 8×4 (drawer bases only)."
+    )
     lines.append("")
     lines.append("---")
     lines.append("")

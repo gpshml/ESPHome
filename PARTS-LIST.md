@@ -25,8 +25,8 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 | Part | Qty / size | Role |
 |------|------------|------|
 | Wall plugs + screws / resin anchors | as required | Fix **ledger** into **existing back wall** |
-| Softwood ledger | 1× ~45×70×1920mm | Support at the wall — **top flush under deck** |
-| Shelf board | 18mm ply/MDF **1920 × 210** | Shelf deck |
+| Softwood ledger | 1× **45×70×1920** (from 2.4m PSE/CLS) | Support on **existing back wall** — **top flush under deck** |
+| Shelf deck | **18mm plywood** **1920 × 210** (`Rear-Deck`) | Cut from the 18mm drawer sheets |
 | Front fascia uprights | **3** × **1182mm** (`Rear-Fascia-Stud-1..3`) | At the **front** of the 210mm shelf only — carry PB |
 | Front fascia head rail | 1× **1920mm** (`Rear-Fascia-Track`) | Top of fascia / shelf nosing line |
 | Light noggins | **4** × **825mm** (`Rear-Fascia-Noggin-*`) | Between rear fascia uprights (~400 / 800 AFF) |
@@ -47,9 +47,9 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 | Part | Qty / size | Role |
 |------|------------|------|
 | Wall plugs + screws | as required | Ledgers + **corner post** into **existing head wall** |
-| Softwood ledger(s) | 1–2× | Carry deck — **top flush under deck** |
+| Softwood ledger | 1× **45×70×1144** (from 2.4m PSE/CLS) | On **existing head wall** — **top flush under deck** |
 | **Corner post** | **1** × **1182mm** (`Corner-Post-RearHead`) | Rear/head L pick-up — wall-fixed |
-| Shelf deck | 18mm **326 × 1144** (`Head-Deck`) | Top surface |
+| Shelf deck | **18mm plywood** **326 × 1144** (`Head-Deck`) | Cut from the 18mm drawer sheets |
 | Fascia frame uprights | **3** × **1182mm** (`Head-Fascia-Stud-1..3`) | Bed face, forward of corner post |
 | Fascia head rail | 1× **934mm** (`Head-Fascia-Track`) | Top rail over bay fascia |
 | Light noggins | **2×177 + 2×427** (`Head-Fascia-Noggin-*`) | Between head uprights (~400 / 800) |
@@ -118,10 +118,12 @@ Exact model pieces (`MODEL-BOM.md`):
 
 | Part | Qty / size | Role |
 |------|------------|------|
-| 18mm ply/MDF | **2** sheets 8×4 | Drawer boxes |
-| 12mm ply | **1** sheet 8×4 | Bases |
+| **18mm plywood** 2440×1220 | **2** sheets | Drawer **boxes** (sides/fronts/backs) — same sheets also cut shelf decks |
+| **12mm plywood** 2440×1220 | **1** sheet | Drawer **bases** only |
 | 900mm 100kg runners | **2** pairs | Heavy under-bed slides |
 | Handles | 2 | |
+
+Prefer **structural/hardwood ply** for drawers (screws hold better than MDF). MDF is acceptable if you paint and use confirmat/dowels.
 
 ---
 
@@ -179,10 +181,10 @@ Four front rails each need their own stick (2246 + 1920 > 3000) → **5×** buy 
 | Item | Qty | Used on |
 |------|-----|---------|
 | 47×150×2.4m (or rip to 170mm) | **5** | Bed lift bearers + packs |
-| Ledger 45×70 (or similar) | ~3–4m (**2** lengths) | Rear + head shelf wall supports |
-| Shelf board 18mm | from drawer offcuts or extra | Rear 1920×210 + head deck |
-| Tablet / corner packers | offcuts | Tablet block; optional head-wall packer for corner post |
-
+| Softwood PSE/CLS ~45×70 × 2.4m | **2** | `Rear-Ledger` 1920 + `Head-Ledger` 1144 (not ply) |
+| 18mm plywood 8×4 | **2** | Drawer boxes + `Rear-Deck` + `Head-Deck` |
+| 12mm plywood 8×4 | **1** | Drawer bases |
+| Tablet / corner packers | softwood offcuts | Tablet block; optional head-wall packer for corner post |
 ---
 
 ## Cutting summary (quick) — order this
@@ -193,9 +195,9 @@ Four front rails each need their own stick (2246 + 1920 > 3000) → **5×** buy 
 | 72mm U-track 3.0m | **5** | 5 packed (was under-bought at 4) |
 | 12.5mm TE PB 2400×1200 | **8** | 18 faces / ~12.6 m² |
 | Softwood lift 47×150×2.4m | **5** | 3×920 + 2×1900 @ 170 |
-| Softwood ledgers ~2.4m | **2** | Rear 1920 + head 1144 |
-| 18mm sheet 8×4 | **2** | Decks + drawers |
-| 12mm sheet 8×4 | **1** | Drawer bases |
+| Softwood ~45×70 × 2.4m (PSE/CLS) | **2** | Ledgers only — cut **1920** rear + **1144** head |
+| 18mm plywood 8×4 (MDF OK) | **2** | Drawer boxes ×2 + shelf decks 1920×210 and 326×1144 |
+| 12mm plywood 8×4 | **1** | Drawer bases only |
 | Beads / compound / tape / drywall screws | as pack | |
 | Grab adhesive + short floor screws | yes | |
 

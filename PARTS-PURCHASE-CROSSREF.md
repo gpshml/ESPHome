@@ -56,6 +56,6 @@ Noggins (21) nest into leftover and **11** total packed sticks; buy **13** leave
 
 ## Purchase actions
 
-1. **One Bence/crane drop:** 13× stud, **5×** track, 8× PB, beads/compound/tape/screws, 5× lift timber, 2× ledgers, 2×18 + 1×12 sheet, grab adhesive. Script in `COST-ESTIMATE-GL53.md`.  
+1. **One Bence/crane drop:** 13× stud, **5×** track, 8× PB, beads/compound/tape/screws, 5× lift timber, **2× softwood 45×70 ledgers**, **2× 18mm ply + 1× 12mm ply** (8×4), grab adhesive. Script in `COST-ESTIMATE-GL53.md`.
 2. **Online parcels:** 900mm 100kg runners ×2, ESP32 7", LED + PSU, curtain track if not on drop.  
 3. **Electrician:** mains to PSU only.

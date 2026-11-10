@@ -28,8 +28,8 @@
 | PB 12.5mm | £13.40 | 8 | **£107** |
 | Beads + compound + tape + screws | — | — | **£85** |
 | Lift timber → 170mm | ~£10 | 5 | **£50** |
-| Shelf ledgers | ~£6 | 2 | **£12** |
-| Ply 18mm ×2 + 12mm ×1 | — | — | **£104** |
+| Softwood ledgers 45×70 ×2.4m | ~£6 | 2 | **£12** |
+| Plywood 18mm ×2 + 12mm ×1 (8×4) | — | — | **£104** |
 | Adhesive / detector / foam / paint / curtain / handles | — | — | **£120** |
 | **Merchant subtotal** | | | **≈ £685** |
 
@@ -70,7 +70,11 @@
 > - **8×** 12.5mm TE plasterboard 2400×1200  
 > - Corner/stop bead ~12m, joint compound, tape, drywall screws  
 > - **5×** 47×150×2.4m softwood for **170mm** lift (owned 360mm bed → 530mm platform)  
-> - **2×** ledger lengths (~45×70) for rear + head wall supports  
-> - **2×** 18mm + **1×** 12mm 8×4 plywood/MDF  
+> - **Softwood ledgers (not sheet):** **2×** ~45×70 × 2.4m PSE/CLS  
+>   - Cut 1: **1920mm** rear wall (`Rear-Ledger`)  
+>   - Cut 2: **1144mm** head wall (`Head-Ledger`)  
+> - **Sheet goods (ply preferred; MDF OK if painted):**  
+>   - **2×** **18mm** 2440×1220 (8×4) — drawer boxes ×2 **and** shelf decks (`Rear-Deck` 1920×210, `Head-Deck` 326×1144)  
+>   - **1×** **12mm** 2440×1220 (8×4) **ply** — drawer bases only  
 > - Grab adhesive + short floor screws (≤25–30mm into timber floor)  
 > Crane offload if possible. Confirm free delivery for GL53.

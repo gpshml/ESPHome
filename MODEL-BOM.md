@@ -145,10 +145,14 @@ Buy **5×** 47×150×2.4m and rip/pack to **170mm** height. Model: **3×** long 
 
 ## Ledgers + decks
 
-- `Head-Deck`: 326 × 1144 × 18
-- `Head-Ledger`: 70 × 1144 × 45
-- `Rear-Deck`: 1920 × 210 × 18
-- `Rear-Ledger`: 1920 × 70 × 45
+**Ledgers = softwood** ~45×70 PSE/CLS (not sheet). **Decks = 18mm plywood** cut from the drawer sheets.
+
+- `Head-Deck` (18mm ply deck): 326 × 1144 × 18
+- `Head-Ledger` (softwood ledger): 70 × 1144 × 45
+- `Rear-Deck` (18mm ply deck): 1920 × 210 × 18
+- `Rear-Ledger` (softwood ledger): 1920 × 70 × 45
+
+**Sheet buy:** 2× 18mm plywood 8×4 (drawer boxes + both decks) · 1× 12mm plywood 8×4 (drawer bases only).
 
 ---
 
