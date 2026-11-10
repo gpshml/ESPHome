@@ -119,7 +119,7 @@ Static views from the <strong>component assembly</strong> Three.js model (studs 
 <div class="fixes">
 <h3>Final corrections (component assembly)</h3>
 <ul>
-<li><strong>Coordinate system:</strong> Origin at <span class="highlight">back-left-floor</span>. X foot→head, Y back→front, Z up.</li>
+<li><strong>Coordinate system:</strong> Origin at <span class="highlight">back-left-floor</span>. X foot→head (foot left), Y back→front, Z up.</li>
 <li><strong>Non-overlapping volumes:</strong>
 <ul>
 <li>Rear shelf width = internal width − head wall (1920mm) — does not run under the head fascia</li>

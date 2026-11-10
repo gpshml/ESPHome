@@ -3,7 +3,7 @@
 Researched for UK supply against `PARTS-LIST.md` (bed already owned; buy **lift + alcove + drawers + electronics**).  
 Prices are indicative web list prices (inc. or ex. VAT as noted) and will move; treat as order-of-magnitude.
 
-**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (~£800–£1,200 materials). Rear/head shelves: **backs on existing walls**, **fronts still PB-faced**. Stud buy **10×3m / 4× track** — see `PARTS-LIST.md`.
+**Site-specific priced BOQ:** [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) for **GL53 0DF** (~£820–£1,250 materials). Rear/head shelves: **backs on existing walls**, **fronts PB-faced**, **corner post at rear/head L**. **No noggins.** Model packing: **12× stud / 5× track / 8× PB** — [`MODEL-BOM.md`](MODEL-BOM.md) · `PARTS-LIST.md` · [`PARTS-PURCHASE-CROSSREF.md`](PARTS-PURCHASE-CROSSREF.md).
 
 ---
 
@@ -71,8 +71,8 @@ If you are **outside** that radius, Bence is not the best primary option for hea
 
 | Need (from list) | Availability | Notes |
 |------------------|--------------|-------|
-| 70mm C-stud + matching track | Excellent | **10× stud + 4× track** (room front, foot +237mm, shelf **front** fascia frames) |
-| 12.5mm PB × 7–8 | Excellent | Prefer **tapered edge**; includes **front facings** of rear/head shelves |
+| 70mm C-stud + matching track | Excellent | **12× stud + 5× track** (room front, foot +237mm, shelf fascias, **corner post** — **no noggins**) |
+| 12.5mm PB × **8** | Excellent | Prefer **tapered edge**; front both faces + **reveals**, foot, rear/head fascias, spare |
 | Corner bead ~12m, tape, joint compound | Excellent | Same drop |
 | Primer / emulsion | Excellent | Bence decorating centre or Wickes/Dulux |
 

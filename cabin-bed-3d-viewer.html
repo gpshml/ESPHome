@@ -93,30 +93,39 @@
 
 /**
  * Cabin bed — component assembly model (mm).
- * Parts: studs, track, ledgers, PB faces, shelf decks, lift, bed, drawers.
- * Not BIM/CAD profile-accurate; stud flanges slightly exaggerated for readability.
+ *
+ * Orientation = locked front aspect / top_plan_FINAL.png (LOCKED-IN-SPEC):
+ * Looking into the alcove from the room — FOOT LEFT, HEAD RIGHT.
+ * Narrow access pier (~300mm) at the FOOT (left); wider pier at the HEAD.
+ * Origin = back-left-floor (rear ∩ foot wall ∩ floor).
+ *
+ * Width: INTERNAL_W = 2246 FIXED. Depth may grow (foot extension).
+ * HEAD_W is residual after mattress + 2×TOL — never grow INTERNAL_W for clearances.
+ * Do NOT invert head/foot for a mirrored 3D viewer — fix the view, not the room.
  */
 
 const DIM = {
   FOOT: 98,
-  INTERNAL_W: 2246,
-  W: 2246 + 98, // 2344
-  D: 1242,
-  EXT: 237,
+  INTERNAL_W: 2246, // FIXED alcove clear width (original plan)
+  get W() { return this.INTERNAL_W + this.FOOT; }, // 2344
+  D: 1242, // depth into room (includes foot-wall extension)
+  EXT: 237, // foot wall extension at FRONT — depth growth only
   H: 2380,
   REAR: 210,
-  HEAD_W: 326,
   SHELF: 1200,
   PLINTH: 170,
   FRAME_H: 360,
-  PLATFORM: 170 + 360, // 530
+  get PLATFORM() { return this.PLINTH + this.FRAME_H; }, // 530
   MATT_W: 1900,
   MATT_D: 900,
   MATT_H: 220,
-  TOL: 10,
-  FRAME_D: 900 + 20, // 920
+  TOL: 10, // each end; absorbed by HEAD_W, not by growing INTERNAL_W
+  get FRAME_D() { return this.MATT_D + 2 * this.TOL; }, // 920
+  /** Bed-face → head wall; residual of fixed INTERNAL_W */
+  get HEAD_W() { return this.INTERNAL_W - this.MATT_W - 2 * this.TOL; }, // 326
   ACCESS_W: 1300,
-  ACCESS_X: 300 + 98, // 398
+  FOOT_PIER: 300,
+  get ACCESS_X() { return this.FOOT + this.FOOT_PIER; }, // 398
   ACCESS_BOT: 640,
   ACCESS_TOP: 2080,
   STUD_W: 70,
@@ -124,25 +133,31 @@ const DIM = {
   TRACK_LEG: 25,
   PB: 12.5,
   LEDGER: 70,
-  get FRONT_Y() { return this.D - this.FOOT; },
+  DECK_T: 18,
+  LEDGER_H: 45,
+  get FRONT_Y() { return this.D - this.FOOT; }, // 1144
+  get FRONT_ROOM_Y() { return this.D; },
   get BED_BAY() { return this.FRONT_Y - this.REAR; },
   get FRAME_TUCK() { return (this.BED_BAY - this.FRAME_D) / 2; },
+  get ledger_z() { return this.SHELF - this.DECK_T - this.LEDGER_H; },
+  get fascia_h() { return this.SHELF - this.DECK_T; },
+  get head_bed_face_x() { return this.W - this.HEAD_W; },
   S: 0.001,
 };
 
 const COL = {
-  existing: 0xe67e22,
-  footExt: 0xf1c40f,
-  stud: 0x95a5a6,
-  track: 0x7f8c8d,
-  pb: 0xecf0f1,
-  ledger: 0xc4a574,
-  deck: 0xd4b896,
-  riser: 0xb8956a,
-  bed: 0x8B4513,
-  matt: 0x2ecc71,
+  existing: 0x8c6b47,
+  footExt: 0x6b783f,
+  stud: 0x9ea39a,
+  track: 0x8c9189,
+  pb: 0x5c663d, // autumnal olive
+  ledger: 0x9e7347,
+  deck: 0xb89461,
+  riser: 0x9e7347,
+  bed: 0x664222,
+  matt: 0xc7bda6,
   ghost: 0xbdc3c7,
-  drawer: 0x5d6d7e,
+  drawer: 0x73614d,
   open: 0xff2222,
 };
 
@@ -154,12 +169,16 @@ function buildCabinBed(THREE) {
   const {
     FOOT, INTERNAL_W, W, D, EXT, H, REAR, HEAD_W, SHELF,
     PLINTH, FRAME_H, PLATFORM, MATT_W, MATT_D, MATT_H, TOL, FRAME_D,
-    ACCESS_W, ACCESS_X, ACCESS_BOT, ACCESS_TOP,
+    ACCESS_W, ACCESS_BOT, ACCESS_TOP,
     STUD_W, STUD_FL, TRACK_LEG, PB, LEDGER, S,
   } = DIM;
   const FRONT_Y = DIM.FRONT_Y;
+  const ACCESS_X = DIM.ACCESS_X;
   const shelfW = INTERNAL_W - HEAD_W;
   const frameTuck = DIM.FRAME_TUCK;
+  const ledgerZ = DIM.ledger_z;
+  const fasciaH = DIM.fascia_h;
+  const deckT = DIM.DECK_T;
 
   const root = new THREE.Group();
   const frontGroup = new THREE.Group();
@@ -189,51 +208,66 @@ function buildCabinBed(THREE) {
     return mesh;
   }
 
-  // —— Existing structure (ghost) ——
+  // —— Existing structure ——
+  // Foot wall LEFT (0..FOOT), head wall RIGHT ghost, back wall
   box(footGroup, 0, 0, 0, FOOT, D - EXT, H, COL.existing, 0.35);
-  box(root, FOOT, -20, 0, INTERNAL_W, 20, H, COL.ghost, 0.18); // back wall
-  box(headGroup, W, 0, 0, 20, FRONT_Y, H, COL.ghost, 0.18); // head wall
+  box(root, FOOT, -20, 0, INTERNAL_W, 20, H, COL.ghost, 0.18);
+  box(headGroup, W, 0, 0, 20, FRONT_Y, H, COL.ghost, 0.18);
 
-  // —— Foot extension (+237mm): 2 studs, tracks, PB ——
+  // —— Foot extension +237mm at FRONT — LEFT (0..FOOT), flush rules ——
   {
     const y0 = D - EXT;
-    box(footGroup, (FOOT - STUD_W) / 2, y0 + 50, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
-    box(footGroup, (FOOT - STUD_W) / 2, y0 + EXT - 90, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    const studX = PB;
+    box(footGroup, studX, y0 + 40, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    box(footGroup, studX, D - STUD_FL - 40, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     box(footGroup, (FOOT - 72) / 2, y0, 0, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
     box(footGroup, (FOOT - 72) / 2, y0, H - TRACK_LEG, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(footGroup, -PB, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
-    box(footGroup, FOOT, y0, 0, PB, EXT, H, COL.pb, 0.95, 2);
-    box(footGroup, 0, y0, 0, FOOT, EXT, H, COL.footExt, 0.12);
+    // No noggins — C-stud + track + PB at these centres
+    box(footGroup, 0, y0, 0, PB, EXT, H, COL.pb, 0.98, 2);
+    box(footGroup, FOOT - PB, y0, 0, PB, EXT, H, COL.pb, 0.98, 2);
+    box(footGroup, 0, D - PB, 0, FOOT, PB, H, COL.pb, 0.98, 2);
+    box(footGroup, 0, y0, 0, FOOT, EXT, H, COL.footExt, 0.06);
   }
 
-  // —— Rear shelf: ledger on back wall, deck, front fascia studs + PB ——
+  // —— Rear shelf (stops before head) ——
   {
     const g = rearGroup;
-    box(g, FOOT, 0, SHELF - 80, shelfW, LEDGER, 45, COL.ledger, 1, 1);
-    box(g, FOOT, 0, SHELF - 18, shelfW, REAR, 18, COL.deck, 1, 2);
+    const sx = FOOT;
+    box(g, sx, 0, ledgerZ, shelfW, LEDGER, DIM.LEDGER_H, COL.ledger, 1, 1);
+    box(g, sx, 0, SHELF - deckT, shelfW, REAR, deckT, COL.deck, 1, 2);
     const fasciaY = REAR - STUD_FL;
-    for (const x of [FOOT + 30, FOOT + shelfW / 2 - STUD_W / 2, FOOT + shelfW - STUD_W - 30]) {
-      box(g, x, fasciaY, 0, STUD_W, STUD_FL, SHELF, COL.stud, 1, 1, 0.55);
+    const uprightXs = [sx + 30, sx + shelfW / 2 - STUD_W / 2, sx + shelfW - STUD_W - 30];
+    for (const x of uprightXs) {
+      box(g, x, fasciaY, 0, STUD_W, STUD_FL, fasciaH, COL.stud, 1, 1, 0.55);
     }
-    box(g, FOOT, fasciaY, SHELF - TRACK_LEG, shelfW, STUD_FL, TRACK_LEG, COL.track, 1, 1, 0.55);
-    box(g, FOOT, REAR, 0, shelfW, PB, SHELF, COL.pb, 0.92, 2);
-    box(g, FOOT + shelfW / 2 - 150, 0, 935, 300, 40, 80, COL.ledger, 1, 1); // tablet block ~975
+    box(g, sx, fasciaY, fasciaH - TRACK_LEG, shelfW, STUD_FL, TRACK_LEG, COL.track, 1, 1, 0.55);
+    // PB flush with deck front (Y=REAR) — not proud; router-ease nosing for lean
+    box(g, sx, REAR - PB, 0, shelfW, PB, fasciaH, COL.pb, 0.98, 2);
+    box(g, sx + shelfW / 2 - 150, 0, 935, 300, 40, 80, COL.ledger, 1, 1);
   }
 
-  // —— Head shelf/fascia: on existing head wall; PB on exposed faces ——
+  // —— Head shelf/fascia RIGHT — envelope inside fixed HEAD_W (no bay theft) ——
   {
     const g = headGroup;
-    const hx = W - HEAD_W;
-    box(g, W - LEDGER, 0, SHELF - 80, LEDGER, FRONT_Y, 45, COL.ledger, 1, 1);
-    box(g, hx, 0, SHELF - 18, HEAD_W, FRONT_Y, 18, COL.deck, 1, 2);
-    box(g, hx, REAR + 40, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
-    box(g, hx, FRONT_Y / 2 - STUD_W / 2, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
-    box(g, hx, FRONT_Y - STUD_W - 40, 0, STUD_FL, STUD_W, SHELF, COL.stud, 1, 1, 0.55);
-    box(g, hx - PB, 0, 0, PB, FRONT_Y, SHELF, COL.pb, 0.92, 2); // toward bed
-    box(g, hx, FRONT_Y, 0, HEAD_W, PB, SHELF, COL.pb, 0.92, 2); // toward room front
+    const hx = DIM.head_bed_face_x; // finished bed face; HEAD_W = hx → W
+    const studX = hx + PB;
+    box(g, W - LEDGER, 0, ledgerZ, LEDGER, FRONT_Y, DIM.LEDGER_H, COL.ledger, 1, 1);
+    box(g, hx, 0, SHELF - deckT, HEAD_W, FRONT_Y, deckT, COL.deck, 1, 2);
+    // Corner post at rear/head L — solid pick-up fixed toward head wall
+    box(g, studX, REAR - STUD_FL, 0, STUD_W, STUD_FL, fasciaH, COL.stud, 1, 1, 0.55);
+    const ys = [REAR + 80, FRONT_Y / 2 - STUD_W / 2, FRONT_Y - STUD_W - 40];
+    for (const y of ys) {
+      box(g, studX, y, 0, STUD_FL, STUD_W, fasciaH, COL.stud, 1, 1, 0.55);
+    }
+    // Top rail over bay fascia (matches CadQuery Head-Fascia-Track)
+    box(g, studX, REAR, fasciaH - TRACK_LEG, STUD_FL, FRONT_Y - REAR, TRACK_LEG, COL.track, 1, 1, 0.55);
+    // Bed face PB inside HEAD_W; exposed bay only
+    box(g, hx, REAR, 0, PB, FRONT_Y - REAR, fasciaH, COL.pb, 0.98, 2);
+    // Front return flush with deck front (not proud into front wall)
+    box(g, hx, FRONT_Y - PB, 0, HEAD_W, PB, fasciaH, COL.pb, 0.98, 2);
   }
 
-  // —— Bed lift + bed + mattress + drawer ghosts ——
+  // —— Bed (pillow toward HEAD / right) ——
   {
     const mx = FOOT + TOL;
     const fy = REAR + frameTuck;
@@ -252,33 +286,41 @@ function buildCabinBed(THREE) {
     box(root, mx + dw + 35, fy + 50, 25, dw, FRAME_D - 100, PLINTH - 45, COL.drawer, 0.4, 1);
   }
 
-  // —— Front fascia: tracks, 4 jamb studs, sill/lintel, PB ——
+  // —— Front fascia: X=FOOT..W; narrow pier at FOOT (left) ——
   {
     const g = frontGroup;
-    const leftW = ACCESS_X - FOOT;
+    const leftW = ACCESS_X - FOOT; // 300 at foot
     const rightX = ACCESS_X + ACCESS_W;
-    const rightW = W - rightX;
+    const rightW = W - rightX; // ~646 at head
     const y = FRONT_Y;
     const ty = y + (FOOT - 72) / 2;
     const sy = y + (FOOT - STUD_FL) / 2;
+    const roomY = y + FOOT - PB;
+    const alcoveY = y;
 
     box(g, FOOT, ty, 0, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
     box(g, FOOT, ty, H - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
     box(g, FOOT, ty, ACCESS_BOT - TRACK_LEG, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
     box(g, FOOT, ty, ACCESS_TOP, INTERNAL_W, 72, TRACK_LEG, COL.track, 1, 1, 0.55);
 
-    for (const x of [FOOT + 25, ACCESS_X - STUD_W - 25]) {
-      box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
-    }
-    for (const x of [rightX + 25, W - STUD_W - 25]) {
-      box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    const leftStuds = [FOOT + 25, ACCESS_X - STUD_W - 25];
+    const rightStuds = [rightX + 25, W - STUD_W - 25];
+    for (const x of leftStuds) box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    for (const x of rightStuds) box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
+    // No pier noggins — screw PB to studs + sill/lintel track
+
+    for (const pbY of [roomY, alcoveY]) {
+      box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, FOOT, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.98, 2);
+      box(g, FOOT, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.98, 2);
     }
 
-    const pbY = y + FOOT - PB;
-    box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, FOOT, pbY, ACCESS_BOT, leftW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, rightX, pbY, ACCESS_BOT, rightW, PB, ACCESS_TOP - ACCESS_BOT, COL.pb, 0.92, 2);
-    box(g, FOOT, pbY, ACCESS_TOP, INTERNAL_W, PB, H - ACCESS_TOP, COL.pb, 0.92, 2);
+    const oh = ACCESS_TOP - ACCESS_BOT;
+    box(g, ACCESS_X - PB, y, ACCESS_BOT, PB, FOOT, oh, COL.pb, 0.98, 2);
+    box(g, rightX, y, ACCESS_BOT, PB, FOOT, oh, COL.pb, 0.98, 2);
+    box(g, ACCESS_X, y, ACCESS_BOT - PB, ACCESS_W, FOOT, PB, COL.pb, 0.98, 2);
+    box(g, ACCESS_X, y, ACCESS_TOP, ACCESS_W, FOOT, PB, COL.pb, 0.98, 2);
 
     const ox0 = ACCESS_X * S, ox1 = (ACCESS_X + ACCESS_W) * S;
     const oz0 = ACCESS_BOT * S, oz1 = ACCESS_TOP * S;
