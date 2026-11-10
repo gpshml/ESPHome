@@ -8,7 +8,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 
 **Orientation:** looking into the alcove — **FOOT left, HEAD right**. Narrow access pier at the **foot** (left).
 
-**Construction rule:** **existing back and head walls carry the shelves** — no uprights along the *back* of those shelves. Fascia frames at the **front** of each shelf only, with a **corner post at the rear/head L** fixed to the head wall. Full-height metal stud = **room front fascia** + **foot-wall extension**, with **horizontal noggins** wherever full-height PB is fixed.
+**Construction rule:** **existing back and head walls carry the shelves** — no uprights along the *back* of those shelves. Fascia frames at the **front** of each shelf only, with a **corner post at the rear/head L** fixed to the head wall. Full-height metal stud = **room front fascia** + **foot-wall extension**. **No noggins** — screw PB to C-studs and U-track (pier spans ≪ 600mm).
 
 **Buying / delivery:** [`SOURCING-AND-DELIVERY.md`](SOURCING-AND-DELIVERY.md) · priced BOQ [`COST-ESTIMATE-GL53.md`](COST-ESTIMATE-GL53.md) · cross-check [`PARTS-PURCHASE-CROSSREF.md`](PARTS-PURCHASE-CROSSREF.md).
 
@@ -20,7 +20,7 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 
 **Back:** fixed to **existing back wall** (no stud wall behind).  
 **Front:** plasterboard-faced fascia looking into the alcove.  
-**Corner:** **corner post** at rear/head L (see B) — rear track/noggins terminate into it.
+**Corner:** **corner post** at rear/head L (see B) — rear head rail terminates into it.
 
 | Part | Qty / size | Role |
 |------|------------|------|
@@ -29,7 +29,6 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 | Shelf deck | **18mm plywood** **1920 × 210** (`Rear-Deck`) | Cut from the 18mm drawer sheets |
 | Front fascia uprights | **3** × **1182mm** (`Rear-Fascia-Stud-1..3`) | At the **front** of the 210mm shelf only — carry PB |
 | Front fascia head rail | 1× **1920mm** (`Rear-Fascia-Track`) | Top of fascia / shelf nosing line |
-| Light noggins | **4** × **825mm** (`Rear-Fascia-Noggin-*`) | Between rear fascia uprights (~400 / 800 AFF) |
 | **12.5mm PB facing** | ~**1920 × 1200** (≈1 sheet) | Front face — **flush with deck front** (not proud, not recessed) |
 | Shelf nosing | router eased / rounded | Smooth lean under shelf |
 | Corner bead | ~1.2m | Verticals at ends (nosing is routed) |
@@ -52,7 +51,6 @@ Overall envelope: **2344mm W × 1242mm D × 2380mm H** (alcove clear width **224
 | Shelf deck | **18mm plywood** **326 × 1144** (`Head-Deck`) | Cut from the 18mm drawer sheets |
 | Fascia frame uprights | **3** × **1182mm** (`Head-Fascia-Stud-1..3`) | Bed face, forward of corner post |
 | Fascia head rail | 1× **934mm** (`Head-Fascia-Track`) | Top rail over bay fascia |
-| Light noggins | **2×177 + 2×427** (`Head-Fascia-Noggin-*`) | Between head uprights (~400 / 800) |
 | **12.5mm PB facing** | bed face **12.5×934×1182** + front **326×12.5×1182** | Inside the 326mm envelope |
 | Corner / stop bead | ~3–4m | External corners incl. rear/head L |
 | Head trim | 1× 20×40–60×326mm | Optional finish strip |
@@ -73,14 +71,11 @@ Picture-frame surround: 98mm thick. Opening **1300 × 1440** (640–2080 AFF), *
 | C-stud jambs (right / **head** pier ~646mm) | **2** × 2380mm | Full-height right of opening |
 | Sill rail | 1× ~2246mm | At **640mm** AFF |
 | Lintel rail | 1× ~2246mm | At **2080mm** AFF |
-| **Noggins (required)** | see cut list | Between pier studs for full-height PB |
 | Plasterboard | ~3–4 sheets | Room face + alcove face + **opening reveals** |
 | Corner / stop bead | ~6–8m | Opening reveals + external corners |
 | Curtain track | ≥1300mm | In reveal or face-fix |
 
-**Opening reveals:** 12.5mm PB on jambs, sill, lintel soffit — drywall screws into studs/noggins/track (~300mm centres), then stop/corner bead, tape, joint, paint.
-
-**Noggins — front piers:** at **600 / 1200 / 1800** AFF plus bands **~320** and **~2230**. Clear spans ≈ **110mm** (foot/left) and ≈ **456mm** (head/right — critical bay).
+**Opening reveals:** 12.5mm PB on jambs, sill, lintel soffit — drywall screws into **studs + track** (~300mm centres), then stop/corner bead, tape, joint, paint. **No noggins.**
 
 ---
 
@@ -93,7 +88,6 @@ Existing foot wall stays; only the **front 237mm** is new.
 |------|------------|------|
 | Floor + ceiling track | 2× ~237–300mm | Short runs |
 | C-stud uprights | **2** × 2380mm | New return |
-| **Noggins** | **3** × ~100–150mm | At 600 / 1200 / 1800 AFF |
 | Plasterboard | ~0.5–1 sheet | Outer, inner, front end — flush as above |
 | Join work | — | Strip ~200mm existing PB before tying in |
 
@@ -140,11 +134,11 @@ Prefer **structural/hardwood ply** for drawers (screws hold better than MDF). MD
 
 ## Metal stud — buy list (Bence drop)
 
-Packed from the **exact CadQuery part list** (`MODEL-BOM.md`). Do not reduce these buys.
+Packed from the **exact CadQuery part list** (`MODEL-BOM.md`). **No noggins.**
 
 | Item | Buy | Model | Used on |
 |------|-----|-------|---------|
-| 70mm C-stud × 3.0m | **13** | 13 uprights (22.55m) + 21 noggins (7.55m) → **11** packed sticks + **2** spare | Front jambs ×4; foot ×2; rear fascia ×3; head fascia ×3; **corner post ×1**; all noggins |
+| 70mm C-stud × 3.0m | **12** | 13 uprights (22.55m) → **10** packed sticks + **2** spare | Front jambs ×4; foot ×2; rear fascia ×3; head fascia ×3; **corner post ×1** |
 | 72mm U-track × 3.0m | **5** | 8 runs (12.31m) → **5** packed sticks | Front F/C/sill/lintel ×4 @ 2246; foot ×2 @ 237; rear rail 1920; head rail 934 |
 
 **Uprights (13 modeled):**  
@@ -154,14 +148,12 @@ Packed from the **exact CadQuery part list** (`MODEL-BOM.md`). Do not reduce the
 - 3× `Head-Fascia-Stud-*` @ 1182  
 - 1× `Corner-Post-RearHead` @ 1182  
 
-**Noggins (21 modeled, from C-stud stock):**  
-- Front foot/left: 5× **110** · front head/right: 5× **456**  
-- Foot ext: 3× **70** · rear fascia: 4× **825** · head fascia: 2× **177** + 2× **427**  
+**Noggins:** none.
 
 **Track (8 modeled):** 4×2246 front + 2×237 foot + 1920 rear + **934 head**.  
-Four front rails each need their own stick (2246 + 1920 > 3000) → **5×** buy minimum.
+Four front rails cannot share a stick with shelf rails → **5×** buy.
 
-*(Shelf fascia uprights + corner post may be timber instead of C-stud if preferred; keep metal noggins on full-height boarded walls.)*
+*(Shelf fascia uprights + corner post may be timber instead of C-stud if preferred.)*
 
 ---
 
@@ -191,8 +183,8 @@ Four front rails each need their own stick (2246 + 1920 > 3000) → **5×** buy 
 
 | Material | Buy | Model check |
 |----------|-----|-------------|
-| 70mm C-stud 3.0m | **13** | 11 packed + 2 spare |
-| 72mm U-track 3.0m | **5** | 5 packed (was under-bought at 4) |
+| 70mm C-stud 3.0m | **12** | 10 packed + 2 spare (no noggins) |
+| 72mm U-track 3.0m | **5** | 5 packed |
 | 12.5mm TE PB 2400×1200 | **8** | 18 faces / ~12.6 m² |
 | Softwood lift 47×150×2.4m | **5** | 3×920 + 2×1900 @ 170 |
 | Softwood ~45×70 × 2.4m (PSE/CLS) | **2** | Ledgers only — cut **1920** rear + **1144** head |

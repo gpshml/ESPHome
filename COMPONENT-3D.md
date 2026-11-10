@@ -53,7 +53,7 @@ Copy this into another agent or CAD assistant:
 > **Foot (left):** existing 98 mm + 237 mm front extension — flush with existing wall and front fascia end.  
 > **Head (right):** 326 mm fascia; PB on exposed bay + front return only (not through to rear wall).  
 > **Front:** 98 mm both faces + **12.5mm PB reveals**; access @ X=398 (**300 mm pier at foot / left**).  
-> **Ledgers** tight under decks. **Noggins** + **13×** C-stud — see `PARTS-LIST.md` / `BUILD-SEQUENCE.md`. Do not invert head/foot for a mirrored 3D view.
+> **Ledgers** tight under decks. **No noggins** — C-stud + track + PB; see `MODEL-BOM.md` / `PARTS-LIST.md`. Do not invert head/foot for a mirrored 3D view.
 
 ## Recommendation — which AI / tool for CAD-grade work
 

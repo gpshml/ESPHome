@@ -45,8 +45,6 @@ class Dim:
     GAUGE: float = 0.7
     DECK_T: float = 18.0
     LEDGER_H: float = 45.0
-    NOGGIN_H: float = 40.0
-    NOGGIN_ZS: tuple[float, ...] = (600.0, 1200.0, 1800.0)
     FOOT_PIER: float = 300.0
 
     @property

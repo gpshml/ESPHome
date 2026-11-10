@@ -20,10 +20,6 @@ from dim import DIM  # noqa: E402
 from materials import COL, MTL_HINTS  # noqa: E402
 from profiles import board, c_stud, place_min, u_track  # noqa: E402
 
-# Extra material key for noggins (galvanised-ish)
-COL["noggin"] = cq.Color(0.50, 0.53, 0.50)
-
-
 def add_box(
     assy: cq.Assembly,
     name: str,
@@ -120,26 +116,6 @@ def add_track_y(
     assy.add(solid, name=name, color=color)
 
 
-def add_noggin_x(
-    assy: cq.Assembly,
-    name: str,
-    x0: float,
-    x1: float,
-    y: float,
-    z_mid: float,
-    *,
-    height: float | None = None,
-    color: cq.Color | None = None,
-) -> None:
-    """Horizontal noggin spanning X between stud faces (PB support)."""
-    D = DIM
-    span = x1 - x0
-    if span < 20:
-        return
-    h = D.NOGGIN_H if height is None else height
-    add_box(assy, name, x0, y, z_mid - h / 2, span, D.STUD_FL, h, color or COL["noggin"])
-
-
 def build_foot_extension(assy: cq.Assembly) -> None:
     """Foot return +237 mm at FRONT (LEFT). Same X footprint as existing (0..FOOT).
 
@@ -171,20 +147,7 @@ def build_foot_extension(assy: cq.Assembly) -> None:
         invert_legs=True,
         color=COL["track"],
     )
-    y_a = y0 + 40 + D.STUD_FL
-    y_b = D.D - D.STUD_FL - 40
-    for i, z in enumerate(D.NOGGIN_ZS, start=1):
-        add_box(
-            assy,
-            f"FootExt-Noggin-{i}",
-            stud_x,
-            y_a,
-            z - D.NOGGIN_H / 2,
-            D.STUD_W,
-            y_b - y_a,
-            D.NOGGIN_H,
-            COL["noggin"],
-        )
+    # No noggins — C-stud + track + PB is sufficient at these centres
     add_box(assy, "FootExt-PB-Outer", 0, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
     add_box(assy, "FootExt-PB-Inner", D.FOOT - D.PB, y0, 0, D.PB, D.EXT, D.H, COL["painted"])
     add_box(assy, "FootExt-PB-Front", 0, D.D - D.PB, 0, D.FOOT, D.PB, D.H, COL["painted"])
@@ -201,17 +164,6 @@ def build_rear_shelf(assy: cq.Assembly) -> None:
     xs = [sx + 30, sx + sw / 2 - D.STUD_W / 2, sx + sw - D.STUD_W - 30]
     for i, x in enumerate(xs, start=1):
         add_vstud(assy, f"Rear-Fascia-Stud-{i}", x, fascia_y, 0, D.fascia_h, color=COL["stud"])
-    for i in range(len(xs) - 1):
-        for j, z in enumerate((400.0, 800.0), start=1):
-            add_noggin_x(
-                assy,
-                f"Rear-Fascia-Noggin-{i + 1}-{j}",
-                xs[i] + D.STUD_W,
-                xs[i + 1],
-                fascia_y,
-                z,
-                height=40.0,
-            )
     add_track_x(
         assy,
         "Rear-Fascia-Track",
@@ -275,23 +227,6 @@ def build_head_shelf(assy: cq.Assembly) -> None:
             flange_sign=1,
             color=COL["stud"],
         )
-    for i in range(len(ys) - 1):
-        y0 = ys[i] + D.STUD_W
-        span = ys[i + 1] - y0
-        if span < 20:
-            continue
-        for j, z in enumerate((400.0, 800.0), start=1):
-            add_box(
-                assy,
-                f"Head-Fascia-Noggin-{i + 1}-{j}",
-                stud_x,
-                y0,
-                z - 20,
-                D.STUD_FL,
-                span,
-                40,
-                COL["noggin"],
-            )
     # Top rail over bay fascia (packs with rear 1920 on one 3.0m track stick)
     add_track_y(
         assy,
@@ -417,13 +352,7 @@ def build_front_fascia(assy: cq.Assembly) -> None:
     for i, x in enumerate(right_studs, start=1):
         add_vstud(assy, f"Front-Jamb-R{i}", x, sy, 0, D.H, color=COL["stud"])
 
-    for label, pair in (("L", left_studs), ("R", right_studs)):
-        x0, x1 = pair[0] + D.STUD_W, pair[1]
-        for i, z in enumerate(D.NOGGIN_ZS, start=1):
-            add_noggin_x(assy, f"Front-Noggin-{label}-{i}", x0, x1, sy, z)
-        for i, z in enumerate((320.0, 2230.0), start=1):
-            add_noggin_x(assy, f"Front-Noggin-{label}-Band-{i}", x0, x1, sy, z, height=40.0)
-
+    # No pier noggins — stud centres ≪ 600mm; screw PB to studs + sill/lintel track
     _front_pb_picture_frame(assy, "Front-PB-Room", y + D.FOOT - D.PB)
     _front_pb_picture_frame(assy, "Front-PB-Alcove", y)
 
@@ -642,9 +571,7 @@ def export_obj_mtl(
         if color is None:
             return "Default"
         lower = name.lower()
-        if "noggin" in lower:
-            key = "GalvanisedNoggin"
-        elif "marker-foot" in lower or "pb" in lower or "painted" in lower:
+        if "marker-foot" in lower or "pb" in lower or "painted" in lower:
             key = "PaintedOlive"
         elif "stud" in lower or "jamb" in lower:
             key = "GalvanisedStud"

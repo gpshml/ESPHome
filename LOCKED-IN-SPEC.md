@@ -77,7 +77,7 @@ See also `CORRECTED-TOLERANCE.md` (historic correction when width was wrongly gr
 | Rear shelf | 1920 × 210mm | INTERNAL_W − HEAD_W; stops before head |
 | Access opening | 1300 × 1440mm | 640–2080 AFF; starts **300mm from left of internal (foot side)** → ACCESS_X = 398 |
 | Front fascia | 98mm thick | Both faces + opening reveals boarded |
-| Noggins | Required | Full-height PB support — see `PARTS-LIST.md` |
+| Noggins | **None** | Not required — C-stud + track + PB at these centres (≪ 600mm) |
 
 ## Opening reveal facings (inside the access opening)
 
@@ -85,7 +85,7 @@ See also `CORRECTED-TOLERANCE.md` (historic correction when width was wrongly gr
 |------|------|
 | Material | **12.5mm tapered-edge plasterboard** (same as other boarded faces) |
 | Where | Left & right jamb reveals, sill top, lintel soffit — wrapping the 98mm wall thickness |
-| Fixing | **Drywall screws** into C-stud jambs, noggins, and sill/lintel track (typically ~300mm centres) |
+| Fixing | **Drywall screws** into C-stud jambs and sill/lintel track (typically ~300mm centres) |
 | Edges | **Metal stop bead / corner bead** on external corners of the opening, then tape + joint compound |
 | Finish | Primer + emulsion (autumnal olive on visible faces) |
 
@@ -96,7 +96,7 @@ See also `CORRECTED-TOLERANCE.md` (historic correction when width was wrongly gr
 3. Do **not** put the 237mm extension at the **rear** of the foot wall.
 4. Do **not** swap foot/head vs the locked front aspect (foot stays **left**).
 5. Do **not** stop the foot wall at 1200mm.
-6. Do **not** omit noggins on full-height boarded stud walls.
+6. Noggins are **not** used — screw PB to studs and track only.
 7. Do **not** leave the foot extension proud of / short of the existing wall or front fascia room face.
 8. Do **not** leave wall ledgers below the shelf decks (gap).
 9. Do **not** run head bed-face PB through to the rear wall (hidden behind rear shelf).

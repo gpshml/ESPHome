@@ -7,7 +7,7 @@ Mesh: `out/cabin_bed_assembly.obj` + `.mtl` (**metres**). STEP stays mm for CAD.
 | OBJ material | Real-world | Principled BSDF |
 |--------------|------------|----------------|
 | **PaintedOlive** | Emulsion on 12.5mm PB | Base ≈ `#5C663D`, Roughness **0.55**, Metallic **0**, Specular **0.3** |
-| **GalvanisedStud / Track / Noggin** | Zinc C-stud | Base light grey, Metallic **0.85**, Roughness **0.35**, clearcoat 0.1 optional |
+| **GalvanisedStud / Track** | Zinc C-stud | Base light grey, Metallic **0.85**, Roughness **0.35**, clearcoat 0.1 optional |
 | **Timber / TimberDeck / BedFrame** | Softwood / ply | Roughness **0.5–0.65**; add a subtle wood texture if you want |
 | **Mattress** | Linen / cotton | Roughness **0.85**, Sheen **0.4** (fabric) |
 | **Drawer** | Painted ply / oak | Roughness **0.55** |
@@ -32,7 +32,7 @@ Material Preview / EEVEE is enough to verify boarding and reveals. Turn on **Scr
 Inside the access opening (jambs, sill, lintel soffit):
 
 1. **12.5mm TE plasterboard** cut to the 98mm wall depth  
-2. **Drywall screws** into C-stud jambs, noggins, and sill/lintel track (~300mm centres)  
+2. **Drywall screws** into C-stud jambs and sill/lintel track (~300mm centres) — no noggins  
 3. **Stop bead / corner bead** on the room and alcove edges of the reveal  
 4. Tape, joint compound, primer, emulsion (olive)
 

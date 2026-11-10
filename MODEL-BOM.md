@@ -10,24 +10,23 @@ Excluded from buy: `Existing-*`, `Marker-*`, owned `Bed-Frame` / `Mattress` / dr
 
 | Stock | Model need | Pack sticks | **Buy** | Notes |
 |-------|------------|-------------|---------|-------|
-| 70mm C-stud × 3.0m | 13 uprights (22.55m) + 21 noggins (7.55m) = **30.10m** | **11** | **13** | Uprights: 4 front jambs + 2 foot + 3 rear fascia + 3 head fascia + 1 corner post |
+| 70mm C-stud × 3.0m | 13 uprights (22.55m) (no noggins) | **10** | **12** | 4 front jambs + 2 foot + 3 rear fascia + 3 head fascia + 1 corner post |
 | 72mm U-track × 3.0m | 8 runs (12.31m) | **5** | **5** | 4× front @ 2246 cannot share a stick with shelf rails |
 | 12.5mm TE PB 2400×1200 | 18 faces (12.60 m²) | — | **8** | Picture-frame nesting; 8 sheets ≈ 23 m² |
 
 ### Metal packing detail
 
-**C-stud sticks (uprights + noggins):**
-- Stick 1: 2380 + 456 + 110 → rem 54mm
-- Stick 2: 2380 + 456 + 110 → rem 54mm
-- Stick 3: 2380 + 456 + 110 → rem 54mm
-- Stick 4: 2380 + 456 + 110 → rem 54mm
-- Stick 5: 2380 + 456 + 110 → rem 54mm
-- Stick 6: 2380 + 427 + 177 → rem 16mm
-- Stick 7: 1182 + 1182 + 427 + 177 → rem 32mm
-- Stick 8: 1182 + 1182 + 70 + 70 + 70 → rem 426mm
+**C-stud sticks (uprights only — no noggins):**
+- Stick 1: 2380 → rem 620mm
+- Stick 2: 2380 → rem 620mm
+- Stick 3: 2380 → rem 620mm
+- Stick 4: 2380 → rem 620mm
+- Stick 5: 2380 → rem 620mm
+- Stick 6: 2380 → rem 620mm
+- Stick 7: 1182 + 1182 → rem 636mm
+- Stick 8: 1182 + 1182 → rem 636mm
 - Stick 9: 1182 + 1182 → rem 636mm
-- Stick 10: 1182 + 825 + 825 → rem 168mm
-- Stick 11: 825 + 825 → rem 1350mm
+- Stick 10: 1182 → rem 1818mm
 
 **U-track sticks:**
 - Stick 1: 2246 + 237 + 237 → rem 280mm
@@ -54,31 +53,9 @@ Excluded from buy: `Existing-*`, `Marker-*`, owned `Bed-Frame` / `Mattress` / dr
 | `Rear-Fascia-Stud-2` | 70 × 45 × 1182 | **1182** |
 | `Rear-Fascia-Stud-3` | 70 × 45 × 1182 | **1182** |
 
-## Noggins (from C-stud stock) (21)
+## Noggins
 
-| Part | Size (mm) | Cut |
-|------|-----------|-----|
-| `FootExt-Noggin-1` | 70 × 67 × 40 | **70** |
-| `FootExt-Noggin-2` | 70 × 67 × 40 | **70** |
-| `FootExt-Noggin-3` | 70 × 67 × 40 | **70** |
-| `Front-Noggin-L-1` | 110 × 45 × 40 | **110** |
-| `Front-Noggin-L-2` | 110 × 45 × 40 | **110** |
-| `Front-Noggin-L-3` | 110 × 45 × 40 | **110** |
-| `Front-Noggin-L-Band-1` | 110 × 45 × 40 | **110** |
-| `Front-Noggin-L-Band-2` | 110 × 45 × 40 | **110** |
-| `Front-Noggin-R-1` | 456 × 45 × 40 | **456** |
-| `Front-Noggin-R-2` | 456 × 45 × 40 | **456** |
-| `Front-Noggin-R-3` | 456 × 45 × 40 | **456** |
-| `Front-Noggin-R-Band-1` | 456 × 45 × 40 | **456** |
-| `Front-Noggin-R-Band-2` | 456 × 45 × 40 | **456** |
-| `Head-Fascia-Noggin-1-1` | 45 × 177 × 40 | **177** |
-| `Head-Fascia-Noggin-1-2` | 45 × 177 × 40 | **177** |
-| `Head-Fascia-Noggin-2-1` | 45 × 427 × 40 | **427** |
-| `Head-Fascia-Noggin-2-2` | 45 × 427 × 40 | **427** |
-| `Rear-Fascia-Noggin-1-1` | 825 × 45 × 40 | **825** |
-| `Rear-Fascia-Noggin-1-2` | 825 × 45 × 40 | **825** |
-| `Rear-Fascia-Noggin-2-1` | 825 × 45 × 40 | **825** |
-| `Rear-Fascia-Noggin-2-2` | 825 × 45 × 40 | **825** |
+**None.** Omitted — standard C-stud + U-track + PB at these centres (pier spans ≪ 600mm). Screw boards to studs and sill/lintel track.
 
 ## U-track (8)
 

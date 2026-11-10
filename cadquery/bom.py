@@ -88,7 +88,7 @@ def buy_summary(rows: list[PartRow]) -> dict:
         by[r.kind].append(r)
 
     stud_cuts = [r.cut_mm for r in by["stud"]]
-    nog_cuts = [r.cut_mm for r in by["noggin"]]
+    nog_cuts = [r.cut_mm for r in by["noggin"]]  # expected empty — noggins omitted
     track_cuts = [r.cut_mm for r in by["track"]]
     metal_bins = pack_stock(stud_cuts + nog_cuts)
     track_bins = pack_stock(track_cuts)
@@ -151,12 +151,16 @@ def write_model_bom(assy, path: Path) -> dict:
     lines.append("")
     lines.append("| Stock | Model need | Pack sticks | **Buy** | Notes |")
     lines.append("|-------|------------|-------------|---------|-------|")
+    nog_note = (
+        f" + {summary['noggin_count']} noggins ({summary['noggin_m']:.2f}m)"
+        if summary["noggin_count"]
+        else " (no noggins)"
+    )
     lines.append(
         f"| 70mm C-stud × 3.0m | {summary['stud_count']} uprights "
-        f"({summary['stud_m']:.2f}m) + {summary['noggin_count']} noggins "
-        f"({summary['noggin_m']:.2f}m) = **{summary['stud_m'] + summary['noggin_m']:.2f}m** | "
+        f"({summary['stud_m']:.2f}m){nog_note} | "
         f"**{summary['metal_sticks_needed']}** | **{summary['stud_buy']}** | "
-        f"Uprights: 4 front jambs + 2 foot + 3 rear fascia + 3 head fascia + 1 corner post |"
+        f"4 front jambs + 2 foot + 3 rear fascia + 3 head fascia + 1 corner post |"
     )
     lines.append(
         f"| 72mm U-track × 3.0m | {summary['track_count']} runs "
@@ -171,7 +175,7 @@ def write_model_bom(assy, path: Path) -> dict:
     lines.append("")
     lines.append("### Metal packing detail")
     lines.append("")
-    lines.append("**C-stud sticks (uprights + noggins):**")
+    lines.append("**C-stud sticks (uprights only — no noggins):**")
     for i, b in enumerate(summary["metal_bins"], 1):
         cuts = " + ".join(f"{c:.0f}" for c in b["cuts"])
         lines.append(f"- Stick {i}: {cuts} → rem {b['rem']:.0f}mm")
@@ -184,6 +188,15 @@ def write_model_bom(assy, path: Path) -> dict:
 
     def section(title: str, kind: str) -> None:
         items = sorted(by[kind], key=lambda r: r.name)
+        if not items and kind == "noggin":
+            lines.append("## Noggins")
+            lines.append("")
+            lines.append(
+                "**None.** Omitted — standard C-stud + U-track + PB at these centres "
+                "(pier spans ≪ 600mm). Screw boards to studs and sill/lintel track."
+            )
+            lines.append("")
+            return
         lines.append(f"## {title} ({len(items)})")
         lines.append("")
         lines.append("| Part | Size (mm) | Cut |")
@@ -195,7 +208,7 @@ def write_model_bom(assy, path: Path) -> dict:
         lines.append("")
 
     section("C-stud uprights", "stud")
-    section("Noggins (from C-stud stock)", "noggin")
+    section("Noggins", "noggin")
     section("U-track", "track")
     section("Plasterboard faces", "pb")
     section("Timber (ledgers / decks / lift / tablet)", "timber")

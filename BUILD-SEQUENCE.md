@@ -25,8 +25,7 @@ Existing foot wall stays. Only the **front +237 mm** into the room is new.
 1. Strip ~200 mm of existing PB where the return ties in.
 2. Fix short **floor + ceiling U-track** in the extension footprint (same X as existing wall: **0 … 98**).
 3. Stand **2× C-studs** between the PB skins; flanges toward the cavity.
-4. Fit **noggins** at 600 / 1200 / 1800 AFF between the uprights.
-5. Board **outer**, **inner**, and **front end** with 12.5 mm PB so that:
+4. Board **outer**, **inner**, and **front end** with 12.5 mm PB so that:
    - outer face is flush with the existing foot wall outer face;
    - inner face is flush with the **left** end of the front fascia;
    - front face is flush with the front wall **room** face (**Y = 1242**).
@@ -47,8 +46,8 @@ Shelves are **wall-supported** — no stud row along the back of either shelf.
 ## 3. Rear shelf fascia (front of the 210 mm shelf)
 
 1. Stand **corner post** first at the **rear/head L** (junction of rear fascia front and head bed face). Fix it to the **existing head wall** (or a short packer) — this is the solid pick-up for both fascia runs. Do **not** run a head stud all the way back under the rear shelf to the back wall.
-2. Stand remaining rear fascia uprights along the front of the 210 mm shelf; terminate track/noggins into the corner post.
-3. Fit light noggins / head rail so the front can take PB.
+2. Stand remaining rear fascia uprights along the front of the 210 mm shelf; terminate head rail into the corner post.
+3. Fit **head rail** (U-track) so the front can take PB — **no noggins**.
 4. Drop the **1920 × 210 × 18** deck onto the rear ledger + fascia head; top at **1200 AFF**.
 5. Board the **front face only** with 12.5 mm PB (alcove-facing), **flush with the deck front edge** — not proud into the bay and not set back/recessed.
 6. Router-ease the shelf nosing (deck front / PB junction) so it is comfortable to lean against.
@@ -76,9 +75,8 @@ Picture-frame wall, **98 mm** thick, spanning **foot → head** (left end meets 
 1. Fix **floor + ceiling U-track** full internal run (**X = FOOT … W**).
 2. Stand **2 jamb studs** in the **foot-side (narrow 300 mm) pier** and **2** in the **head-side (wide ~646 mm) pier**.
 3. Fit **sill track** at 640 and **lintel track** at 2080.
-4. Fit **noggins** between pier studs at 600 / 1200 / 1800 plus bands ~320 and ~2230 (wide pier is critical for PB).
-5. Board **room face** and **alcove face** (picture-frame around the opening).
-6. Board **opening reveals** (jambs, sill, lintel soffit) with **12.5 mm TE plasterboard**, drywall-screwed into studs / noggins / track (~300 mm centres). Stop / corner bead, tape, joint, paint (olive).
+4. Board **room face** and **alcove face** (picture-frame around the opening). Screw PB to studs + sill/lintel track — **no noggins** (pier spans ≪ 600 mm; standard C-stud practice).
+5. Board **opening reveals** (jambs, sill, lintel soffit) with **12.5 mm TE plasterboard**, drywall-screwed into studs / track (~300 mm centres). Stop / corner bead, tape, joint, paint (olive).
 
 ---
 

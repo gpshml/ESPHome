@@ -42,7 +42,6 @@ export const DIM = {
   LEDGER: 70,
   DECK_T: 18,
   LEDGER_H: 45,
-  NOGGIN_ZS: [600, 1200, 1800],
   get FRONT_Y() { return this.D - this.FOOT; }, // 1144
   get FRONT_ROOM_Y() { return this.D; },
   get BED_BAY() { return this.FRONT_Y - this.REAR; },
@@ -58,7 +57,6 @@ export const COL = {
   footExt: 0x6b783f,
   stud: 0x9ea39a,
   track: 0x8c9189,
-  noggin: 0x7f8680,
   pb: 0x5c663d, // autumnal olive
   ledger: 0x9e7347,
   deck: 0xb89461,
@@ -85,7 +83,6 @@ export function buildCabinBed(THREE) {
   const ACCESS_X = DIM.ACCESS_X;
   const shelfW = INTERNAL_W - HEAD_W;
   const frameTuck = DIM.FRAME_TUCK;
-  const nogginZs = DIM.NOGGIN_ZS;
   const ledgerZ = DIM.ledger_z;
   const fasciaH = DIM.fascia_h;
   const deckT = DIM.DECK_T;
@@ -118,14 +115,6 @@ export function buildCabinBed(THREE) {
     return mesh;
   }
 
-  function nogginsBetween(parent, xL, xR, y, zs, thick = STUD_FL) {
-    const span = xR - xL;
-    if (span < 20) return;
-    for (const z of zs) {
-      box(parent, xL, y, z - thick / 2, span, STUD_FL, thick, COL.noggin, 1, 1, 0.55);
-    }
-  }
-
   // —— Existing structure ——
   // Foot wall LEFT (0..FOOT), head wall RIGHT ghost, back wall
   box(footGroup, 0, 0, 0, FOOT, D - EXT, H, COL.existing, 0.35);
@@ -140,11 +129,7 @@ export function buildCabinBed(THREE) {
     box(footGroup, studX, D - STUD_FL - 40, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     box(footGroup, (FOOT - 72) / 2, y0, 0, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
     box(footGroup, (FOOT - 72) / 2, y0, H - TRACK_LEG, 72, EXT, TRACK_LEG, COL.track, 1, 1, 0.55);
-    const yA = y0 + 40 + STUD_FL;
-    const yB = D - STUD_FL - 40;
-    for (const z of nogginZs) {
-      box(footGroup, studX, yA, z - 20, STUD_W, yB - yA, 40, COL.noggin, 1, 1, 0.55);
-    }
+    // No noggins — C-stud + track + PB at these centres
     box(footGroup, 0, y0, 0, PB, EXT, H, COL.pb, 0.98, 2);
     box(footGroup, FOOT - PB, y0, 0, PB, EXT, H, COL.pb, 0.98, 2);
     box(footGroup, 0, D - PB, 0, FOOT, PB, H, COL.pb, 0.98, 2);
@@ -161,9 +146,6 @@ export function buildCabinBed(THREE) {
     const uprightXs = [sx + 30, sx + shelfW / 2 - STUD_W / 2, sx + shelfW - STUD_W - 30];
     for (const x of uprightXs) {
       box(g, x, fasciaY, 0, STUD_W, STUD_FL, fasciaH, COL.stud, 1, 1, 0.55);
-    }
-    for (let i = 0; i < uprightXs.length - 1; i++) {
-      nogginsBetween(g, uprightXs[i] + STUD_W, uprightXs[i + 1], fasciaY, [400, 800], 40);
     }
     box(g, sx, fasciaY, fasciaH - TRACK_LEG, shelfW, STUD_FL, TRACK_LEG, COL.track, 1, 1, 0.55);
     // PB flush with deck front (Y=REAR) — not proud; router-ease nosing for lean
@@ -183,15 +165,6 @@ export function buildCabinBed(THREE) {
     const ys = [REAR + 80, FRONT_Y / 2 - STUD_W / 2, FRONT_Y - STUD_W - 40];
     for (const y of ys) {
       box(g, studX, y, 0, STUD_FL, STUD_W, fasciaH, COL.stud, 1, 1, 0.55);
-    }
-    for (let i = 0; i < ys.length - 1; i++) {
-      const y0 = ys[i] + STUD_W;
-      const span = ys[i + 1] - y0;
-      if (span > 20) {
-        for (const z of [400, 800]) {
-          box(g, studX, y0, z - 20, STUD_FL, span, 40, COL.noggin, 1, 1, 0.55);
-        }
-      }
     }
     // Top rail over bay fascia (matches CadQuery Head-Fascia-Track)
     box(g, studX, REAR, fasciaH - TRACK_LEG, STUD_FL, FRONT_Y - REAR, TRACK_LEG, COL.track, 1, 1, 0.55);
@@ -241,11 +214,7 @@ export function buildCabinBed(THREE) {
     const rightStuds = [rightX + 25, W - STUD_W - 25];
     for (const x of leftStuds) box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
     for (const x of rightStuds) box(g, x, sy, 0, STUD_W, STUD_FL, H, COL.stud, 1, 1, 0.55);
-
-    nogginsBetween(g, leftStuds[0] + STUD_W, leftStuds[1], sy, nogginZs);
-    nogginsBetween(g, rightStuds[0] + STUD_W, rightStuds[1], sy, nogginZs);
-    nogginsBetween(g, leftStuds[0] + STUD_W, leftStuds[1], sy, [320, 2230], 40);
-    nogginsBetween(g, rightStuds[0] + STUD_W, rightStuds[1], sy, [320, 2230], 40);
+    // No pier noggins — screw PB to studs + sill/lintel track
 
     for (const pbY of [roomY, alcoveY]) {
       box(g, FOOT, pbY, 0, INTERNAL_W, PB, ACCESS_BOT, COL.pb, 0.98, 2);
