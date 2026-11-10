@@ -250,7 +250,19 @@ def build_head_shelf(assy: cq.Assembly) -> None:
     add_box(assy, "Head-Deck", hx, 0, D.SHELF - D.DECK_T, D.HEAD_W, D.FRONT_Y, D.DECK_T, COL["deck"])
     # Studs behind bed-face PB (inside the 326mm envelope)
     stud_x = hx + D.PB
-    ys = [D.REAR + 40, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
+    # Corner post at rear/head L — wall-fixed pick-up for both fascia runs
+    add_vstud(
+        assy,
+        "Corner-Post-RearHead",
+        stud_x,
+        D.REAR - D.STUD_FL,
+        0,
+        D.fascia_h,
+        web_along_x=True,
+        color=COL["stud"],
+    )
+    # Remaining head uprights forward of the corner (not a back row to the rear wall)
+    ys = [D.REAR + 80, D.FRONT_Y / 2 - D.STUD_W / 2, D.FRONT_Y - D.STUD_W - 40]
     for i, y in enumerate(ys, start=1):
         add_vstud(
             assy,

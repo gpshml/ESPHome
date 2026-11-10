@@ -46,12 +46,13 @@ Shelves are **wall-supported** — no stud row along the back of either shelf.
 
 ## 3. Rear shelf fascia (front of the 210 mm shelf)
 
-1. Stand **3×** light uprights (stud or timber) at the **front** of the 210 mm shelf only — not against the back wall.
-2. Fit light noggins / head rail so the front can take PB.
-3. Drop the **1920 × 210 × 18** deck onto the rear ledger + fascia head; top at **1200 AFF**.
-4. Board the **front face only** with 12.5 mm PB (alcove-facing), **flush with the deck front edge** — not proud into the bay and not set back/recessed.
-5. Router-ease the shelf nosing (deck front / PB junction) so it is comfortable to lean against.
-6. Fix tablet mount block on the back wall under the shelf (~975 AFF) — packer for the 7″ ESP32 touchscreen.
+1. Stand **corner post** first at the **rear/head L** (junction of rear fascia front and head bed face). Fix it to the **existing head wall** (or a short packer) — this is the solid pick-up for both fascia runs. Do **not** run a head stud all the way back under the rear shelf to the back wall.
+2. Stand remaining rear fascia uprights along the front of the 210 mm shelf; terminate track/noggins into the corner post.
+3. Fit light noggins / head rail so the front can take PB.
+4. Drop the **1920 × 210 × 18** deck onto the rear ledger + fascia head; top at **1200 AFF**.
+5. Board the **front face only** with 12.5 mm PB (alcove-facing), **flush with the deck front edge** — not proud into the bay and not set back/recessed.
+6. Router-ease the shelf nosing (deck front / PB junction) so it is comfortable to lean against.
+7. Fix tablet mount block on the back wall under the shelf (~975 AFF) — packer for the 7″ ESP32 touchscreen.
 
 ---
 
@@ -59,12 +60,12 @@ Shelves are **wall-supported** — no stud row along the back of either shelf.
 
 Carried on the existing head wall. Depth from bed face to wall is whatever remains of the fixed 2246 after mattress + side tolerances — not a deep “pillow shelf”.
 
-1. Stand **2–3** fascia uprights at the **bed-facing** line only (inside the 326 mm), starting forward of the rear shelf line — **not** a stud row against the head wall.
+1. Screw head fascia uprights into the **corner post**, then forward along the bed face (inside the 326 mm) — **not** a stud row against the head wall or back under the rear shelf.
 2. Seat the head deck on the head ledger + fascia; top at **1200 AFF**.
 3. Board **exposed** faces only:
    - **Bed face** PB from the **rear shelf front** forward to the front wall (do **not** run a hidden sheet back to the rear wall through the rear-shelf junction).
    - **Front return** PB on the room-facing end of the 326 mm block.
-4. Do **not** board the face hard against the existing head wall (hidden / useless).
+4. External corner bead at the rear/head L. Do **not** board the face hard against the existing head wall (hidden / useless).
 
 ---
 

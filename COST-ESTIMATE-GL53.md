@@ -2,7 +2,9 @@
 
 **Site:** GL53 0DF · Bence local · Wickes/TP OK.  
 **Scope:** Materials only. Bed owned.  
-**Shelves:** backs on **existing walls**; **fronts still PB-faced** (light fascia frame). Zone detail: `PARTS-LIST.md`.
+**Shelves:** backs on **existing walls**; **fronts PB-faced**; **corner post at rear/head L** (wall-fixed). Zone detail: `PARTS-LIST.md`.
+
+**Alcove clear width 2246mm FIXED** — head shelf depth is residual after mattress + tolerances.
 
 ---
 
@@ -10,9 +12,9 @@
 
 | Stock | Qty | Where |
 |-------|-----|--------|
-| 70mm C-stud × 3.0m | **13** (39m) | Front jambs ×4, foot ext ×2, shelf front uprights ~2, **noggins ~3**, spare ×1 |
+| 70mm C-stud × 3.0m | **13** (39m) | Front jambs ×4, foot ext ×2, shelf fascia + **corner post** ~3, **noggins ~3**, spare ×1 |
 | 72mm U-track × 3.0m | **4** (12m) | Front F/C/sill/lintel, foot ext, shelf fascia rails |
-| 12.5mm PB | **8** | Front **both faces** + foot + **rear shelf front** + **head fascia faces** + spare |
+| 12.5mm TE PB 2400×1200 | **8** | Front **both faces + reveals**, foot ext, rear fascia, head faces, spare |
 
 ---
 
@@ -31,15 +33,15 @@
 | **Merchant subtotal** | | | **≈ £674** |
 
 **Wickes path ≈ £675–£720** (delivery/collect).  
-**Bence path ≈ £530–£630** + free local delivery.
+**Bence path ≈ £530–£630** + free local delivery (trade pricing).
 
 ---
 
-## Online parcels
+## Online parcels (not on Bence stud drop)
 
 | Item | Typical |
 |------|---------|
-| 900mm 100kg runners ×2 | £70–£90 |
+| 900mm 100kg runners ×2 pairs | £70–£90 |
 | ESP32 7" + LED + PSU + light + speaker + starfield budget | £200–£350 |
 | **Parcels** | **≈ £270–£440** |
 
@@ -55,9 +57,18 @@
 
 ---
 
-## Bence script
+## Bence order script (read this out / email)
 
-> **GL53 0DF #22.** Shelves hang off existing back/head walls; **PB still faces the front of those shelves.**  
-> 13× 70mm C-stud 3.0m (incl. **noggins** for full-height PB), 4× 72mm track 3.0m, 8× 12.5mm 2400×1200 TE PB, beads, compound, tape, screws.  
-> 5× 47×150×2.4m for **170mm** lift (360mm bed → 530mm platform), 2× ledger lengths, 2× 18mm + 1× 12mm 8×4 ply, grab adhesive. Crane if needed.  
-> Orientation: **foot left, head right** when looking into the alcove (locked front aspect).
+> **GL53 0DF #22 — cabin / daybed alcove materials.**  
+> Clear alcove width **2246mm** fixed; depth grown with **+237mm** foot-wall return at the front. Looking in: **foot left, head right**.  
+>  
+> Please quote / deliver:  
+> - **13×** 70mm C-stud × 3.0m (front jambs, foot return, shelf fascia uprights, **1 corner post at rear/head junction**, noggins for full-height PB, spare)  
+> - **4×** 72mm U-track × 3.0m (front floor/ceiling/sill/lintel, foot return shorts, shelf fascia head rails)  
+> - **8×** 12.5mm TE plasterboard 2400×1200  
+> - Corner/stop bead ~12m, joint compound, tape, drywall screws  
+> - **5×** 47×150×2.4m softwood for **170mm** lift (owned 360mm bed → 530mm platform)  
+> - **2×** ledger lengths (~45×70) for rear + head wall supports  
+> - **2×** 18mm + **1×** 12mm 8×4 plywood/MDF  
+> - Grab adhesive + short floor screws (≤25–30mm into timber floor)  
+> Crane offload if possible. Confirm free delivery for GL53.

@@ -178,7 +178,9 @@ export function buildCabinBed(THREE) {
     const studX = hx + PB;
     box(g, W - LEDGER, 0, ledgerZ, LEDGER, FRONT_Y, DIM.LEDGER_H, COL.ledger, 1, 1);
     box(g, hx, 0, SHELF - deckT, HEAD_W, FRONT_Y, deckT, COL.deck, 1, 2);
-    const ys = [REAR + 40, FRONT_Y / 2 - STUD_W / 2, FRONT_Y - STUD_W - 40];
+    // Corner post at rear/head L — solid pick-up fixed toward head wall
+    box(g, studX, REAR - STUD_FL, 0, STUD_W, STUD_FL, fasciaH, COL.stud, 1, 1, 0.55);
+    const ys = [REAR + 80, FRONT_Y / 2 - STUD_W / 2, FRONT_Y - STUD_W - 40];
     for (const y of ys) {
       box(g, studX, y, 0, STUD_FL, STUD_W, fasciaH, COL.stud, 1, 1, 0.55);
     }
